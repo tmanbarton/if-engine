@@ -49,7 +49,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *   <li>Command parsing and routing to handlers</li>
  *   <li>Movement between locations</li>
  *   <li>Game state management (intro, playing, confirmations)</li>
- *   <li>JSON response generation for WebSocket clients</li>
+ *   <li>JSON response generation</li>
  * </ul>
  */
 public class GameEngine {

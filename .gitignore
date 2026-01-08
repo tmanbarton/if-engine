@@ -1,3 +1,7 @@
+# Gradle
+.gradle/
+build/
+
 # Claude stuff
 progress.md
 API_GAPS.md

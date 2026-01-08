@@ -1,6 +1,6 @@
 plugins {
-  id 'java'
-  id 'application'
+  id 'java-library'
+  id 'maven-publish'
   id 'jacoco'
 }
 
@@ -9,6 +9,12 @@ version = '1.0.0'
 
 java {
   sourceCompatibility = '17'
+  withSourcesJar()
+}
+
+tasks.withType(Javadoc).configureEach {
+  options.addBooleanOption('Xdoclint:none', true)
+  failOnError = false
 }
 
 repositories {
@@ -16,21 +22,12 @@ repositories {
 }
 
 dependencies {
-  implementation 'org.eclipse.jetty:jetty-server:11.0.18'
-  implementation 'org.eclipse.jetty:jetty-servlet:11.0.18'
-  implementation 'org.eclipse.jetty.websocket:websocket-jetty-server:11.0.18'
-  implementation 'org.eclipse.jetty.websocket:websocket-jetty-api:11.0.18'
-  implementation 'org.slf4j:slf4j-simple:2.0.9'
   implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
   testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
   testImplementation 'org.mockito:mockito-core:5.7.0'
   testImplementation 'org.mockito:mockito-junit-jupiter:5.7.0'
   testImplementation 'org.json:json:20231013'
-}
-
-application {
-  mainClass = 'com.ifengine.IFEngineApplication'
 }
 
 tasks.named('test') {
@@ -54,5 +51,21 @@ jacocoTestReport {
     xml.required = false
     csv.required = false
     html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+  }
+}
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      from components.java
+
+      pom {
+        name = 'IF Engine'
+        description = 'Interactive Fiction Game Engine'
+      }
+    }
+  }
+  repositories {
+    mavenLocal()
   }
 }
