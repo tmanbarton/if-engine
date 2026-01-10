@@ -1114,13 +1114,13 @@ class GameEngineTest {
     }
 
     @Test
-    @DisplayName("withIntro - handler controls state transition")
-    void testWithIntro_handlerControlsStateTransition() {
+    @DisplayName("withIntroHandler - handler controls state transition")
+    void testWithIntroHandler_handlerControlsStateTransition() {
       // Given
       final GameMap map = new GameMap.Builder()
           .addLocation(new Location("start", "Start location.", "Start"))
           .setStartingLocation("start")
-          .withIntro("Type 'begin' to start.", (player, response, gameMap) -> {
+          .withIntroHandler((player, response, gameMap) -> {
             if ("begin".equalsIgnoreCase(response)) {
               return IntroResult.playing("Starting!");
             }
@@ -1136,6 +1136,44 @@ class GameEngineTest {
       // When - correct answer transitions
       engine.processCommand(SESSION_ID, "begin");
       assertEquals(GameState.PLAYING, engine.getPlayer(SESSION_ID).getGameState());
+    }
+
+    @Test
+    @DisplayName("withIntroResponses - uses custom yes/no responses")
+    void testWithIntroResponses_usesCustomYesNoResponses() {
+      // Given
+      final GameMap map = new GameMap.Builder()
+          .addLocation(new Location("start", "Start location.", "Start"))
+          .setStartingLocation("start")
+          .withIntroResponses("Let's go!", "Come back later.")
+          .build();
+      final GameEngine engine = new GameEngine(map);
+
+      // When - yes answer
+      final String yesResponse = engine.processCommand(SESSION_ID, "yes");
+
+      // Then (note: engine adds \n\n to all responses for visual spacing)
+      assertEquals("Let's go!\n\n", JsonTestUtils.extractMessage(yesResponse));
+      assertEquals(GameState.PLAYING, engine.getPlayer(SESSION_ID).getGameState());
+    }
+
+    @Test
+    @DisplayName("withIntroResponses - no answer returns custom response and stays in intro")
+    void testWithIntroResponses_noAnswerStaysInIntro() {
+      // Given
+      final GameMap map = new GameMap.Builder()
+          .addLocation(new Location("start", "Start location.", "Start"))
+          .setStartingLocation("start")
+          .withIntroResponses("Let's go!", "Come back later.")
+          .build();
+      final GameEngine engine = new GameEngine(map);
+
+      // When - no answer
+      final String noResponse = engine.processCommand(SESSION_ID, "no");
+
+      // Then (note: engine adds \n\n to all responses for visual spacing)
+      assertEquals("Come back later.\n\n", JsonTestUtils.extractMessage(noResponse));
+      assertEquals(GameState.WAITING_FOR_START_ANSWER, engine.getPlayer(SESSION_ID).getGameState());
     }
 
     @Test

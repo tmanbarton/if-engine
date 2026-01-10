@@ -75,9 +75,8 @@ public final class SimpleGameExample {
         // Set where players start
         .setStartingLocation("cottage")
 
-        // Custom intro question
-        .withIntro(
-            "Welcome to the Cottage Adventure!\n\nAre you ready to explore? (yes/no)",
+        // Custom intro responses (question is displayed in HTML/frontend)
+        .withIntroResponses(
             "Excellent! Your adventure begins...",
             "Take your time. Type 'yes' when you're ready.")
 

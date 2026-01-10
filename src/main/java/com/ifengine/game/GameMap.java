@@ -38,7 +38,6 @@ public class GameMap implements GameMapInterface {
 
   // Intro configuration
   private final boolean skipIntro;
-  private final String introQuestion;
   private final IntroHandler introHandler;
   private final String customYesResponse;
   private final String customNoResponse;
@@ -54,7 +53,6 @@ public class GameMap implements GameMapInterface {
     this.startingLocationKey = builder.startingLocationKey;
     this.initialItemPlacements = new HashMap<>(builder.initialItemPlacements);
     this.skipIntro = builder.skipIntro;
-    this.introQuestion = builder.introQuestion;
     this.introHandler = builder.introHandler;
     this.customYesResponse = builder.customYesResponse;
     this.customNoResponse = builder.customNoResponse;
@@ -127,16 +125,6 @@ public class GameMap implements GameMapInterface {
   }
 
   /**
-   * Returns the custom intro message, if configured.
-   *
-   * @return the intro message, or null if not configured
-   */
-  @Nullable
-  public String getIntroQuestion() {
-    return introQuestion;
-  }
-
-  /**
    * Returns the custom intro handler, if configured.
    *
    * @return the intro handler, or null if not configured
@@ -172,16 +160,16 @@ public class GameMap implements GameMapInterface {
    * @return true if a custom intro handler is set
    */
   public boolean hasCustomIntroHandler() {
-    return introQuestion != null && introHandler != null;
+    return introHandler != null;
   }
 
   /**
-   * Returns whether a custom intro with simple yes response is configured.
+   * Returns whether a custom intro with simple yes/no responses is configured.
    *
-   * @return true if a custom intro message and yes response are set (without custom handler)
+   * @return true if custom yes/no responses are set (without custom handler)
    */
   public boolean hasCustomIntroMessage() {
-    return introQuestion != null && customYesResponse != null;
+    return customYesResponse != null && introHandler == null;
   }
 
   /**
@@ -190,7 +178,7 @@ public class GameMap implements GameMapInterface {
    * @return true if any custom intro configuration is set
    */
   public boolean hasCustomIntro() {
-    return introQuestion != null && (introHandler != null || customYesResponse != null);
+    return introHandler != null || customYesResponse != null;
   }
 
   /**
@@ -211,7 +199,6 @@ public class GameMap implements GameMapInterface {
 
     // Intro configuration
     private boolean skipIntro = false;
-    private String introQuestion;
     private IntroHandler introHandler;
     private String customYesResponse;
     private String customNoResponse;
@@ -375,28 +362,27 @@ public class GameMap implements GameMapInterface {
     }
 
     /**
-     * Configures a custom intro message with custom yes/no responses.
+     * Configures custom yes/no responses for the intro.
      * <p>
-     * The intro message is displayed when a new player joins. When the player
-     * answers "yes" (or variants like "y", "yeah", "sure", "ok"), the yesResponse
-     * is shown and the game transitions to PLAYING state. When they answer "no"
-     * (or variants), the noResponse is shown and they stay in the intro state.
+     * When the player answers "yes" (or variants like "y", "yeah", "sure", "ok"),
+     * the yesResponse is shown and the game transitions to PLAYING state.
+     * When they answer "no" (or variants), the noResponse is shown and they
+     * stay in the intro state.
      * <p>
-     * Use {@link #withIntro(String, IntroHandler)} for full control over response handling.
+     * The intro question itself should be displayed in the HTML/frontend layer,
+     * not stored in the game map.
+     * <p>
+     * Use {@link #withIntroHandler(IntroHandler)} for full control over response handling.
      *
-     * @param introQuestion the intro message/question to display
      * @param yesResponse the message to show when player answers yes
      * @param noResponse the message to show when player answers no
      * @return this Builder for method chaining
      */
     @Nonnull
-    public Builder withIntro(@Nonnull final String introQuestion,
-                             @Nonnull final String yesResponse,
-                             @Nonnull final String noResponse) {
-      Objects.requireNonNull(introQuestion, "introQuestion cannot be null");
+    public Builder withIntroResponses(@Nonnull final String yesResponse,
+                                      @Nonnull final String noResponse) {
       Objects.requireNonNull(yesResponse, "yesResponse cannot be null");
       Objects.requireNonNull(noResponse, "noResponse cannot be null");
-      this.introQuestion = introQuestion;
       this.introHandler = null;
       this.customYesResponse = yesResponse;
       this.customNoResponse = noResponse;
@@ -404,21 +390,20 @@ public class GameMap implements GameMapInterface {
     }
 
     /**
-     * Configures a custom intro message and handler.
+     * Configures a custom intro handler.
      * <p>
-     * The intro message is displayed when a new player joins. The handler is invoked
-     * with the player's response to determine what message to show and whether to
-     * transition to the PLAYING state.
+     * The handler is invoked with the player's response to determine what message
+     * to show and whether to transition to the PLAYING state.
+     * <p>
+     * The intro question itself should be displayed in the HTML/frontend layer,
+     * not stored in the game map.
      *
-     * @param message the intro message to display
      * @param handler the handler for processing the player's response
      * @return this Builder for method chaining
      */
     @Nonnull
-    public Builder withIntro(@Nonnull final String message, @Nonnull final IntroHandler handler) {
-      Objects.requireNonNull(message, "message cannot be null");
+    public Builder withIntroHandler(@Nonnull final IntroHandler handler) {
       Objects.requireNonNull(handler, "handler cannot be null");
-      this.introQuestion = message;
       this.introHandler = handler;
       this.customYesResponse = null;
       this.customNoResponse = null;

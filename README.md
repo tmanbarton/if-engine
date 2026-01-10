@@ -56,7 +56,7 @@ GameMap map = new GameMap.Builder()
     .connectOneWay("a", Direction.DOWN, "b")  // One-way connection
     .setStartingLocation("room") // Required: where players start
     .skipIntro()                 // Optional: skip intro question
-    .withIntro(question, yesResponse, noResponse)  // Custom intro
+    .withIntroResponses(yesResponse, noResponse)  // Custom yes/no responses
     .build();  // Validates and returns GameMap
 ```
 
@@ -114,6 +114,8 @@ Players can use abbreviations: `n`, `s`, `e`, `w`, `ne`, `nw`, `se`, `sw`, `u`, 
 
 By default, games start with "Have you played this adventure before? (yes/no)".
 
+**Note:** The intro question itself should be displayed in your HTML/frontend layer, not stored in the game map. The engine only handles processing the player's response.
+
 ### Skip the intro
 
 ```java
@@ -124,14 +126,13 @@ GameMap map = new GameMap.Builder()
     .build();
 ```
 
-### Custom intro with yes/no responses
+### Custom yes/no responses
 
 ```java
 GameMap map = new GameMap.Builder()
     .addLocation(...)
     .setStartingLocation("start")
-    .withIntro(
-        "Welcome! Ready to play? (yes/no)",
+    .withIntroResponses(
         "Let's begin!",           // shown on "yes"
         "Take your time."         // shown on "no"
     )
@@ -146,17 +147,14 @@ For full control over intro logic:
 GameMap map = new GameMap.Builder()
     .addLocation(...)
     .setStartingLocation("start")
-    .withIntro(
-        "Choose difficulty: easy/hard",
-        (player, response, gameMap) -> {
-            if ("easy".equalsIgnoreCase(response)) {
-                return IntroResult.playing("Easy mode selected!");
-            } else if ("hard".equalsIgnoreCase(response)) {
-                return IntroResult.playing("Hard mode selected!");
-            }
-            return IntroResult.waiting("Please choose easy or hard.");
+    .withIntroHandler((player, response, gameMap) -> {
+        if ("easy".equalsIgnoreCase(response)) {
+            return IntroResult.playing("Easy mode selected!");
+        } else if ("hard".equalsIgnoreCase(response)) {
+            return IntroResult.playing("Hard mode selected!");
         }
-    )
+        return IntroResult.waiting("Please choose easy or hard.");
+    })
     .build();
 ```
 
