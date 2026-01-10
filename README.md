@@ -112,9 +112,14 @@ Players can use abbreviations: `n`, `s`, `e`, `w`, `ne`, `nw`, `se`, `sw`, `u`, 
 
 ## Intro Configuration
 
-By default, games start with "Have you played this adventure before? (yes/no)".
+By default, games start in `WAITING_FOR_START_ANSWER` state, expecting a response to an intro question like "Have you played this adventure before?".
 
-**Note:** The intro question itself should be displayed in your HTML/frontend layer, not stored in the game map. The engine only handles processing the player's response.
+**Important:** The engine does **not** display the intro question - your frontend must handle this. Display the question when:
+- The user first connects (e.g., on WebSocket connect)
+- The page loads in a web app
+- The session starts in a CLI application
+
+The engine only processes the player's response and returns the appropriate message. Your frontend is responsible for showing the initial question to the user.
 
 ### Skip the intro
 
@@ -128,20 +133,28 @@ GameMap map = new GameMap.Builder()
 
 ### Custom yes/no responses
 
+For yes/no questions where both answers start the game (e.g., "Have you played IF before?" or "Ready to begin?"):
+
 ```java
 GameMap map = new GameMap.Builder()
     .addLocation(...)
     .setStartingLocation("start")
     .withIntroResponses(
-        "Let's begin!",           // shown on "yes"
-        "Take your time."         // shown on "no"
+        "Great! Let's begin...",     // shown on "yes"
+        "No problem! Here we go..."  // shown on "no"
     )
     .build();
 ```
 
+Both "yes" and "no" answers transition to PLAYING state - only the response message differs.
+
+**Accepted variants:**
+- Yes: `yes`, `y`, `yeah`, `yep`, `sure`
+- No: `no`, `n`, `nah`, `nope`, `no thanks`
+
 ### Custom intro handler
 
-For full control over intro logic:
+For full control over intro logic (including keeping player in intro state on certain answers):
 
 ```java
 GameMap map = new GameMap.Builder()

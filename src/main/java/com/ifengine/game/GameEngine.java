@@ -376,7 +376,7 @@ public class GameEngine {
   private boolean isYesAnswer(@Nonnull final String answer) {
     final String lowerAnswer = answer.toLowerCase();
     return lowerAnswer.equals("yes") || lowerAnswer.equals("y") || lowerAnswer.equals("yeah") ||
-        lowerAnswer.equals("yep") || lowerAnswer.equals("sure") || lowerAnswer.equals("ok");
+        lowerAnswer.equals("yep") || lowerAnswer.equals("sure");
   }
 
   private boolean isNoAnswer(@Nonnull final String answer) {
@@ -408,6 +408,7 @@ public class GameEngine {
         player.setGameState(GameState.PLAYING);
         return map.getCustomYesResponse();
       } else if (isNoAnswer(answer)) {
+        player.setGameState(GameState.PLAYING);
         return map.getCustomNoResponse();
       } else {
         return responseProvider.getPleaseAnswerQuestion();

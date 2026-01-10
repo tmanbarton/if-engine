@@ -1158,8 +1158,8 @@ class GameEngineTest {
     }
 
     @Test
-    @DisplayName("withIntroResponses - no answer returns custom response and stays in intro")
-    void testWithIntroResponses_noAnswerStaysInIntro() {
+    @DisplayName("withIntroResponses - no answer returns custom response and transitions to playing")
+    void testWithIntroResponses_noAnswerTransitionsToPlaying() {
       // Given
       final GameMap map = new GameMap.Builder()
           .addLocation(new Location("start", "Start location.", "Start"))
@@ -1173,7 +1173,7 @@ class GameEngineTest {
 
       // Then (note: engine adds \n\n to all responses for visual spacing)
       assertEquals("Come back later.\n\n", JsonTestUtils.extractMessage(noResponse));
-      assertEquals(GameState.WAITING_FOR_START_ANSWER, engine.getPlayer(SESSION_ID).getGameState());
+      assertEquals(GameState.PLAYING, engine.getPlayer(SESSION_ID).getGameState());
     }
 
     @Test

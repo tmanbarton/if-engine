@@ -380,17 +380,22 @@ public class GameMap implements GameMapInterface {
     }
 
     /**
-     * Configures custom yes/no responses for the intro.
+     * Configures custom yes/no responses for the intro question.
      * <p>
-     * When the player answers "yes" (or variants like "y", "yeah", "sure", "ok"),
-     * the yesResponse is shown and the game transitions to PLAYING state.
-     * When they answer "no" (or variants), the noResponse is shown and they
-     * stay in the intro state.
+     * This is designed for yes/no questions where both answers start the game,
+     * such as "Have you played interactive fiction before?" or "Ready to begin?".
+     * <p>
+     * Both "yes" and "no" answers transition the game to PLAYING state, allowing
+     * gameplay to begin. The difference is only in the response message shown.
+     * <p>
+     * Accepted yes variants: "yes", "y", "yeah", "yep", "sure"
+     * Accepted no variants: "no", "n", "nah", "nope", "no thanks"
      * <p>
      * The intro question itself should be displayed in the HTML/frontend layer,
      * not stored in the game map.
      * <p>
-     * Use {@link #withIntroHandler(IntroHandler)} for full control over response handling.
+     * Use {@link #withIntroHandler(IntroHandler)} for full control over response
+     * handling, including keeping the player in the intro state on certain answers.
      *
      * @param yesResponse the message to show when player answers yes
      * @param noResponse the message to show when player answers no
