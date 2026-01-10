@@ -11,11 +11,15 @@ import java.util.Set;
 /**
  * Represents a scenery object in the game world that players can interact with but cannot take.
  * Scenery objects have names, aliases, and specific responses to different interaction types.
+ * <p>
+ * Supports both standard {@link InteractionType} responses and custom string-based interactions
+ * for use with custom commands registered via {@code GameMap.Builder.withCommand()}.
  */
 public record SceneryObject(
     @Nonnull String name,
     @Nonnull Set<String> aliases,
-    @Nonnull Map<InteractionType, String> responses
+    @Nonnull Map<InteractionType, String> responses,
+    @Nonnull Map<String, String> customResponses
 ) {
 
   /**
@@ -70,12 +74,30 @@ public record SceneryObject(
   }
 
   /**
+   * Gets the response for a custom interaction verb.
+   * <p>
+   * Custom interactions are defined via {@code withCustomInteraction()} and can be
+   * used with custom commands registered via {@code GameMap.Builder.withCommand()}.
+   *
+   * @param verb the custom verb to get response for (can be null)
+   * @return an Optional containing the response if available, empty otherwise
+   */
+  @Nonnull
+  public Optional<String> getCustomResponse(@Nullable final String verb) {
+    if (verb == null) {
+      return Optional.empty();
+    }
+    return Optional.ofNullable(customResponses.get(verb.toLowerCase()));
+  }
+
+  /**
    * Builder class for constructing SceneryObject instances with fluent API.
    */
   public static class Builder {
     private final String name;
     private final Set<String> aliases = new HashSet<>();
     private final Map<InteractionType, String> responses = new HashMap<>();
+    private final Map<String, String> customResponses = new HashMap<>();
 
     private Builder(@Nonnull final String name) {
       this.name = name;
@@ -131,17 +153,48 @@ public record SceneryObject(
     }
 
     /**
+     * Adds a custom interaction response for this scenery object.
+     * <p>
+     * Custom interactions allow scenery to respond to verbs beyond the standard
+     * {@link InteractionType} enum. Use with custom commands registered via
+     * {@code GameMap.Builder.withCommand()}.
+     * <p>
+     * Example:
+     * <pre>
+     * SceneryObject.builder("flower")
+     *     .withCustomInteraction("smell", "It smells lovely!")
+     *     .build();
+     * </pre>
+     *
+     * @param verb the custom verb (must not be null or blank)
+     * @param response the response text (must not be null or blank)
+     * @return this builder for method chaining
+     * @throws IllegalArgumentException if verb or response is null/blank
+     */
+    @Nonnull
+    public Builder withCustomInteraction(@Nonnull final String verb, @Nonnull final String response) {
+      if (verb == null || verb.trim().isEmpty()) {
+        throw new IllegalArgumentException("Verb cannot be null or blank");
+      }
+      if (response == null || response.trim().isEmpty()) {
+        throw new IllegalArgumentException("Response cannot be null or blank");
+      }
+      customResponses.put(verb.trim().toLowerCase(), response.trim());
+      return this;
+    }
+
+    /**
      * Builds the SceneryObject instance with the configured properties.
      *
      * @return a new SceneryObject instance
-     * @throws IllegalStateException if no interactions have been added
+     * @throws IllegalStateException if no interactions (standard or custom) have been added
      */
     @Nonnull
     public SceneryObject build() {
-      if (responses.isEmpty()) {
+      if (responses.isEmpty() && customResponses.isEmpty()) {
         throw new IllegalStateException("SceneryObject must have at least one interaction");
       }
-      return new SceneryObject(name, Set.copyOf(aliases), Map.copyOf(responses));
+      return new SceneryObject(name, Set.copyOf(aliases), Map.copyOf(responses), Map.copyOf(customResponses));
     }
   }
 }

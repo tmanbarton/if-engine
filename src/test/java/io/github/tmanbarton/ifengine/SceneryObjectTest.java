@@ -150,4 +150,45 @@ class SceneryObjectTest {
       assertEquals("You kick the tree.", scenery.getResponse(InteractionType.KICK).get());
     }
   }
+
+  @Nested
+  @DisplayName("Custom Interactions")
+  class CustomInteractions {
+
+    @Test
+    @DisplayName("Test withCustomInteraction - adds custom verb response")
+    void testWithCustomInteraction_addsResponse() {
+      final SceneryObject scenery = SceneryObject.builder("flower")
+          .withCustomInteraction("smell", "It smells lovely!")
+          .build();
+
+      final Optional<String> result = scenery.getCustomResponse("smell");
+
+      assertTrue(result.isPresent());
+      assertEquals("It smells lovely!", result.get());
+    }
+
+    @Test
+    @DisplayName("Test getCustomResponse - case insensitive lookup")
+    void testGetCustomResponse_caseInsensitive() {
+      final SceneryObject scenery = SceneryObject.builder("flower")
+          .withCustomInteraction("smell", "It smells lovely!")
+          .build();
+
+      assertTrue(scenery.getCustomResponse("SMELL").isPresent());
+      assertTrue(scenery.getCustomResponse("Smell").isPresent());
+    }
+
+    @Test
+    @DisplayName("Test builder - can have only custom interactions")
+    void testBuilder_onlyCustomInteractions() {
+      final SceneryObject scenery = SceneryObject.builder("flower")
+          .withCustomInteraction("smell", "It smells lovely!")
+          .withCustomInteraction("taste", "It tastes bitter.")
+          .build();
+
+      assertEquals(2, scenery.customResponses().size());
+      assertTrue(scenery.responses().isEmpty());
+    }
+  }
 }

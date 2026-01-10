@@ -1,8 +1,10 @@
 package io.github.tmanbarton.ifengine.example;
 
 import io.github.tmanbarton.ifengine.Direction;
+import io.github.tmanbarton.ifengine.InteractionType;
 import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.Location;
+import io.github.tmanbarton.ifengine.SceneryObject;
 import io.github.tmanbarton.ifengine.game.GameEngine;
 import io.github.tmanbarton.ifengine.game.GameMap;
 
@@ -46,11 +48,7 @@ public final class GameExample {
             "You stand on a narrow forest path. Ancient trees tower above you. "
                 + "The path continues east. The cottage lies to the south.",
             "On the forest path."))
-        .addLocation(new Location(
-            "clearing",
-            "You emerge into a sun-dappled clearing. Wildflowers dot the grass. "
-                + "The forest path leads west.",
-            "In a sunny clearing."))
+        .addLocation(createClearing())
 
         // Connect locations (bidirectional)
         .connect("cottage", Direction.NORTH, "forest")
@@ -177,7 +175,40 @@ public final class GameExample {
           return "You can't knock on that.";
         })
 
+        // Custom command using scenery custom interactions
+        // Works with SceneryObject.withCustomInteraction("smell", response)
+        .withCommand("smell", List.of("sniff"), (player, cmd, ctx) -> {
+          final String target = cmd.getFirstDirectObject();
+          if (target.isEmpty()) {
+            return "Smell what?";
+          }
+          return ctx.getCurrentLocation().findSceneryObject(target)
+              .flatMap(s -> s.getCustomResponse("smell"))
+              .orElse("You can't smell that.");
+        })
+
         .build();
+  }
+
+  /**
+   * Creates the clearing location with scenery demonstrating custom interactions.
+   */
+  private static Location createClearing() {
+    final Location clearing = new Location(
+        "clearing",
+        "You emerge into a sun-dappled clearing. Wildflowers dot the grass. "
+            + "The forest path leads west.",
+        "In a sunny clearing.");
+
+    // Scenery with standard interaction + custom interaction for use with custom commands
+    final SceneryObject wildflowers = SceneryObject.builder("wildflowers")
+        .withAliases("flowers", "flower")
+        .withInteraction(InteractionType.LOOK, "A colorful mix of daisies, buttercups, and violets.")
+        .withCustomInteraction("smell", "The sweet fragrance of wildflowers fills your nose.")
+        .build();
+    clearing.addSceneryObject(wildflowers);
+
+    return clearing;
   }
 
   /**
