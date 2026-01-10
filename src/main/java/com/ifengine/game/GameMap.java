@@ -42,6 +42,7 @@ public class GameMap implements GameMapInterface {
   private final IntroHandler introHandler;
   private final String customYesResponse;
   private final String customNoResponse;
+  private final String customIntroMessage;
 
   // Hint configuration
   private final HintConfiguration hintConfiguration;
@@ -60,6 +61,7 @@ public class GameMap implements GameMapInterface {
     this.introHandler = builder.introHandler;
     this.customYesResponse = builder.customYesResponse;
     this.customNoResponse = builder.customNoResponse;
+    this.customIntroMessage = builder.customIntroMessage;
     this.hintConfiguration = builder.hintConfiguration;
   }
 
@@ -169,11 +171,11 @@ public class GameMap implements GameMapInterface {
   }
 
   /**
-   * Returns whether a custom intro with simple yes/no responses is configured.
+   * Returns whether custom yes/no intro responses are configured.
    *
    * @return true if custom yes/no responses are set (without custom handler)
    */
-  public boolean hasCustomIntroMessage() {
+  public boolean hasCustomIntroResponses() {
     return customYesResponse != null && introHandler == null;
   }
 
@@ -184,6 +186,25 @@ public class GameMap implements GameMapInterface {
    */
   public boolean hasCustomIntro() {
     return introHandler != null || customYesResponse != null;
+  }
+
+  /**
+   * Returns whether a custom intro message is configured.
+   *
+   * @return true if a custom intro message is set
+   */
+  public boolean hasCustomIntroMessage() {
+    return customIntroMessage != null;
+  }
+
+  /**
+   * Returns the custom intro message, if configured.
+   *
+   * @return the custom intro message, or null if not configured
+   */
+  @Nullable
+  public String getCustomIntroMessage() {
+    return customIntroMessage;
   }
 
   /**
@@ -217,6 +238,7 @@ public class GameMap implements GameMapInterface {
     private IntroHandler introHandler;
     private String customYesResponse;
     private String customNoResponse;
+    private String customIntroMessage;
 
     // Hint configuration
     private HintConfiguration hintConfiguration;
@@ -430,6 +452,26 @@ public class GameMap implements GameMapInterface {
       this.introHandler = handler;
       this.customYesResponse = null;
       this.customNoResponse = null;
+      return this;
+    }
+
+    /**
+     * Configures an intro message shown before the first location description.
+     * <p>
+     * This message is displayed after the yes/no response (if any) and before
+     * showing the player's starting location. Use this to set the scene or
+     * provide story context when the game begins.
+     * <p>
+     * Can be used alone (with default yes/no handling) or combined with
+     * {@link #withIntroResponses(String, String)} for custom yes/no messages.
+     *
+     * @param introMessage the message to show before the location description
+     * @return this Builder for method chaining
+     */
+    @Nonnull
+    public Builder withIntroMessage(@Nonnull final String introMessage) {
+      Objects.requireNonNull(introMessage, "introMessage cannot be null");
+      this.customIntroMessage = introMessage;
       return this;
     }
 

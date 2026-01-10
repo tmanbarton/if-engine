@@ -402,14 +402,14 @@ public class GameEngine {
       return result.message();
     }
 
-    // Check for custom intro message with simple yes/no responses
-    if (gameMap instanceof GameMap map && map.hasCustomIntroMessage()) {
+    // Check for custom yes/no responses
+    if (gameMap instanceof GameMap map && map.hasCustomIntroResponses()) {
       if (isYesAnswer(answer)) {
         player.setGameState(GameState.PLAYING);
-        return map.getCustomYesResponse();
+        return map.getCustomYesResponse() + "\n\n" + buildIntroWithLocation(map, player);
       } else if (isNoAnswer(answer)) {
         player.setGameState(GameState.PLAYING);
-        return map.getCustomNoResponse();
+        return map.getCustomNoResponse() + "\n\n" + buildIntroWithLocation(map, player);
       } else {
         return responseProvider.getPleaseAnswerQuestion();
       }
@@ -417,18 +417,38 @@ public class GameEngine {
 
     // Default yes/no handling
     if (isYesAnswer(answer)) {
-      // Yes - they have played before
       player.setExperiencedPlayer(true);
       player.setGameState(GameState.PLAYING);
+      // If custom intro message is set, use it instead of default yes response
+      if (gameMap instanceof GameMap map && map.hasCustomIntroMessage()) {
+        return buildIntroWithLocation(map, player);
+      }
       return responseProvider.getExperiencedPlayerIntro() + "\n\n" + lookAtLocation(player, true);
     } else if (isNoAnswer(answer)) {
-      // No - they haven't played before
       player.setExperiencedPlayer(false);
       player.setGameState(GameState.PLAYING);
+      // If custom intro message is set, use it instead of default no response
+      if (gameMap instanceof GameMap map && map.hasCustomIntroMessage()) {
+        return buildIntroWithLocation(map, player);
+      }
       return responseProvider.getNewPlayerIntro() + "\n\n" + lookAtLocation(player, true);
     } else {
       return responseProvider.getPleaseAnswerQuestion();
     }
+  }
+
+  /**
+   * Builds the intro text with location description.
+   * If a custom intro message is configured, it's shown before the location.
+   * Otherwise, just the location description is returned.
+   */
+  @Nonnull
+  private String buildIntroWithLocation(@Nonnull final GameMap map, @Nonnull final Player player) {
+    final String locationDescription = lookAtLocation(player, true);
+    if (map.hasCustomIntroMessage()) {
+      return map.getCustomIntroMessage() + "\n\n" + locationDescription;
+    }
+    return locationDescription;
   }
 
   @Nonnull

@@ -1139,8 +1139,8 @@ class GameEngineTest {
     }
 
     @Test
-    @DisplayName("withIntroResponses - uses custom yes/no responses")
-    void testWithIntroResponses_usesCustomYesNoResponses() {
+    @DisplayName("withIntroResponses - yes answer shows custom response and location description")
+    void testWithIntroResponses_yesAnswerShowsResponseAndLocation() {
       // Given
       final GameMap map = new GameMap.Builder()
           .addLocation(new Location("start", "Start location.", "Start"))
@@ -1152,14 +1152,15 @@ class GameEngineTest {
       // When - yes answer
       final String yesResponse = engine.processCommand(SESSION_ID, "yes");
 
-      // Then (note: engine adds \n\n to all responses for visual spacing)
-      assertEquals("Let's go!\n\n", JsonTestUtils.extractMessage(yesResponse));
+      // Then - shows custom response followed by location description
+      final String message = JsonTestUtils.extractMessage(yesResponse);
+      assertEquals("Let's go!\n\nStart location.\n\n", message);
       assertEquals(GameState.PLAYING, engine.getPlayer(SESSION_ID).getGameState());
     }
 
     @Test
-    @DisplayName("withIntroResponses - no answer returns custom response and transitions to playing")
-    void testWithIntroResponses_noAnswerTransitionsToPlaying() {
+    @DisplayName("withIntroResponses - no answer shows custom response and location description")
+    void testWithIntroResponses_noAnswerShowsResponseAndLocation() {
       // Given
       final GameMap map = new GameMap.Builder()
           .addLocation(new Location("start", "Start location.", "Start"))
@@ -1171,8 +1172,50 @@ class GameEngineTest {
       // When - no answer
       final String noResponse = engine.processCommand(SESSION_ID, "no");
 
-      // Then (note: engine adds \n\n to all responses for visual spacing)
-      assertEquals("Come back later.\n\n", JsonTestUtils.extractMessage(noResponse));
+      // Then - shows custom response followed by location description
+      final String message = JsonTestUtils.extractMessage(noResponse);
+      assertEquals("Come back later.\n\nStart location.\n\n", message);
+      assertEquals(GameState.PLAYING, engine.getPlayer(SESSION_ID).getGameState());
+    }
+
+    @Test
+    @DisplayName("withIntroMessage - shows intro message before location description")
+    void testWithIntroMessage_showsIntroMessageBeforeLocation() {
+      // Given
+      final GameMap map = new GameMap.Builder()
+          .addLocation(new Location("start", "Start location.", "Start"))
+          .setStartingLocation("start")
+          .withIntroMessage("Welcome to the adventure!")
+          .build();
+      final GameEngine engine = new GameEngine(map);
+
+      // When - yes answer with default handling
+      final String response = engine.processCommand(SESSION_ID, "yes");
+
+      // Then - shows intro message followed by location description
+      final String message = JsonTestUtils.extractMessage(response);
+      assertEquals("Welcome to the adventure!\n\nStart location.\n\n", message);
+      assertEquals(GameState.PLAYING, engine.getPlayer(SESSION_ID).getGameState());
+    }
+
+    @Test
+    @DisplayName("withIntroMessage and withIntroResponses - shows custom response then intro message then location")
+    void testWithIntroMessageAndResponses_showsAllThree() {
+      // Given
+      final GameMap map = new GameMap.Builder()
+          .addLocation(new Location("start", "Start location.", "Start"))
+          .setStartingLocation("start")
+          .withIntroResponses("Let's go!", "Come back later.")
+          .withIntroMessage("Welcome to the adventure!")
+          .build();
+      final GameEngine engine = new GameEngine(map);
+
+      // When - yes answer
+      final String response = engine.processCommand(SESSION_ID, "yes");
+
+      // Then - shows custom response + intro message + location description
+      final String message = JsonTestUtils.extractMessage(response);
+      assertEquals("Let's go!\n\nWelcome to the adventure!\n\nStart location.\n\n", message);
       assertEquals(GameState.PLAYING, engine.getPlayer(SESSION_ID).getGameState());
     }
 

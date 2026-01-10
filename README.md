@@ -56,7 +56,8 @@ GameMap map = new GameMap.Builder()
     .connectOneWay("a", Direction.DOWN, "b")  // One-way connection
     .setStartingLocation("room") // Required: where players start
     .skipIntro()                 // Optional: skip intro question
-    .withIntroResponses(yesResponse, noResponse)  // Custom yes/no responses
+    .withIntroResponses(yes, no) // Custom yes/no responses
+    .withIntroMessage(message)   // Story intro before location
     .build();  // Validates and returns GameMap
 ```
 
@@ -146,11 +147,50 @@ GameMap map = new GameMap.Builder()
     .build();
 ```
 
-Both "yes" and "no" answers transition to PLAYING state - only the response message differs.
+Both "yes" and "no" answers transition to PLAYING state. The custom response is shown followed by the starting location description.
 
 **Accepted variants:**
 - Yes: `yes`, `y`, `yeah`, `yep`, `sure`
 - No: `no`, `n`, `nah`, `nope`, `no thanks`
+
+### Custom intro message
+
+Use `withIntroMessage()` to add story context before the first location description:
+
+```java
+GameMap map = new GameMap.Builder()
+    .addLocation(...)
+    .setStartingLocation("cottage")
+    .withIntroMessage("You find yourself at the edge of a mysterious forest...")
+    .build();
+```
+
+When the player answers yes/no, they'll see: intro message → location description.
+
+### Combining intro responses and message
+
+You can use both together for full customization:
+
+```java
+GameMap map = new GameMap.Builder()
+    .addLocation(...)
+    .setStartingLocation("cottage")
+    .withIntroResponses(
+        "Excellent! Let's begin...",
+        "No worries. Let's begin anyway...")
+    .withIntroMessage("You find yourself at the edge of a mysterious forest. "
+        + "A small cottage catches your eye...")
+    .build();
+```
+
+Output on "yes":
+```
+Excellent! Let's begin...
+
+You find yourself at the edge of a mysterious forest. A small cottage catches your eye...
+
+You are in a cozy cottage...
+```
 
 ### Custom intro handler
 

@@ -77,8 +77,12 @@ public final class SimpleGameExample {
 
         // Custom intro responses (question is displayed in HTML/frontend)
         .withIntroResponses(
-            "Excellent! Your adventure begins...",
-            "Take your time. Type 'yes' when you're ready.")
+            "Excellent! Let's begin...",
+            "No worries. Let's begin anyway...")
+
+        // Intro message shown before the first location description
+        .withIntroMessage("You find yourself at the edge of a mysterious forest. "
+            + "A small cottage catches your eye...")
 
         // Progressive hint system
         .withHints(hints -> hints
