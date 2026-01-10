@@ -19,9 +19,8 @@ import com.ifengine.game.GameMap;
 GameMap map = new GameMap.Builder()
     .addLocation(new Location("cottage", "A cozy cottage.", "In the cottage."))
     .addLocation(new Location("forest", "A dark forest.", "In the forest."))
-    .addItem(new Item("key", "a key", "A key lies here.", "A rusty key."))
     .connect("cottage", Direction.NORTH, "forest")
-    .placeItem("key", "cottage")
+    .placeItem(new Item("key", "a key", "A key lies here.", "A rusty key."), "cottage")
     .setStartingLocation("cottage")
     .build();  // Validates configuration
 
@@ -50,8 +49,7 @@ Use `GameMap.Builder` to construct your game world with fluent method chaining. 
 ```java
 GameMap map = new GameMap.Builder()
     .addLocation(location)       // Add a location
-    .addItem(item)               // Register an item
-    .placeItem("key", "room")    // Place item in location
+    .placeItem(item, "room")     // Add and place item in location
     .connect("a", Direction.NORTH, "b")  // Bidirectional connection
     .connectOneWay("a", Direction.DOWN, "b")  // One-way connection
     .setStartingLocation("room") // Required: where players start
@@ -297,8 +295,7 @@ The engine supports progressive 3-level hints that adapt based on game state:
 ```java
 GameMap map = new GameMap.Builder()
     .addLocation(...)
-    .addItem(new Item("key", "a key", "A key lies here.", "A brass key."))
-    .placeItem("key", "garden")
+    .placeItem(new Item("key", "a key", "A key lies here.", "A brass key."), "garden")
     .withHints(hints -> hints
         .addPhase("FIND_KEY",
             "Something important might be nearby...",           // Level 1: subtle nudge

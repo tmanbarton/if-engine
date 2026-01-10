@@ -101,14 +101,14 @@ class GameMapTest {
     }
 
     @Test
-    @DisplayName("addItem - adds item to map")
-    void testAddItem_addsToMap() {
+    @DisplayName("placeItem - registers item in map")
+    void testPlaceItem_registersItemInMap() {
       final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
       final Item key = TestItemFactory.createTestKey();
 
       final GameMap gameMap = new GameMap.Builder()
           .addLocation(cottage)
-          .addItem(key)
+          .placeItem(key, "cottage")
           .setStartingLocation("cottage")
           .build();
 
@@ -213,8 +213,7 @@ class GameMapTest {
 
       new GameMap.Builder()
           .addLocation(cottage)
-          .addItem(key)
-          .placeItem("key", "cottage")
+          .placeItem(key, "cottage")
           .setStartingLocation("cottage")
           .build();
 
@@ -222,30 +221,14 @@ class GameMapTest {
     }
 
     @Test
-    @DisplayName("placeItem - throws when item not found")
-    void testPlaceItem_throwsWhenItemNotFound() {
-      final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
-      final GameMap.Builder builder = new GameMap.Builder()
-          .addLocation(cottage);
-
-      final IllegalArgumentException exception = assertThrows(
-          IllegalArgumentException.class,
-          () -> builder.placeItem("key", "cottage")
-      );
-
-      assertTrue(exception.getMessage().contains("key"));
-    }
-
-    @Test
     @DisplayName("placeItem - throws when location not found")
     void testPlaceItem_throwsWhenLocationNotFound() {
       final Item key = TestItemFactory.createTestKey();
-      final GameMap.Builder builder = new GameMap.Builder()
-          .addItem(key);
+      final GameMap.Builder builder = new GameMap.Builder();
 
       final IllegalArgumentException exception = assertThrows(
           IllegalArgumentException.class,
-          () -> builder.placeItem("key", "cottage")
+          () -> builder.placeItem(key, "cottage")
       );
 
       assertTrue(exception.getMessage().contains("cottage"));
@@ -264,8 +247,7 @@ class GameMapTest {
 
       final GameMap gameMap = new GameMap.Builder()
           .addLocation(cottage)
-          .addItem(key)
-          .placeItem("key", "cottage")
+          .placeItem(key, "cottage")
           .setStartingLocation("cottage")
           .build();
 

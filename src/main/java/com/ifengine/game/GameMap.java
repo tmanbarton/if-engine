@@ -21,9 +21,8 @@ import java.util.function.Consumer;
  * GameMap map = new GameMap.Builder()
  *     .addLocation(new Location("cottage", "A cozy cottage...", "In a cottage."))
  *     .addLocation(new Location("forest", "A dark forest...", "In the forest."))
- *     .addItem(new Item("key", "a key", "A key lies here.", "A rusty key."))
  *     .connect("cottage", Direction.NORTH, "forest")
- *     .placeItem("key", "cottage")
+ *     .placeItem(new Item("key", "a key", "A key lies here.", "A rusty key."), "cottage")
  *     .setStartingLocation("cottage")
  *     .build();
  *
@@ -266,44 +265,25 @@ public class GameMap implements GameMapInterface {
     }
 
     /**
-     * Adds an item to the game map.
+     * Adds an item and places it in a location.
      * <p>
      * The item's name (from {@link Item#getName()}) is used as its key.
-     * Note: This registers the item but does not place it in a location.
-     * Use {@link #placeItem(String, String)} to place items.
      *
-     * @param item the item to add
-     * @return this Builder for method chaining
-     */
-    @Nonnull
-    public Builder addItem(@Nonnull final Item item) {
-      Objects.requireNonNull(item, "item cannot be null");
-      items.put(item.getName(), item);
-      return this;
-    }
-
-    /**
-     * Places an item in a location.
-     * <p>
-     * The item must have been added via {@link #addItem(Item)} first.
-     *
-     * @param itemKey the key/name of the item to place
+     * @param item the item to add and place
      * @param locationKey the key/name of the location to place it in
      * @return this Builder for method chaining
-     * @throws IllegalArgumentException if the item or location is not found
+     * @throws IllegalArgumentException if the location is not found
      */
     @Nonnull
-    public Builder placeItem(@Nonnull final String itemKey, @Nonnull final String locationKey) {
-      final Item item = items.get(itemKey);
-      if (item == null) {
-        throw new IllegalArgumentException("Item not found: " + itemKey);
-      }
+    public Builder placeItem(@Nonnull final Item item, @Nonnull final String locationKey) {
+      Objects.requireNonNull(item, "item cannot be null");
       final Location location = locations.get(locationKey);
       if (location == null) {
         throw new IllegalArgumentException("Location not found: " + locationKey);
       }
+      items.put(item.getName(), item);
       location.addItem(item);
-      initialItemPlacements.put(itemKey, locationKey);
+      initialItemPlacements.put(item.getName(), locationKey);
       return this;
     }
 

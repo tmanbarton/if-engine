@@ -50,27 +50,23 @@ public final class SimpleGameExample {
                 + "The forest path leads west.",
             "In a sunny clearing."))
 
-        // Add items
-        .addItem(new Item(
-            "lantern",
-            "a brass lantern",
-            "A brass lantern sits on a wooden shelf.",
-            "An old brass lantern, slightly tarnished but still functional.",
-            Set.of("lamp", "light")))
-        .addItem(new Item(
-            "key",
-            "a rusty key",
-            "A rusty key lies in the grass.",
-            "A small iron key, covered in rust.",
-            Set.of("rusty key", "iron key")))
-
         // Connect locations (bidirectional)
         .connect("cottage", Direction.NORTH, "forest")
         .connect("forest", Direction.EAST, "clearing")
 
-        // Place items in locations
-        .placeItem("lantern", "cottage")
-        .placeItem("key", "clearing")
+        // Add and place items
+        .placeItem(new Item(
+            "lantern",
+            "a brass lantern",
+            "A brass lantern sits on a wooden shelf.",
+            "An old brass lantern, slightly tarnished but still functional.",
+            Set.of("lamp", "light")), "cottage")
+        .placeItem(new Item(
+            "key",
+            "a rusty key",
+            "A rusty key lies in the grass.",
+            "A small iron key, covered in rust.",
+            Set.of("rusty key", "iron key")), "clearing")
 
         // Set where players start
         .setStartingLocation("cottage")
