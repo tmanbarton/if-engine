@@ -1,4 +1,4 @@
-package com.ifengine.content;
+package com.ifengine.example;
 
 import com.ifengine.Direction;
 import com.ifengine.Item;
@@ -15,14 +15,14 @@ import java.util.Set;
  *
  * <h2>Usage</h2>
  * <pre>
- * GameMap map = SimpleGameExample.createMap();
+ * GameMap map = GameExample.createMap();
  * GameEngine engine = new GameEngine(map);
  * String response = engine.processCommand("player1", "look");
  * </pre>
  */
-public final class SimpleGameExample {
+public final class GameExample {
 
-  private SimpleGameExample() {
+  private GameExample() {
     // Utility class
   }
 
@@ -68,6 +68,15 @@ public final class SimpleGameExample {
             "A small iron key, covered in rust.",
             Set.of("rusty key", "iron key")), "clearing")
 
+        // A locked chest that requires the key to open
+        .placeItem(new Lockbox(
+            "chest",
+            "a wooden chest",
+            "A sturdy wooden chest sits in the corner.",
+            "An old chest with iron bands and a rusty lock.",
+            Set.of("box", "wooden chest"),
+            "key"), "cottage")
+
         // Set where players start
         .setStartingLocation("cottage")
 
@@ -90,18 +99,32 @@ public final class SimpleGameExample {
                 "The forest beckons. Perhaps there's something to discover.",
                 "Explore the clearing to the east. Something glints in the grass.",
                 "Go north, then east. Take the rusty key from the clearing.")
+            .addPhase("OPEN_CHEST",
+                "That key must fit something...",
+                "Remember the chest in the cottage? Return and try the key.",
+                "Go back to the cottage and type 'open chest'.")
             .addPhase("ADVENTURE_CONTINUES",
                 "You have everything you need for now.",
                 "Explore freely. Who knows what you might find?",
                 "The adventure continues... try different commands!")
+            // Check later-game states first; earliest hint goes in else clause.
+            // This ensures new players get the starting hint when they first type "hint".
             .determiner((player, gameMap) -> {
-              if (!player.hasItem("lantern")) {
-                return "GET_LANTERN";
+              final var cottage = gameMap.getLocation("cottage");
+              final var chest = cottage.getItems().stream()
+                  .filter(item -> item.getName().equals("chest"))
+                  .findFirst();
+              if (chest.isPresent() && chest.get() instanceof Lockbox lockbox
+                  && lockbox.isOpen()) {
+                return "ADVENTURE_CONTINUES";
               }
-              if (!player.hasItem("key")) {
+              if (player.hasItem("key")) {
+                return "OPEN_CHEST";
+              }
+              if (player.hasItem("lantern")) {
                 return "FIND_KEY";
               }
-              return "ADVENTURE_CONTINUES";
+              return "GET_LANTERN";
             }))
 
         .build();

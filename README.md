@@ -97,6 +97,43 @@ new Item(
 
 Items support aliases for flexible player input - "take rusty key" works if "rusty key" is an alias.
 
+### Custom Item Subclasses
+
+Extend `Item` to add custom properties for your game:
+
+```java
+public class TreasureItem extends Item {
+  private final int pointValue;
+  private final boolean cursed;
+
+  public TreasureItem(String name, String invDesc, String locDesc,
+                      String detailDesc, int pointValue, boolean cursed) {
+    super(name, invDesc, locDesc, detailDesc);
+    this.pointValue = pointValue;
+    this.cursed = cursed;
+  }
+
+  public int getPointValue() { return pointValue; }
+  public boolean isCursed() { return cursed; }
+}
+```
+
+Use your custom properties in game logic:
+
+```java
+// Calculate score from inventory
+int score = player.getInventory().stream()
+    .filter(item -> item instanceof TreasureItem)
+    .mapToInt(item -> ((TreasureItem) item).getPointValue())
+    .sum();
+```
+
+Common patterns for custom item properties:
+- **Point values** - Track score/treasure value
+- **Readability/Edibility** - Item-level behavior flags
+- **Game state** - Track phases, quests, or progress
+- **Custom attributes** - Color, weight, material, etc.
+
 ### Direction
 
 The `Direction` enum defines all valid movement directions:
@@ -323,23 +360,20 @@ GameMap map = new GameMap.Builder()
 
 **Determining hint phase:**
 
-The `determiner` function receives `Player` and `GameMap`, allowing you to check game state directly:
+The `determiner` function receives `Player` and `GameMap`, allowing you to check game state directly.
+
+**Important:** Check later-game states first and put the earliest hint in the `else` clause. This ensures new players get the starting hint when they first type `hint`:
 
 ```java
 .determiner((player, gameMap) -> {
-    // Check inventory
+    // Check later-game states first
+    if (player.hasItem("treasure")) {
+        return "GAME_COMPLETE";
+    }
     if (player.hasItem("key")) {
         return "UNLOCK_SHED";
     }
-    // Check location
-    if (player.getCurrentLocation().getName().equals("garden")) {
-        return "EXPLORE_GARDEN";
-    }
-    // Check if location was visited
-    Location cave = gameMap.getLocation("cave");
-    if (cave != null && cave.isVisited()) {
-        return "AFTER_CAVE";
-    }
+    // Earliest hint goes in the else
     return "FIND_KEY";
 })
 ```
@@ -353,11 +387,11 @@ The `determiner` function receives `Player` and `GameMap`, allowing you to check
 
 ## Example
 
-See `SimpleGameExample.java` for a complete working example:
+See `GameExample.java` for a complete working example:
 
 ```java
 public static void main(String[] args) {
-    GameMap map = SimpleGameExample.createMap();
+    GameMap map = GameExample.createMap();
     GameEngine engine = new GameEngine(map);
 
     String sessionId = "player1";
