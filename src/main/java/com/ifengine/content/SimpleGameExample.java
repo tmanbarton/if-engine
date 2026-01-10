@@ -80,6 +80,30 @@ public final class SimpleGameExample {
             "Excellent! Your adventure begins...",
             "Take your time. Type 'yes' when you're ready.")
 
+        // Progressive hint system
+        .withHints(hints -> hints
+            .addPhase("GET_LANTERN",
+                "There might be something useful in this cottage...",
+                "Check around for a light source. You may need it later.",
+                "Take the brass lantern from the shelf.")
+            .addPhase("FIND_KEY",
+                "The forest beckons. Perhaps there's something to discover.",
+                "Explore the clearing to the east. Something glints in the grass.",
+                "Go north, then east. Take the rusty key from the clearing.")
+            .addPhase("ADVENTURE_CONTINUES",
+                "You have everything you need for now.",
+                "Explore freely. Who knows what you might find?",
+                "The adventure continues... try different commands!")
+            .determiner((player, gameMap) -> {
+              if (!player.hasItem("lantern")) {
+                return "GET_LANTERN";
+              }
+              if (!player.hasItem("key")) {
+                return "FIND_KEY";
+              }
+              return "ADVENTURE_CONTINUES";
+            }))
+
         .build();
   }
 
