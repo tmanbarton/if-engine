@@ -2,7 +2,7 @@ package io.github.tmanbarton.ifengine.util;
 
 import io.github.tmanbarton.ifengine.Container;
 import io.github.tmanbarton.ifengine.Item;
-import io.github.tmanbarton.ifengine.SceneryContainer;
+import io.github.tmanbarton.ifengine.LocationContainer;
 import io.github.tmanbarton.ifengine.game.Player;
 
 import javax.annotation.Nonnull;
@@ -50,9 +50,9 @@ public final class LocationItemFormatter {
           containedDescriptions.add(itemDescription + " - in " + containerName);
         }
         // Location container (table, desk, etc.)
-        else if (container instanceof SceneryContainer sceneryContainer) {
-          final List<String> prepositions = sceneryContainer.getPreferredPrepositions();
-          containedDescriptions.add(itemDescription + " - " + prepositions.getFirst() + " " + sceneryContainer.getSceneryObject().name());
+        else if (container instanceof LocationContainer locationContainer) {
+          final List<String> prepositions = locationContainer.getPreferredPrepositions();
+          containedDescriptions.add(itemDescription + " - " + prepositions.getFirst() + " " + locationContainer.getSceneryObject().name());
         } else {
           // Shouldn't happen, but fallback to plain description
           containedDescriptions.add(itemDescription);

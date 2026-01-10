@@ -9,7 +9,7 @@ This document tracks what the IFEngine API supports for complex interactive fict
 - **Multiple locations with complex connections** - GameContent.setupConnections() handles any topology
 - **Items with aliases** - Item constructor accepts alias sets
 - **SceneryObjects with interaction responses** - Builder pattern with InteractionType responses
-- **SceneryContainers** - Scenery that can contain items (barrels, shelves, etc.)
+- **LocationContainers** - Scenery that can contain items (barrels, shelves, etc.)
 - **OpenableLocation** - Abstract base class for locked doors, sheds, etc. (games subclass with key-based unlocking)
 - **OpenableItem** - Abstract base class for lockable items (chests, lockboxes, cryptexes) with flexible unlock logic
 - **Code/word-based unlocking** - Items can require codes ("1, 2, 3, 4") or words ("plugh") via `tryUnlock()`/`tryOpen()`

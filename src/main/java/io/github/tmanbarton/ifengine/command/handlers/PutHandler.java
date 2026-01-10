@@ -4,7 +4,7 @@ import io.github.tmanbarton.ifengine.Container;
 import io.github.tmanbarton.ifengine.ContainerType;
 import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.Location;
-import io.github.tmanbarton.ifengine.SceneryContainer;
+import io.github.tmanbarton.ifengine.LocationContainer;
 import io.github.tmanbarton.ifengine.command.BaseCommandHandler;
 import io.github.tmanbarton.ifengine.game.Player;
 import io.github.tmanbarton.ifengine.parser.ObjectResolver;
@@ -125,7 +125,7 @@ public class PutHandler implements BaseCommandHandler {
     }
 
     if (player.getCurrentLocation().isItemInContainer(item)) {
-      final SceneryContainer oldLocationContainer = player.getCurrentLocation().getContainerForItem(item);
+      final LocationContainer oldLocationContainer = player.getCurrentLocation().getContainerForItem(item);
       if (oldLocationContainer != null) {
         oldLocationContainer.removeItem(item);
       }
@@ -145,7 +145,7 @@ public class PutHandler implements BaseCommandHandler {
     if (containerType == ContainerType.INVENTORY) {
       handleInventoryContainerInsertion(player, item, container);
     } else {
-      handleLocationContainerInsertion(player, item, (SceneryContainer) container);
+      handleLocationContainerInsertion(player, item, (LocationContainer) container);
     }
 
     return responseProvider.getPutSuccess(itemName, preposition, containerName);
@@ -181,9 +181,9 @@ public class PutHandler implements BaseCommandHandler {
 
     // Check scenery containers at location
     final Location location = player.getCurrentLocation();
-    for (final SceneryContainer sceneryContainer : location.getSceneryContainers()) {
-      if (sceneryContainer.getSceneryObject().matches(containerName)) {
-        return sceneryContainer;
+    for (final LocationContainer locationContainer : location.getLocationContainers()) {
+      if (locationContainer.getSceneryObject().matches(containerName)) {
+        return locationContainer;
       }
     }
 
@@ -265,7 +265,7 @@ public class PutHandler implements BaseCommandHandler {
   private void handleLocationContainerInsertion(
       @Nonnull final Player player,
       @Nonnull final Item item,
-      @Nonnull final SceneryContainer sceneryContainer
+      @Nonnull final LocationContainer locationContainer
   ) {
     final boolean itemInInventory = player.getInventory().contains(item);
 
@@ -274,7 +274,7 @@ public class PutHandler implements BaseCommandHandler {
       player.getCurrentLocation().addItem(item);
     }
 
-    player.getCurrentLocation().setItemContainer(item, sceneryContainer);
+    player.getCurrentLocation().setItemContainer(item, locationContainer);
 
     // If item is a container with items, move contained items too
     if (item instanceof Container itemContainer) {

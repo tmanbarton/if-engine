@@ -2,7 +2,7 @@ package io.github.tmanbarton.ifengine.game;
 
 import io.github.tmanbarton.ifengine.Container;
 import io.github.tmanbarton.ifengine.Item;
-import io.github.tmanbarton.ifengine.SceneryContainer;
+import io.github.tmanbarton.ifengine.LocationContainer;
 import io.github.tmanbarton.ifengine.util.ContainerHelper;
 
 import javax.annotation.Nonnull;
@@ -45,7 +45,7 @@ public class ContainerStateManager {
     if (ContainerHelper.isInventoryContainer(container)) {
       inventoryContainment.put(item, container);
     } else if (ContainerHelper.isLocationContainer(container)) {
-      player.getCurrentLocation().setItemContainer(item, (SceneryContainer) container);
+      player.getCurrentLocation().setItemContainer(item, (LocationContainer) container);
     }
   }
 
@@ -114,7 +114,7 @@ public class ContainerStateManager {
       // Search location items for those in this scenery container
       return player.getCurrentLocation().getItems().stream()
           .filter(item -> {
-            final SceneryContainer itemContainer = player.getCurrentLocation().getContainerForItem(item);
+            final LocationContainer itemContainer = player.getCurrentLocation().getContainerForItem(item);
             return container.equals(itemContainer);
           })
           .collect(Collectors.toList());

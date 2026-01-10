@@ -3,7 +3,7 @@ package io.github.tmanbarton.ifengine.test;
 import io.github.tmanbarton.ifengine.Direction;
 import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.Location;
-import io.github.tmanbarton.ifengine.SceneryContainer;
+import io.github.tmanbarton.ifengine.LocationContainer;
 import io.github.tmanbarton.ifengine.SceneryObject;
 
 import javax.annotation.Nonnull;
@@ -189,9 +189,9 @@ public final class TestLocationFactory {
    * @param location the location to add the container to
    * @param container the scenery container to add
    */
-  public static void addSceneryContainer(@Nonnull final Location location,
-                                         @Nonnull final SceneryContainer container) {
-    location.addSceneryContainer(container);
+  public static void addLocationContainer(@Nonnull final Location location,
+                                         @Nonnull final LocationContainer container) {
+    location.addLocationContainer(container);
   }
 
   /**

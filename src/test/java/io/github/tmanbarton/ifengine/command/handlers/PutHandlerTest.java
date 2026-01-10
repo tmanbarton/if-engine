@@ -2,7 +2,7 @@ package io.github.tmanbarton.ifengine.command.handlers;
 
 import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.Location;
-import io.github.tmanbarton.ifengine.SceneryContainer;
+import io.github.tmanbarton.ifengine.LocationContainer;
 import io.github.tmanbarton.ifengine.SceneryObject;
 import io.github.tmanbarton.ifengine.game.Player;
 import io.github.tmanbarton.ifengine.parser.CommandType;
@@ -69,13 +69,13 @@ class PutHandlerTest {
 
     @Test
     @DisplayName("Test handle - put item on location scenery container")
-    void testHandle_putItemOnLocationSceneryContainer() {
+    void testHandle_putItemOnLocationLocationContainer() {
       final Item coin = TestItemFactory.createSimpleItem("coin");
       player.addItem(coin);
 
-      // SceneryContainer accepts "on/onto" prepositions by default
-      final SceneryContainer table = createSceneryContainer("table", "coin");
-      location.addSceneryContainer(table);
+      // LocationContainer accepts "on/onto" prepositions by default
+      final LocationContainer table = createLocationContainer("table", "coin");
+      location.addLocationContainer(table);
 
       final ParsedCommand command = createPutCommand("coin", "on", "table");
 
@@ -148,9 +148,9 @@ class PutHandlerTest {
       final Item coin = TestItemFactory.createSimpleItem("coin");
       player.addItem(coin);
 
-      // SceneryContainer accepts "on/onto" by default
-      final SceneryContainer table = createSceneryContainer("table", "coin");
-      location.addSceneryContainer(table);
+      // LocationContainer accepts "on/onto" by default
+      final LocationContainer table = createLocationContainer("table", "coin");
+      location.addLocationContainer(table);
 
       final ParsedCommand command = createPutCommand("coin", "on", "table");
 
@@ -189,13 +189,13 @@ class PutHandlerTest {
 
     @Test
     @DisplayName("Test handle - wrong preposition for scenery container")
-    void testHandle_wrongPrepositionForSceneryContainer() {
+    void testHandle_wrongPrepositionForLocationContainer() {
       final Item coin = TestItemFactory.createSimpleItem("coin");
       player.addItem(coin);
 
-      // SceneryContainer accepts "on/onto", not "in"
-      final SceneryContainer table = createSceneryContainer("table", "coin");
-      location.addSceneryContainer(table);
+      // LocationContainer accepts "on/onto", not "in"
+      final LocationContainer table = createLocationContainer("table", "coin");
+      location.addLocationContainer(table);
 
       final ParsedCommand command = createPutCommand("coin", "in", "table");
 
@@ -489,12 +489,12 @@ class PutHandlerTest {
 
     @Test
     @DisplayName("Test handle - item from inventory to scenery container stays at location")
-    void testHandle_itemFromInventoryToSceneryContainer() {
+    void testHandle_itemFromInventoryToLocationContainer() {
       final Item coin = TestItemFactory.createSimpleItem("coin");
       player.addItem(coin);
 
-      final SceneryContainer table = createSceneryContainer("table", "coin");
-      location.addSceneryContainer(table);
+      final LocationContainer table = createLocationContainer("table", "coin");
+      location.addLocationContainer(table);
 
       final ParsedCommand command = createPutCommand("coin", "on", "table");
 
@@ -508,12 +508,12 @@ class PutHandlerTest {
 
     @Test
     @DisplayName("Test handle - item from location to scenery container stays at location")
-    void testHandle_itemFromLocationToSceneryContainer() {
+    void testHandle_itemFromLocationToLocationContainer() {
       final Item coin = TestItemFactory.createSimpleItem("coin");
       location.addItem(coin);
 
-      final SceneryContainer table = createSceneryContainer("table", "coin");
-      location.addSceneryContainer(table);
+      final LocationContainer table = createLocationContainer("table", "coin");
+      location.addLocationContainer(table);
 
       final ParsedCommand command = createPutCommand("coin", "on", "table");
 
@@ -525,13 +525,13 @@ class PutHandlerTest {
   }
 
   /**
-   * Helper method to create a SceneryContainer (supports "on/onto" prepositions by default).
+   * Helper method to create a LocationContainer (supports "on/onto" prepositions by default).
    */
-  private SceneryContainer createSceneryContainer(final String name, final String... acceptedItems) {
+  private LocationContainer createLocationContainer(final String name, final String... acceptedItems) {
     final SceneryObject sceneryObject = SceneryObject.builder(name)
         .withInteraction(io.github.tmanbarton.ifengine.InteractionType.LOOK, "You see a " + name + ".")
         .build();
-    return new SceneryContainer(sceneryObject, Set.of(acceptedItems));
+    return new LocationContainer(sceneryObject, Set.of(acceptedItems));
   }
 
   /**

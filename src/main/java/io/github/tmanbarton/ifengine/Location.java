@@ -19,8 +19,8 @@ public class Location {
   private final Map<Direction, Location> connections;
   private final List<Item> items;
   private final List<SceneryObject> sceneryObjects;
-  private final List<SceneryContainer> sceneryContainers;
-  private final Map<Item, SceneryContainer> itemContainment;
+  private final List<LocationContainer> locationContainers;
+  private final Map<Item, LocationContainer> itemContainment;
   private boolean visited;
 
   public Location(@Nonnull final String name, @Nonnull final String longDescription, @Nonnull final String shortDescription) {
@@ -30,7 +30,7 @@ public class Location {
     this.connections = new HashMap<>();
     this.items = new ArrayList<>();
     this.sceneryObjects = new ArrayList<>();
-    this.sceneryContainers = new ArrayList<>();
+    this.locationContainers = new ArrayList<>();
     this.itemContainment = new HashMap<>();
     this.visited = false;
   }
@@ -42,7 +42,7 @@ public class Location {
     this.connections = new HashMap<>();
     this.items = new ArrayList<>();
     this.sceneryObjects = new ArrayList<>(sceneryObjects);
-    this.sceneryContainers = new ArrayList<>();
+    this.locationContainers = new ArrayList<>();
     this.itemContainment = new HashMap<>();
     this.visited = false;
   }
@@ -119,11 +119,11 @@ public class Location {
    * Adds a scenery container to this location.
    * Also adds the wrapped scenery object.
    *
-   * @param sceneryContainer the scenery container to add
+   * @param locationContainer the scenery container to add
    */
-  public void addSceneryContainer(@Nonnull final SceneryContainer sceneryContainer) {
-    sceneryContainers.add(sceneryContainer);
-    sceneryObjects.add(sceneryContainer.getSceneryObject());
+  public void addLocationContainer(@Nonnull final LocationContainer locationContainer) {
+    locationContainers.add(locationContainer);
+    sceneryObjects.add(locationContainer.getSceneryObject());
   }
 
   /**
@@ -132,8 +132,8 @@ public class Location {
    * @return defensive copy of scenery containers list
    */
   @Nonnull
-  public List<SceneryContainer> getSceneryContainers() {
-    return new ArrayList<>(sceneryContainers);
+  public List<LocationContainer> getLocationContainers() {
+    return new ArrayList<>(locationContainers);
   }
 
   @Nonnull
@@ -189,7 +189,7 @@ public class Location {
    * @param item the item to track
    * @param container the scenery container holding the item
    */
-  public void setItemContainer(@Nonnull final Item item, @Nonnull final SceneryContainer container) {
+  public void setItemContainer(@Nonnull final Item item, @Nonnull final LocationContainer container) {
     itemContainment.put(item, container);
   }
 
@@ -210,7 +210,7 @@ public class Location {
    * @return the scenery container holding the item, or null if not in a container
    */
   @Nullable
-  public SceneryContainer getContainerForItem(@Nonnull final Item item) {
+  public LocationContainer getContainerForItem(@Nonnull final Item item) {
     return itemContainment.get(item);
   }
 

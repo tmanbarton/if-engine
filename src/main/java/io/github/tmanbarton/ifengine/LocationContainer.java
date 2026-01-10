@@ -15,7 +15,7 @@ import java.util.Set;
  *
  * Scenery containers have unlimited capacity (getCapacity() returns 0).
  */
-public class SceneryContainer implements Container {
+public class LocationContainer implements Container {
 
   private final SceneryObject sceneryObject;
   private final Set<String> allowedItemNames;
@@ -27,7 +27,7 @@ public class SceneryContainer implements Container {
    * @param sceneryObject the scenery object this container represents
    * @param allowedItemNames names of items that can be placed on/in this container
    */
-  public SceneryContainer(@Nonnull final SceneryObject sceneryObject, @Nonnull final Set<String> allowedItemNames) {
+  public LocationContainer(@Nonnull final SceneryObject sceneryObject, @Nonnull final Set<String> allowedItemNames) {
     this.sceneryObject = sceneryObject;
     this.allowedItemNames = Set.copyOf(allowedItemNames);
     this.insertedItemNames = new HashSet<>();

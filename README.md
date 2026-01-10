@@ -407,16 +407,16 @@ Then register a custom command to use it:
 })
 ```
 
-### SceneryContainer
+### LocationContainer
 
 Scenery that can hold items:
 
 ```java
-SceneryContainer table = new SceneryContainer(
+LocationContainer table = new LocationContainer(
     tableSceneryObject,
     Set.of("book", "key")  // items allowed on this surface
 );
-location.addSceneryContainer(table);
+location.addLocationContainer(table);
 ```
 
 ### Openable Interface

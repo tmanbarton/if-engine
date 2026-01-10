@@ -192,16 +192,16 @@ class LocationTest {
 
   @Nested
   @DisplayName("Scenery Container Management")
-  class SceneryContainerManagement {
+  class LocationContainerManagement {
 
     @Test
-    @DisplayName("Test addSceneryContainer - adds container and its scenery object")
-    void testAddSceneryContainer_addsContainerAndScenery() {
-      final SceneryContainer table = TestItemFactory.createSceneryContainer("table");
+    @DisplayName("Test addLocationContainer - adds container and its scenery object")
+    void testAddLocationContainer_addsContainerAndScenery() {
+      final LocationContainer table = TestItemFactory.createLocationContainer("table");
 
-      location.addSceneryContainer(table);
+      location.addLocationContainer(table);
 
-      assertTrue(location.getSceneryContainers().contains(table));
+      assertTrue(location.getLocationContainers().contains(table));
       assertTrue(location.findSceneryObject("table").isPresent());
     }
   }
@@ -214,9 +214,9 @@ class LocationTest {
     @DisplayName("Test setItemContainer - tracks containment")
     void testSetItemContainer_tracksContainment() {
       final Item key = TestItemFactory.createTestKey();
-      final SceneryContainer table = TestItemFactory.createSceneryContainer("table");
+      final LocationContainer table = TestItemFactory.createLocationContainer("table");
       location.addItem(key);
-      location.addSceneryContainer(table);
+      location.addLocationContainer(table);
 
       location.setItemContainer(key, table);
 
@@ -228,9 +228,9 @@ class LocationTest {
     @DisplayName("Test removeItemFromContainer - removes tracking")
     void testRemoveItemFromContainer_removesTracking() {
       final Item key = TestItemFactory.createTestKey();
-      final SceneryContainer table = TestItemFactory.createSceneryContainer("table");
+      final LocationContainer table = TestItemFactory.createLocationContainer("table");
       location.addItem(key);
-      location.addSceneryContainer(table);
+      location.addLocationContainer(table);
       location.setItemContainer(key, table);
 
       location.removeItemFromContainer(key);
