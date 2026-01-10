@@ -198,14 +198,12 @@ src/main/java/com.ifengine/
 │   ├── Player.java               # Player state: location, inventory, game state
 │   └── GameMap.java              # World container
 ├── content/
-│   ├── GameContent.java          # Interface for game definitions
-│   └── ExampleGameContent.java   # Reference implementation
+│   └── SimpleGameExample.java    # Example using builder API
 ├── response/
 │   ├── ResponseProvider.java     # All response method signatures
 │   └── DefaultResponses.java     # Default implementations
 ├── constants/                    # Static constants (ItemConstants has READABLE/EDIBLE sets)
-├── util/                         # DirectionHelper, LocationItemFormatter, ContainerHelper
-└── websocket/                    # WebSocket handler example
+└── util/                         # DirectionHelper, LocationItemFormatter, ContainerHelper
 ```
 
 ## Key Files to Understand

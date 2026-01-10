@@ -3,7 +3,6 @@ package com.ifengine.game;
 import com.ifengine.Direction;
 import com.ifengine.Item;
 import com.ifengine.Location;
-import com.ifengine.content.GameContent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -14,31 +13,23 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Standard GameMapInterface implementation for building game worlds.
+ * GameMapInterface implementation for building game worlds.
  * <p>
- * GameMap can be built in two ways:
- *
- * <h2>1. Builder-style API (recommended for simple games)</h2>
+ * Use the builder-style API to construct your game:
  * <pre>
- * GameMap map = new GameMap();
- * map.addLocation(new Location("cottage", "A cozy cottage...", "In a cottage."));
- * map.addLocation(new Location("forest", "A dark forest...", "In the forest."));
- * map.connect("cottage", Direction.NORTH, "forest");
- * map.setStartingLocation("cottage");
+ * GameMap map = new GameMap()
+ *     .addLocation(new Location("cottage", "A cozy cottage...", "In a cottage."))
+ *     .addLocation(new Location("forest", "A dark forest...", "In the forest."))
+ *     .addItem(new Item("key", "a key", "A key lies here.", "A rusty key."))
+ *     .connect("cottage", Direction.NORTH, "forest")
+ *     .placeItem("key", "cottage")
+ *     .setStartingLocation("cottage");
  *
  * GameEngine engine = new GameEngine(map);
- * </pre>
- *
- * <h2>2. GameContent interface (for complex games)</h2>
- * <pre>
- * GameContent content = new MyAdventureContent();
- * GameMap map = new GameMap(content);
- * GameEngine engine = new GameEngine(map, content.getResponseProvider());
  * </pre>
  */
 public class GameMap implements GameMapInterface {
 
-  private GameContent gameContent;
   private final Map<String, Location> locations = new HashMap<>();
   private final Map<String, Item> items = new HashMap<>();
   private String startingLocationKey;
@@ -47,7 +38,7 @@ public class GameMap implements GameMapInterface {
   private final Map<String, String> initialItemPlacements = new HashMap<>();
 
   /**
-   * Creates an empty GameMap for builder-style construction.
+   * Creates an empty GameMap.
    * <p>
    * Use {@link #addLocation(Location)}, {@link #addItem(Item)},
    * {@link #connect(String, Direction, String)}, and {@link #setStartingLocation(String)}
@@ -55,43 +46,6 @@ public class GameMap implements GameMapInterface {
    */
   public GameMap() {
     // Empty map for builder-style construction
-  }
-
-  /**
-   * Creates a GameMap from the given game content.
-   * <p>
-   * Initializes the map by:
-   * <ol>
-   *   <li>Getting locations and items from game content</li>
-   *   <li>Setting up connections between locations</li>
-   *   <li>Placing items in their starting locations</li>
-   *   <li>Adding scenery objects</li>
-   * </ol>
-   *
-   * @param gameContent the game content to build from
-   */
-  public GameMap(@Nonnull final GameContent gameContent) {
-    Objects.requireNonNull(gameContent, "game content cannot be null");
-    initializeFromContent(gameContent);
-  }
-
-  /**
-   * Initializes the map from a GameContent instance.
-   *
-   * @param gameContent the game content to initialize from
-   */
-  private void initializeFromContent(@Nonnull final GameContent gameContent) {
-    this.gameContent = gameContent;
-    this.locations.clear();
-    this.locations.putAll(gameContent.getLocations());
-    this.items.clear();
-    this.items.putAll(gameContent.getItems());
-    this.startingLocationKey = gameContent.getStartingLocationKey();
-
-    // Initialize the game world
-    gameContent.setupConnections();
-    gameContent.placeItems();
-    gameContent.addScenery();
   }
 
   /**
@@ -290,24 +244,17 @@ public class GameMap implements GameMapInterface {
 
   @Override
   public void resetMap() {
-    if (gameContent != null) {
-      // GameContent-based map: create fresh copy
-      final GameContent freshContent = gameContent.createFreshCopy();
-      initializeFromContent(freshContent);
-    } else {
-      // Builder-based map: restore initial item placements
-      // First, remove all items from all locations
-      for (final Location location : locations.values()) {
-        location.getItems().forEach(location::removeItem);
-      }
+    // Remove all items from all locations
+    for (final Location location : locations.values()) {
+      location.getItems().forEach(location::removeItem);
+    }
 
-      // Restore items to their initial locations
-      for (final Map.Entry<String, String> entry : initialItemPlacements.entrySet()) {
-        final Item item = items.get(entry.getKey());
-        final Location location = locations.get(entry.getValue());
-        if (item != null && location != null) {
-          location.addItem(item);
-        }
+    // Restore items to their initial locations
+    for (final Map.Entry<String, String> entry : initialItemPlacements.entrySet()) {
+      final Item item = items.get(entry.getKey());
+      final Location location = locations.get(entry.getValue());
+      if (item != null && location != null) {
+        location.addItem(item);
       }
     }
 
@@ -315,15 +262,5 @@ public class GameMap implements GameMapInterface {
     for (final Location location : locations.values()) {
       location.setVisited(false);
     }
-  }
-
-  /**
-   * Gets the game content this map was built from, if any.
-   *
-   * @return the game content, or null if built using builder API
-   */
-  @Nullable
-  public GameContent getGameContent() {
-    return gameContent;
   }
 }
