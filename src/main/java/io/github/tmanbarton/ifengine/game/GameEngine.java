@@ -126,7 +126,7 @@ public class GameEngine {
     commandDispatcher.registerHandler(new KickHandler(responseProvider));
     commandDispatcher.registerHandler(new DrinkHandler(responseProvider));
     commandDispatcher.registerHandler(new SwimHandler(responseProvider));
-    commandDispatcher.registerHandler(new EatHandler(contextManager, sceneryInteractionHandler, responseProvider));
+    commandDispatcher.registerHandler(new EatHandler(sceneryInteractionHandler, responseProvider));
     commandDispatcher.registerHandler(createHintHandler());
     commandDispatcher.registerHandler(new SystemCommandHandler(responseProvider));
 

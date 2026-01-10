@@ -26,16 +26,10 @@ public class EatHandler implements BaseCommandHandler {
    */
   public static final Set<String> EDIBLE_ITEMS = new HashSet<>();
 
-  private final ContextManager contextManager;
   private final SceneryInteractionHandler sceneryHandler;
   private final ResponseProvider responseProvider;
 
-  public EatHandler(
-    @Nonnull final ContextManager contextManager,
-    @Nonnull final SceneryInteractionHandler sceneryHandler,
-    @Nonnull final ResponseProvider responseProvider
-  ) {
-    this.contextManager = contextManager;
+  public EatHandler(@Nonnull final SceneryInteractionHandler sceneryHandler, @Nonnull final ResponseProvider responseProvider) {
     this.sceneryHandler = sceneryHandler;
     this.responseProvider = responseProvider;
   }
