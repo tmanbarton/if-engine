@@ -122,8 +122,22 @@ public class GameEngine {
     commandDispatcher.registerHandler(new DrinkHandler(responseProvider));
     commandDispatcher.registerHandler(new SwimHandler(responseProvider));
     commandDispatcher.registerHandler(new EatHandler(contextManager, sceneryInteractionHandler, responseProvider));
-    commandDispatcher.registerHandler(new HintHandler());
+    commandDispatcher.registerHandler(createHintHandler());
     commandDispatcher.registerHandler(new SystemCommandHandler(responseProvider));
+  }
+
+  /**
+   * Creates a HintHandler with configuration from the GameMap, if available.
+   *
+   * @return a configured HintHandler
+   */
+  @Nonnull
+  private HintHandler createHintHandler() {
+    if (gameMap instanceof GameMap map) {
+      final HintConfiguration hintConfig = map.getHintConfiguration();
+      return new HintHandler(hintConfig, gameMap);
+    }
+    return new HintHandler(null, gameMap);
   }
 
   /**

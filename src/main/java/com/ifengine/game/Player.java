@@ -25,6 +25,7 @@ public class Player {
   private boolean isExperiencedPlayer;
   private String sessionId;
   private final Map<String, Integer> hintCounts;
+  private String lastHintPhase;
   private Openable pendingOpenable;
 
   public Player(@Nonnull final Location startingLocation) {
@@ -123,6 +124,7 @@ public class Player {
     this.gameState = GameState.PLAYING;
     this.isExperiencedPlayer = false;
     this.pendingOpenable = null;
+    this.lastHintPhase = null;
     resetHintCounts();
   }
 
@@ -262,6 +264,26 @@ public class Player {
    */
   public void resetHintCounts() {
     hintCounts.clear();
+  }
+
+  /**
+   * Gets the last hint phase the player was in.
+   * Used to detect phase changes for hint count reset.
+   *
+   * @return the last hint phase key, or null if no hints requested yet
+   */
+  @Nullable
+  public String getLastHintPhase() {
+    return lastHintPhase;
+  }
+
+  /**
+   * Sets the last hint phase the player was in.
+   *
+   * @param phaseKey the phase key to set
+   */
+  public void setLastHintPhase(@Nullable final String phaseKey) {
+    this.lastHintPhase = phaseKey;
   }
 
   /**

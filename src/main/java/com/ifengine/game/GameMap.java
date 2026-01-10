@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * GameMapInterface implementation for building game worlds.
@@ -42,6 +43,9 @@ public class GameMap implements GameMapInterface {
   private final String customYesResponse;
   private final String customNoResponse;
 
+  // Hint configuration
+  private final HintConfiguration hintConfiguration;
+
   /**
    * Creates a GameMap from a Builder.
    *
@@ -56,6 +60,7 @@ public class GameMap implements GameMapInterface {
     this.introHandler = builder.introHandler;
     this.customYesResponse = builder.customYesResponse;
     this.customNoResponse = builder.customNoResponse;
+    this.hintConfiguration = builder.hintConfiguration;
   }
 
   @Override
@@ -182,6 +187,16 @@ public class GameMap implements GameMapInterface {
   }
 
   /**
+   * Returns the hint configuration, if configured.
+   *
+   * @return the hint configuration, or null if not configured
+   */
+  @Nullable
+  public HintConfiguration getHintConfiguration() {
+    return hintConfiguration;
+  }
+
+  /**
    * Builder for constructing GameMap instances.
    * <p>
    * The builder validates that:
@@ -202,6 +217,9 @@ public class GameMap implements GameMapInterface {
     private IntroHandler introHandler;
     private String customYesResponse;
     private String customNoResponse;
+
+    // Hint configuration
+    private HintConfiguration hintConfiguration;
 
     /**
      * Creates an empty Builder.
@@ -407,6 +425,41 @@ public class GameMap implements GameMapInterface {
       this.introHandler = handler;
       this.customYesResponse = null;
       this.customNoResponse = null;
+      return this;
+    }
+
+    /**
+     * Configures the hint system with progressive hints for puzzle phases.
+     * <p>
+     * Example usage:
+     * <pre>
+     * .withHints(hints -> hints
+     *     .addPhase("FIND_KEY",
+     *         "Something important might be nearby...",
+     *         "Check around the old tree.",
+     *         "Take the brass key from the Lightning Tree.")
+     *     .addPhase("UNLOCK_SHED",
+     *         "That key must be for something...",
+     *         "Try using the key on the shed's lock.",
+     *         "Type 'unlock shed' to use your key.")
+     *     .determiner((player, gameMap) -> {
+     *         if (player.hasItem("key")) {
+     *             return "UNLOCK_SHED";
+     *         }
+     *         return "FIND_KEY";
+     *     })
+     * )
+     * </pre>
+     *
+     * @param configurer a consumer that configures the HintConfigurationBuilder
+     * @return this Builder for method chaining
+     */
+    @Nonnull
+    public Builder withHints(@Nonnull final Consumer<HintConfigurationBuilder> configurer) {
+      Objects.requireNonNull(configurer, "configurer cannot be null");
+      final HintConfigurationBuilder hintBuilder = new HintConfigurationBuilder();
+      configurer.accept(hintBuilder);
+      this.hintConfiguration = hintBuilder.build();
       return this;
     }
 

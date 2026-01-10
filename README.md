@@ -237,6 +237,63 @@ public interface Openable {
 }
 ```
 
+### Hint System
+
+The engine supports progressive 3-level hints that adapt based on game state:
+
+```java
+GameMap map = new GameMap.Builder()
+    .addLocation(...)
+    .addItem(new Item("key", "a key", "A key lies here.", "A brass key."))
+    .placeItem("key", "garden")
+    .withHints(hints -> hints
+        .addPhase("FIND_KEY",
+            "Something important might be nearby...",           // Level 1: subtle nudge
+            "Check around the old tree. Something brass...",    // Level 2: more direct
+            "Take the brass key from the Lightning Tree.")      // Level 3: explicit answer
+        .addPhase("UNLOCK_SHED",
+            "That key must be for something...",
+            "Try using the key on the shed's lock.",
+            "Type 'unlock shed' to use your key.")
+        .determiner((player, gameMap) -> {
+            if (player.hasItem("key")) {
+                return "UNLOCK_SHED";
+            }
+            return "FIND_KEY";
+        })
+    )
+    .build();
+```
+
+**How hints work:**
+- Each `hint` command returns progressively more direct hints (1 → 2 → 3)
+- Level 3 stays as the maximum (repeated `hint` commands keep returning level 3)
+- When the player advances to a new phase, hints reset to level 1 for the new phase
+- If no hint configuration is set, returns a default "No hints available" message
+
+**Determining hint phase:**
+
+The `determiner` function receives `Player` and `GameMap`, allowing you to check game state directly:
+
+```java
+.determiner((player, gameMap) -> {
+    // Check inventory
+    if (player.hasItem("key")) {
+        return "UNLOCK_SHED";
+    }
+    // Check location
+    if (player.getCurrentLocation().getName().equals("garden")) {
+        return "EXPLORE_GARDEN";
+    }
+    // Check if location was visited
+    Location cave = gameMap.getLocation("cave");
+    if (cave != null && cave.isVisited()) {
+        return "AFTER_CAVE";
+    }
+    return "FIND_KEY";
+})
+```
+
 ## Building
 
 ```bash
