@@ -9,11 +9,11 @@ A Java library for creating text adventure (interactive fiction) games with a fl
 ## Quick Start
 
 ```java
-import com.ifengine.Direction;
-import com.ifengine.Item;
-import com.ifengine.Location;
-import com.ifengine.game.GameEngine;
-import com.ifengine.game.GameMap;
+import io.github.tmanbarton.ifengine.Direction;
+import io.github.tmanbarton.ifengine.Item;
+import io.github.tmanbarton.ifengine.Location;
+import io.github.tmanbarton.ifengine.game.GameEngine;
+import io.github.tmanbarton.ifengine.game.GameMap;
 
 // Build your game world
 GameMap map = new GameMap.Builder()

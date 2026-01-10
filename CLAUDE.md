@@ -187,7 +187,7 @@ Not all tests add value. Avoid writing tests for scenarios that cannot occur in 
 ## Project Structure
 
 ```
-src/main/java/com.ifengine/
+src/main/java/io.github.tmanbarton.ifengine/
 ├── *.java                    # Core domain: Direction, Item, Location, SceneryObject, Container
 ├── command/
 │   ├── CommandDispatcher.java    # Routes verbs to handlers
@@ -233,7 +233,7 @@ processCommand(sessionId, "take key")
 
 ## Adding a New Command Handler
 
-1. Create `src/main/java/com.ifengine/command/handlers/NewHandler.java`:
+1. Create `src/main/java/io.github.tmanbarton.ifengine/command/handlers/NewHandler.java`:
 ```java
 public class NewHandler implements BaseCommandHandler {
     private final ResponseProvider responses;
@@ -260,7 +260,7 @@ commandDispatcher.registerHandler("newverb", newHandler);
 
 ## Test Infrastructure
 
-Test helpers in `src/test/java/com.ifengine/test/`:
+Test helpers in `src/test/java/io.github.tmanbarton.ifengine/test/`:
 
 - **TestGameEngineBuilder** - Fluent builder: `TestGameEngineBuilder.singleLocation().build()`
 - **TestFixtures** - Pre-built scenarios: `TestFixtures.adventureScenario()`
