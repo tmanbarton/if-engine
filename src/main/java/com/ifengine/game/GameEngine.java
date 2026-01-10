@@ -143,6 +143,10 @@ public class GameEngine {
       final Player newPlayer = new Player(gameMap.getStartingLocation());
       // Mark starting location as visited for new players
       newPlayer.getCurrentLocation().setVisited(true);
+      // Check if intro should be skipped
+      if (gameMap instanceof GameMap map && map.shouldSkipIntro()) {
+        newPlayer.setGameState(GameState.PLAYING);
+      }
       return newPlayer;
     });
 
@@ -370,9 +374,33 @@ public class GameEngine {
   /**
    * Handles the initial "have you played before?" question response.
    * Shows appropriate intro based on answer and transitions to gameplay.
+   * If a custom intro handler is configured, delegates to it instead.
    */
   @Nonnull
   private String handleStartAnswer(@Nonnull final Player player, @Nonnull final String answer) {
+    // Check for custom intro handler
+    if (gameMap instanceof GameMap map && map.hasCustomIntroHandler()) {
+      final IntroHandler handler = map.getIntroHandler();
+      final IntroResult result = handler.handle(player, answer, gameMap);
+      if (result.transitionToPlaying()) {
+        player.setGameState(GameState.PLAYING);
+      }
+      return result.message();
+    }
+
+    // Check for custom intro message with simple yes/no responses
+    if (gameMap instanceof GameMap map && map.hasCustomIntroMessage()) {
+      if (isYesAnswer(answer)) {
+        player.setGameState(GameState.PLAYING);
+        return map.getCustomYesResponse();
+      } else if (isNoAnswer(answer)) {
+        return map.getCustomNoResponse();
+      } else {
+        return responseProvider.getPleaseAnswerQuestion();
+      }
+    }
+
+    // Default yes/no handling
     if (isYesAnswer(answer)) {
       // Yes - they have played before
       player.setExperiencedPlayer(true);

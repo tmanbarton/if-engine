@@ -37,6 +37,13 @@ public class GameMap implements GameMapInterface {
   // For reset support: track initial item placements
   private final Map<String, String> initialItemPlacements = new HashMap<>();
 
+  // Intro configuration
+  private boolean skipIntro = false;
+  private String introMessage;
+  private IntroHandler introHandler;
+  private String customYesResponse;
+  private String customNoResponse;
+
   /**
    * Creates an empty GameMap.
    * <p>
@@ -262,5 +269,146 @@ public class GameMap implements GameMapInterface {
     for (final Location location : locations.values()) {
       location.setVisited(false);
     }
+  }
+
+  /**
+   * Configures the game to skip the intro and start directly in PLAYING state.
+   * <p>
+   * When enabled, new players will not be asked the "have you played before?" question
+   * and will start immediately in gameplay.
+   *
+   * @return this GameMap for method chaining
+   */
+  @Nonnull
+  public GameMap skipIntro() {
+    this.skipIntro = true;
+    return this;
+  }
+
+  /**
+   * Configures a custom intro message with custom yes/no responses.
+   * <p>
+   * The intro message is displayed when a new player joins. When the player
+   * answers "yes" (or variants like "y", "yeah", "sure", "ok"), the yesResponse
+   * is shown and the game transitions to PLAYING state. When they answer "no"
+   * (or variants), the noResponse is shown and they stay in the intro state.
+   * <p>
+   * Use {@link #withIntro(String, IntroHandler)} for full control over response handling.
+   *
+   * @param message the intro message/question to display
+   * @param yesResponse the message to show when player answers yes
+   * @param noResponse the message to show when player answers no
+   * @return this GameMap for method chaining
+   */
+  @Nonnull
+  public GameMap withIntro(@Nonnull final String message,
+                           @Nonnull final String yesResponse,
+                           @Nonnull final String noResponse) {
+    Objects.requireNonNull(message, "message cannot be null");
+    Objects.requireNonNull(yesResponse, "yesResponse cannot be null");
+    Objects.requireNonNull(noResponse, "noResponse cannot be null");
+    this.introMessage = message;
+    this.introHandler = null;
+    this.customYesResponse = yesResponse;
+    this.customNoResponse = noResponse;
+    return this;
+  }
+
+  /**
+   * Configures a custom intro message and handler.
+   * <p>
+   * The intro message is displayed when a new player joins. The handler is invoked
+   * with the player's response to determine what message to show and whether to
+   * transition to the PLAYING state.
+   *
+   * @param message the intro message to display
+   * @param handler the handler for processing the player's response
+   * @return this GameMap for method chaining
+   */
+  @Nonnull
+  public GameMap withIntro(@Nonnull final String message, @Nonnull final IntroHandler handler) {
+    Objects.requireNonNull(message, "message cannot be null");
+    Objects.requireNonNull(handler, "handler cannot be null");
+    this.introMessage = message;
+    this.introHandler = handler;
+    this.customYesResponse = null;
+    this.customNoResponse = null;
+    return this;
+  }
+
+  /**
+   * Returns whether the intro should be skipped.
+   *
+   * @return true if the intro should be skipped
+   */
+  public boolean shouldSkipIntro() {
+    return skipIntro;
+  }
+
+  /**
+   * Returns the custom intro message, if configured.
+   *
+   * @return the intro message, or null if not configured
+   */
+  @Nullable
+  public String getIntroMessage() {
+    return introMessage;
+  }
+
+  /**
+   * Returns the custom intro handler, if configured.
+   *
+   * @return the intro handler, or null if not configured
+   */
+  @Nullable
+  public IntroHandler getIntroHandler() {
+    return introHandler;
+  }
+
+  /**
+   * Returns the custom yes response, if configured.
+   *
+   * @return the custom yes response, or null if not configured
+   */
+  @Nullable
+  public String getCustomYesResponse() {
+    return customYesResponse;
+  }
+
+  /**
+   * Returns the custom no response, if configured.
+   *
+   * @return the custom no response, or null if not configured
+   */
+  @Nullable
+  public String getCustomNoResponse() {
+    return customNoResponse;
+  }
+
+  /**
+   * Returns whether a custom intro handler is configured.
+   *
+   * @return true if a custom intro handler is set
+   */
+  public boolean hasCustomIntroHandler() {
+    return introMessage != null && introHandler != null;
+  }
+
+  /**
+   * Returns whether a custom intro with simple yes response is configured.
+   *
+   * @return true if a custom intro message and yes response are set (without custom handler)
+   */
+  public boolean hasCustomIntroMessage() {
+    return introMessage != null && customYesResponse != null;
+  }
+
+  /**
+   * Returns whether any custom intro is configured.
+   *
+   * @return true if any custom intro configuration is set
+   */
+  public boolean hasCustomIntro() {
+    return introMessage != null && (introHandler != null || customYesResponse != null);
   }
 }

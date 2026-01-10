@@ -1088,4 +1088,70 @@ class GameEngineTest {
       assertEquals(GameState.PLAYING, player.getGameState());
     }
   }
+
+  @Nested
+  @DisplayName("Custom Intro Flow")
+  class CustomIntroFlow {
+
+    @Test
+    @DisplayName("skipIntro - player starts in PLAYING state and commands work")
+    void testSkipIntro_playerStartsInPlayingState() {
+      // Given
+      final GameMap map = new GameMap()
+          .addLocation(new Location("start", "Start location.", "Start"))
+          .setStartingLocation("start")
+          .skipIntro();
+      final GameEngine engine = new GameEngine(map);
+
+      // When
+      final String response = engine.processCommand(SESSION_ID, "look");
+
+      // Then
+      final Player player = engine.getPlayer(SESSION_ID);
+      assertEquals(GameState.PLAYING, player.getGameState());
+      assertTrue(JsonTestUtils.extractMessage(response).contains("Start location."));
+    }
+
+    @Test
+    @DisplayName("withIntro - handler controls state transition")
+    void testWithIntro_handlerControlsStateTransition() {
+      // Given
+      final GameMap map = new GameMap()
+          .addLocation(new Location("start", "Start location.", "Start"))
+          .setStartingLocation("start")
+          .withIntro("Type 'begin' to start.", (player, response, gameMap) -> {
+            if ("begin".equalsIgnoreCase(response)) {
+              return IntroResult.playing("Starting!");
+            }
+            return IntroResult.waiting("Please type 'begin'.");
+          });
+      final GameEngine engine = new GameEngine(map);
+
+      // When - wrong answer keeps waiting
+      engine.processCommand(SESSION_ID, "hello");
+      assertEquals(GameState.WAITING_FOR_START_ANSWER, engine.getPlayer(SESSION_ID).getGameState());
+
+      // When - correct answer transitions
+      engine.processCommand(SESSION_ID, "begin");
+      assertEquals(GameState.PLAYING, engine.getPlayer(SESSION_ID).getGameState());
+    }
+
+    @Test
+    @DisplayName("default - uses standard yes/no logic when no intro configured")
+    void testDefault_usesStandardYesNoLogic() {
+      // Given
+      final GameMap map = new GameMap()
+          .addLocation(new Location("start", "Start location.", "Start"))
+          .setStartingLocation("start");
+      final GameEngine engine = new GameEngine(map);
+
+      // When
+      engine.processCommand(SESSION_ID, "yes");
+
+      // Then
+      final Player player = engine.getPlayer(SESSION_ID);
+      assertEquals(GameState.PLAYING, player.getGameState());
+      assertTrue(player.isExperiencedPlayer());
+    }
+  }
 }

@@ -286,4 +286,5 @@ class GameMapTest {
       assertNotNull(gameMap.getLocation("b").getConnection(Direction.OUT));
     }
   }
+
 }
