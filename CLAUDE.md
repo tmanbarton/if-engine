@@ -321,7 +321,20 @@ All user-facing text goes through `ResponseProvider`. To change any message:
 - **Before committing**: Use `git add -A` to stage all files
 - **When testing**: Use `final` for all test variables and follow JUnit 5 patterns
 - **When asserting strings**: Never use `.contains()` - verify the complete string
+- **After completing a feature or change**: Update README.md to reflect new/changed API
 - **When in doubt**: Refer back to this document
+
+## 📝 README Maintenance
+
+**IMPORTANT**: After adding new features or changing existing APIs, always update README.md.
+
+Update the README when:
+- Adding new builder methods or configuration options
+- Changing method signatures or usage patterns
+- Adding new classes or interfaces that users interact with
+- Removing or deprecating functionality
+
+The README is the primary documentation for library users. Keeping it current prevents confusion.
 
 ## Enforcement
 
