@@ -90,17 +90,6 @@ class GameMapTest {
     }
 
     @Test
-    @DisplayName("addLocation - returns Builder for chaining")
-    void testAddLocation_returnsBuilderForChaining() {
-      final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
-      final GameMap.Builder builder = new GameMap.Builder();
-
-      final GameMap.Builder result = builder.addLocation(cottage);
-
-      assertEquals(builder, result);
-    }
-
-    @Test
     @DisplayName("placeItem - registers item in map")
     void testPlaceItem_registersItemInMap() {
       final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");

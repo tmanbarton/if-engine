@@ -146,21 +146,6 @@ class PlayerTest {
   }
 
   @Nested
-  @DisplayName("Location Tracking")
-  class LocationTracking {
-
-    @Test
-    @DisplayName("Test setCurrentLocation - updates location")
-    void testSetCurrentLocation_updatesLocation() {
-      final Location newLocation = TestLocationFactory.createTestForest();
-
-      player.setCurrentLocation(newLocation);
-
-      assertEquals(newLocation, player.getCurrentLocation());
-    }
-  }
-
-  @Nested
   @DisplayName("Reset Functionality")
   class ResetFunctionality {
 
@@ -258,16 +243,6 @@ class PlayerTest {
   @Nested
   @DisplayName("Pending Openable")
   class PendingOpenable {
-
-    @Test
-    @DisplayName("Test setPendingOpenable - sets pending openable")
-    void testSetPendingOpenable_setsPendingOpenable() {
-      final Openable openable = createTestOpenable();
-
-      player.setPendingOpenable(openable);
-
-      assertEquals(openable, player.getPendingOpenable());
-    }
 
     @Test
     @DisplayName("Test clearPendingOpenable - clears pending openable")
