@@ -60,7 +60,7 @@ class CustomCommandAdapterTest {
       // Given
       final CustomCommandHandler handler = (p, cmd, ctx) -> "response";
       final CustomCommandAdapter adapter = new CustomCommandAdapter(
-          "dance", List.of(), handler, CustomCommandAdapterTest.this::createContext);
+          "dance", List.of(), handler, CustomCommandAdapterTest.this::createContext, null);
 
       // When
       final List<String> verbs = adapter.getSupportedVerbs();
@@ -76,7 +76,7 @@ class CustomCommandAdapterTest {
       // Given
       final CustomCommandHandler handler = (p, cmd, ctx) -> "response";
       final CustomCommandAdapter adapter = new CustomCommandAdapter(
-          "search", List.of("find", "look for"), handler, CustomCommandAdapterTest.this::createContext);
+          "search", List.of("find", "look for"), handler, CustomCommandAdapterTest.this::createContext, null);
 
       // When
       final List<String> verbs = adapter.getSupportedVerbs();
@@ -99,7 +99,7 @@ class CustomCommandAdapterTest {
       // Given
       final CustomCommandHandler handler = (p, cmd, ctx) -> "custom response";
       final CustomCommandAdapter adapter = new CustomCommandAdapter(
-          "test", List.of(), handler, CustomCommandAdapterTest.this::createContext);
+          "test", List.of(), handler, CustomCommandAdapterTest.this::createContext, null);
       final ParsedCommand command = createCommand("test");
 
       // When
@@ -116,7 +116,7 @@ class CustomCommandAdapterTest {
       final CustomCommandHandler handler = (p, cmd, ctx) ->
           "Location: " + p.getCurrentLocation().getName();
       final CustomCommandAdapter adapter = new CustomCommandAdapter(
-          "test", List.of(), handler, CustomCommandAdapterTest.this::createContext);
+          "test", List.of(), handler, CustomCommandAdapterTest.this::createContext, null);
       final ParsedCommand command = createCommand("test");
 
       // When
@@ -133,7 +133,7 @@ class CustomCommandAdapterTest {
       final CustomCommandHandler handler = (p, cmd, ctx) ->
           "Verb: " + cmd.getVerb();
       final CustomCommandAdapter adapter = new CustomCommandAdapter(
-          "poke", List.of(), handler, CustomCommandAdapterTest.this::createContext);
+          "poke", List.of(), handler, CustomCommandAdapterTest.this::createContext, null);
       final ParsedCommand command = createCommand("poke");
 
       // When

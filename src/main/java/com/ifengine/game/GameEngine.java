@@ -8,6 +8,7 @@ import com.ifengine.Openable;
 import com.ifengine.UnlockResult;
 import com.ifengine.command.CommandContext;
 import com.ifengine.command.CommandDispatcher;
+import com.ifengine.command.BaseCommandHandler;
 import com.ifengine.command.CustomCommandAdapter;
 import com.ifengine.command.CustomCommandRegistration;
 import com.ifengine.command.DefaultCommandContext;
@@ -136,8 +137,8 @@ public class GameEngine {
   /**
    * Registers custom commands from the GameMap, if any.
    * <p>
-   * Custom commands are registered after built-in commands, so they can
-   * override built-in commands if they use the same verb.
+   * Custom commands are registered after built-in commands. If a custom handler
+   * returns null, the command will delegate to the built-in handler.
    */
   private void registerCustomCommands() {
     if (!(gameMap instanceof GameMap map)) {
@@ -145,11 +146,16 @@ public class GameEngine {
     }
 
     for (final CustomCommandRegistration registration : map.getCustomCommands()) {
+      // Capture existing handler before overwriting, so custom handler can delegate
+      final BaseCommandHandler fallbackHandler =
+          commandDispatcher.getHandlerForVerb(registration.verb());
+
       final CustomCommandAdapter adapter = new CustomCommandAdapter(
           registration.verb(),
           registration.aliases(),
           registration.handler(),
-          this::createCommandContext
+          this::createCommandContext,
+          fallbackHandler
       );
       commandDispatcher.registerHandler(adapter);
     }

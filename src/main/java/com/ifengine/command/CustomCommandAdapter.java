@@ -4,6 +4,7 @@ import com.ifengine.game.Player;
 import com.ifengine.parser.ParsedCommand;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +22,8 @@ public final class CustomCommandAdapter implements BaseCommandHandler {
   private final List<String> supportedVerbs;
   private final CustomCommandHandler handler;
   private final Function<Player, CommandContext> contextFactory;
+  @Nullable
+  private final BaseCommandHandler fallbackHandler;
 
   /**
    * Creates a new CustomCommandAdapter.
@@ -29,11 +32,13 @@ public final class CustomCommandAdapter implements BaseCommandHandler {
    * @param aliases additional verbs that trigger this command
    * @param handler the custom command handler
    * @param contextFactory creates a CommandContext for each player at invocation time
+   * @param fallbackHandler the handler to delegate to when custom handler returns null
    */
   public CustomCommandAdapter(@Nonnull final String primaryVerb,
                               @Nonnull final List<String> aliases,
                               @Nonnull final CustomCommandHandler handler,
-                              @Nonnull final Function<Player, CommandContext> contextFactory) {
+                              @Nonnull final Function<Player, CommandContext> contextFactory,
+                              @Nullable final BaseCommandHandler fallbackHandler) {
     Objects.requireNonNull(primaryVerb, "primaryVerb cannot be null");
     Objects.requireNonNull(aliases, "aliases cannot be null");
     Objects.requireNonNull(handler, "handler cannot be null");
@@ -47,6 +52,7 @@ public final class CustomCommandAdapter implements BaseCommandHandler {
     this.supportedVerbs = Collections.unmodifiableList(verbs);
     this.handler = handler;
     this.contextFactory = contextFactory;
+    this.fallbackHandler = fallbackHandler;
   }
 
   @Override
@@ -56,9 +62,14 @@ public final class CustomCommandAdapter implements BaseCommandHandler {
   }
 
   @Override
-  @Nonnull
+  @Nullable
   public String handle(@Nonnull final Player player, @Nonnull final ParsedCommand command) {
     final CommandContext context = contextFactory.apply(player);
-    return handler.handle(player, command, context);
+    final String result = handler.handle(player, command, context);
+
+    if (result == null && fallbackHandler != null) {
+      return fallbackHandler.handle(player, command);
+    }
+    return result;
   }
 }

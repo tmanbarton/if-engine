@@ -482,19 +482,19 @@ public class GameMap implements GameMapInterface {
      * Example usage:
      * <pre>
      * .withHints(hints -> hints
-     *     .addPhase("FIND_KEY",
+     *     .addPhase("find-key",
      *         "Something important might be nearby...",
      *         "Check around the old tree.",
-     *         "Take the brass key from the Lightning Tree.")
-     *     .addPhase("UNLOCK_SHED",
+     *         "Take the brass key from the table.")
+     *     .addPhase("unlock-shed",
      *         "That key must be for something...",
      *         "Try using the key on the shed's lock.",
      *         "Type 'unlock shed' to use your key.")
      *     .determiner((player, gameMap) -> {
      *         if (player.hasItem("key")) {
-     *             return "UNLOCK_SHED";
+     *             return "unlock-shed";
      *         }
-     *         return "FIND_KEY";
+     *         return "find-key";
      *     })
      * )
      * </pre>
@@ -514,11 +514,21 @@ public class GameMap implements GameMapInterface {
     /**
      * Registers a custom command with no aliases.
      * <p>
-     * Custom commands can override built-in commands - the last registration wins.
+     * <b>Delegation:</b> Return {@code null} from the handler to delegate to the built-in
+     * handler for this verb. This allows custom handlers to handle specific cases while
+     * falling back to default behavior for everything else.
      * <p>
      * Example usage:
      * <pre>
      * .withCommand("xyzzy", (player, cmd, ctx) -> "Nothing happens.")
+     *
+     * // Partial override - handle special case, delegate otherwise
+     * .withCommand("eat", (player, cmd, ctx) -> {
+     *     if (cmd.getFirstDirectObject().equals("magic apple")) {
+     *         return "You feel a surge of power!";
+     *     }
+     *     return null; // Delegate to default eat behavior
+     * })
      * </pre>
      *
      * @param verb the verb that triggers this command
@@ -534,7 +544,9 @@ public class GameMap implements GameMapInterface {
     /**
      * Registers a custom command with aliases.
      * <p>
-     * Custom commands can override built-in commands - the last registration wins.
+     * <b>Delegation:</b> Return {@code null} from the handler to delegate to the built-in
+     * handler for this verb. This allows custom handlers to handle specific cases while
+     * falling back to default behavior for everything else.
      * <p>
      * Example usage:
      * <pre>

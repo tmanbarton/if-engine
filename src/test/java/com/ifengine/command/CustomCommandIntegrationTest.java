@@ -145,5 +145,61 @@ class CustomCommandIntegrationTest {
       final String message = JsonTestUtils.extractMessage(response);
       assertEquals("Found: key\n\n", message);
     }
+
+    @Test
+    @DisplayName("custom command returning null delegates to built-in handler")
+    void testWithCommand_returnsNullDelegatesToBuiltIn() {
+      // Given - custom "look" that always returns null to delegate
+      final GameMap map = new GameMap.Builder()
+              .addLocation(new Location("room", "A test room.", "Test room."))
+              .setStartingLocation("room")
+              .skipIntro()
+              .withCommand("look", (player, cmd, ctx) -> null)
+              .build();
+      final GameEngine engine = new GameEngine(map);
+
+      // When
+      final String response = engine.processCommand(SESSION_ID, "look");
+
+      // Then - should get built-in look response (location description)
+      final String message = JsonTestUtils.extractMessage(response);
+      assertTrue(message.contains("A test room."),
+              "Expected built-in look behavior with location description, got: " + message);
+    }
+
+    @Test
+    @DisplayName("custom command handles specific case and delegates otherwise")
+    void testWithCommand_partialOverride() {
+      // Given - custom "look" that handles "look mirror" specially, delegates otherwise
+      final GameMap map = new GameMap.Builder()
+              .addLocation(new Location("room", "A test room.", "Test room."))
+              .setStartingLocation("room")
+              .skipIntro()
+              .withCommand("look", (player, cmd, ctx) -> {
+                final String target = cmd.getFirstDirectObject();
+                if ("mirror".equals(target)) {
+                  return "You see your reflection staring back at you.";
+                }
+                // Delegate to default look for everything else
+                return null;
+              })
+              .build();
+      final GameEngine engine = new GameEngine(map);
+
+      // When - special case
+      final String mirrorResponse = engine.processCommand(SESSION_ID, "look mirror");
+
+      // Then - custom handler response
+      final String mirrorMessage = JsonTestUtils.extractMessage(mirrorResponse);
+      assertEquals("You see your reflection staring back at you.\n\n", mirrorMessage);
+
+      // When - default case (just "look")
+      final String lookResponse = engine.processCommand(SESSION_ID, "look");
+
+      // Then - built-in look response
+      final String lookMessage = JsonTestUtils.extractMessage(lookResponse);
+      assertTrue(lookMessage.contains("A test room."),
+              "Expected built-in look behavior, got: " + lookMessage);
+    }
   }
 }

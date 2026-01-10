@@ -314,9 +314,24 @@ The `ctx` parameter provides access to game utilities:
 })
 ```
 
-### Overriding built-in commands
+### Delegating to built-in commands
 
-Custom commands can override built-in commands - the last registration wins:
+Return `null` from your handler to delegate to the built-in command. This allows you to handle specific cases while using default behavior for everything else:
+
+```java
+.withCommand("eat", (player, cmd, ctx) -> {
+    // Handle special case
+    if (cmd.getFirstDirectObject().equals("magic apple")) {
+        return "You feel a surge of power!";
+    }
+    // Delegate to default eat behavior for all other items
+    return null;
+})
+```
+
+### Fully overriding built-in commands
+
+To completely replace a built-in command (never delegate), simply always return a non-null response:
 
 ```java
 .withCommand("look", (player, cmd, ctx) -> "You see nothing special.")
@@ -399,19 +414,19 @@ GameMap map = new GameMap.Builder()
     .addLocation(...)
     .placeItem(new Item("key", "a key", "A key lies here.", "A brass key."), "garden")
     .withHints(hints -> hints
-        .addPhase("FIND_KEY",
+        .addPhase("find-key",
             "Something important might be nearby...",           // Level 1: subtle nudge
             "Check around the old tree. Something brass...",    // Level 2: more direct
-            "Take the brass key from the Lightning Tree.")      // Level 3: explicit answer
-        .addPhase("UNLOCK_SHED",
+            "Take the brass key from the table.")      // Level 3: explicit answer
+        .addPhase("unlock-shed",
             "That key must be for something...",
             "Try using the key on the shed's lock.",
             "Type 'unlock shed' to use your key.")
         .determiner((player, gameMap) -> {
             if (player.hasItem("key")) {
-                return "UNLOCK_SHED";
+                return "unlock-shed";
             }
-            return "FIND_KEY";
+            return "find-key";
         })
     )
     .build();
@@ -436,10 +451,10 @@ The `determiner` function receives `Player` and `GameMap`, allowing you to check
         return "GAME_COMPLETE";
     }
     if (player.hasItem("key")) {
-        return "UNLOCK_SHED";
+        return "unlock-shed";
     }
     // Earliest hint goes in the else
-    return "FIND_KEY";
+    return "find-key";
 })
 ```
 
