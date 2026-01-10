@@ -6,7 +6,11 @@ import com.ifengine.Location;
 import com.ifengine.OpenResult;
 import com.ifengine.Openable;
 import com.ifengine.UnlockResult;
+import com.ifengine.command.CommandContext;
 import com.ifengine.command.CommandDispatcher;
+import com.ifengine.command.CustomCommandAdapter;
+import com.ifengine.command.CustomCommandRegistration;
+import com.ifengine.command.DefaultCommandContext;
 import com.ifengine.command.handlers.ClimbHandler;
 import com.ifengine.command.handlers.DrinkHandler;
 import com.ifengine.command.handlers.DropHandler;
@@ -124,6 +128,45 @@ public class GameEngine {
     commandDispatcher.registerHandler(new EatHandler(contextManager, sceneryInteractionHandler, responseProvider));
     commandDispatcher.registerHandler(createHintHandler());
     commandDispatcher.registerHandler(new SystemCommandHandler(responseProvider));
+
+    // Register custom commands from GameMap (can override built-in commands)
+    registerCustomCommands();
+  }
+
+  /**
+   * Registers custom commands from the GameMap, if any.
+   * <p>
+   * Custom commands are registered after built-in commands, so they can
+   * override built-in commands if they use the same verb.
+   */
+  private void registerCustomCommands() {
+    if (!(gameMap instanceof GameMap map)) {
+      return;
+    }
+
+    for (final CustomCommandRegistration registration : map.getCustomCommands()) {
+      final CustomCommandAdapter adapter = new CustomCommandAdapter(
+          registration.verb(),
+          registration.aliases(),
+          registration.handler(),
+          this::createCommandContext
+      );
+      commandDispatcher.registerHandler(adapter);
+    }
+  }
+
+  /**
+   * Creates a CommandContext for custom command handlers.
+   * <p>
+   * This method is called for each command invocation to ensure the context
+   * reflects the current player state.
+   *
+   * @param player the player for this context
+   * @return a new CommandContext
+   */
+  @Nonnull
+  private CommandContext createCommandContext(@Nonnull final Player player) {
+    return new DefaultCommandContext(responseProvider, objectResolver, player);
   }
 
   /**

@@ -56,6 +56,8 @@ GameMap map = new GameMap.Builder()
     .skipIntro()                 // Optional: skip intro question
     .withIntroResponses(yes, no) // Custom yes/no responses
     .withIntroMessage(message)   // Story intro before location
+    .withCommand("verb", handler)  // Register custom command
+    .withHints(configurer)       // Configure hint system
     .build();  // Validates and returns GameMap
 ```
 
@@ -256,6 +258,69 @@ The engine handles these commands automatically:
 | Items | `take <item>`, `drop <item>`, `inventory`/`i`, `put <item> in/on <container>` |
 | Interaction | `look`/`l`, `examine <object>`, `read <item>`, `eat <item>`, `drink <item>`, `climb <object>`, `kick <object>`, `punch <object>`, `swim`, `unlock <object>`, `open <object>` |
 | System | `quit`, `restart`, `help`, `hint` |
+
+## Custom Commands
+
+Register custom commands via `GameMap.Builder.withCommand()`:
+
+### Simple custom command
+
+```java
+GameMap map = new GameMap.Builder()
+    .addLocation(new Location("room", "A test room.", "Test room."))
+    .setStartingLocation("room")
+    .withCommand("xyzzy", (player, cmd, ctx) -> "Nothing happens.")
+    .build();
+```
+
+### Custom command with aliases
+
+```java
+.withCommand("search", List.of("find", "look for"), (player, cmd, ctx) -> {
+    String target = cmd.getFirstDirectObject();
+    if (target.isEmpty()) {
+        return "Search what?";
+    }
+    return "You search the " + target + " but find nothing.";
+})
+```
+
+### Using CommandContext
+
+The `ctx` parameter provides access to game utilities:
+
+```java
+.withCommand("locate", (player, cmd, ctx) -> {
+    String target = cmd.getFirstDirectObject();
+
+    // Resolve items from inventory or location
+    Optional<Item> item = ctx.resolveItem(target, player);
+    if (item.isPresent()) {
+        return "Found: " + item.get().getName();
+    }
+
+    // Check player inventory
+    if (ctx.playerHasItem("key")) {
+        return "You have the key!";
+    }
+
+    // Get current location
+    Location loc = ctx.getCurrentLocation();
+
+    // Access response provider for consistent messaging
+    ResponseProvider responses = ctx.getResponseProvider();
+
+    return "Not found.";
+})
+```
+
+### Overriding built-in commands
+
+Custom commands can override built-in commands - the last registration wins:
+
+```java
+.withCommand("look", (player, cmd, ctx) -> "You see nothing special.")
+```
 
 ## Customizing Response Text
 

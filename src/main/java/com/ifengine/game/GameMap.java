@@ -3,12 +3,16 @@ package com.ifengine.game;
 import com.ifengine.Direction;
 import com.ifengine.Item;
 import com.ifengine.Location;
+import com.ifengine.command.CustomCommandHandler;
+import com.ifengine.command.CustomCommandRegistration;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -46,6 +50,9 @@ public class GameMap implements GameMapInterface {
   // Hint configuration
   private final HintConfiguration hintConfiguration;
 
+  // Custom commands
+  private final List<CustomCommandRegistration> customCommands;
+
   /**
    * Creates a GameMap from a Builder.
    *
@@ -62,6 +69,7 @@ public class GameMap implements GameMapInterface {
     this.customNoResponse = builder.customNoResponse;
     this.customIntroMessage = builder.customIntroMessage;
     this.hintConfiguration = builder.hintConfiguration;
+    this.customCommands = List.copyOf(builder.customCommands);
   }
 
   @Override
@@ -217,6 +225,16 @@ public class GameMap implements GameMapInterface {
   }
 
   /**
+   * Returns the list of custom command registrations.
+   *
+   * @return immutable list of custom command registrations
+   */
+  @Nonnull
+  public List<CustomCommandRegistration> getCustomCommands() {
+    return customCommands;
+  }
+
+  /**
    * Builder for constructing GameMap instances.
    * <p>
    * The builder validates that:
@@ -241,6 +259,9 @@ public class GameMap implements GameMapInterface {
 
     // Hint configuration
     private HintConfiguration hintConfiguration;
+
+    // Custom commands
+    private final List<CustomCommandRegistration> customCommands = new ArrayList<>();
 
     /**
      * Creates an empty Builder.
@@ -487,6 +508,58 @@ public class GameMap implements GameMapInterface {
       final HintConfigurationBuilder hintBuilder = new HintConfigurationBuilder();
       configurer.accept(hintBuilder);
       this.hintConfiguration = hintBuilder.build();
+      return this;
+    }
+
+    /**
+     * Registers a custom command with no aliases.
+     * <p>
+     * Custom commands can override built-in commands - the last registration wins.
+     * <p>
+     * Example usage:
+     * <pre>
+     * .withCommand("xyzzy", (player, cmd, ctx) -> "Nothing happens.")
+     * </pre>
+     *
+     * @param verb the verb that triggers this command
+     * @param handler the handler for the command
+     * @return this Builder for method chaining
+     */
+    @Nonnull
+    public Builder withCommand(@Nonnull final String verb,
+                               @Nonnull final CustomCommandHandler handler) {
+      return withCommand(verb, List.of(), handler);
+    }
+
+    /**
+     * Registers a custom command with aliases.
+     * <p>
+     * Custom commands can override built-in commands - the last registration wins.
+     * <p>
+     * Example usage:
+     * <pre>
+     * .withCommand("search", List.of("find", "look for"), (player, cmd, ctx) -> {
+     *     String target = cmd.getFirstDirectObject();
+     *     if (target.isEmpty()) {
+     *         return "Search what?";
+     *     }
+     *     return "You search the " + target + " but find nothing.";
+     * })
+     * </pre>
+     *
+     * @param verb the primary verb that triggers this command
+     * @param aliases additional verbs that trigger this command
+     * @param handler the handler for the command
+     * @return this Builder for method chaining
+     */
+    @Nonnull
+    public Builder withCommand(@Nonnull final String verb,
+                               @Nonnull final List<String> aliases,
+                               @Nonnull final CustomCommandHandler handler) {
+      Objects.requireNonNull(verb, "verb cannot be null");
+      Objects.requireNonNull(aliases, "aliases cannot be null");
+      Objects.requireNonNull(handler, "handler cannot be null");
+      customCommands.add(new CustomCommandRegistration(verb, aliases, handler));
       return this;
     }
 
