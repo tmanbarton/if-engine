@@ -28,14 +28,18 @@ Remember: The user values honest technical guidance more than false agreement.
 
 ## 🚨 CRITICAL TEST-DRIVEN DEVELOPMENT REQUIREMENTS 🚨
 
-**NEVER FORGET**: Before implementing ANY feature or fix:
+**NEVER FORGET**: Follow the Red-Green-Refactor cycle for ALL non-trivial features and fixes:
 
-1. **WRITE TESTS FIRST** - Always follow Test-Driven Development (TDD)
-2. **RUN TESTS** - Execute `./gradlew test` and ensure they pass
-3. **FIX FAILURES** - Address any test failures immediately
-4. **ONLY THEN REPORT BACK** - Never report completion without passing tests
+1. **RED**: Write a test for the new behavior. Run it - it MUST fail (if it passes, the test isn't testing new behavior)
+2. **GREEN**: Write the minimal code to make the test pass. No more, no less.
+3. **REFACTOR** (optional): Clean up the code while keeping tests green
 
-**If use cases are unclear, ASK THE USER for clarification before proceeding.**
+**The cycle in practice:**
+```
+Write test → Run (expect FAIL) → Write code → Run (expect PASS) → Refactor → Run (expect PASS)
+```
+
+**If use cases are unclear, ASK THE USER for clarification before writing tests.**
 
 This is MANDATORY for all code changes, no exceptions.
 
@@ -106,7 +110,7 @@ void shouldNotTakeItemWhenNotPresent() { }
 
 ```java
 @Nested
-@DisplayName("Take command")
+@DisplayName("Take command response tests")
 class TakeCommand {
     @Test
     @DisplayName("returns success message when item is present")

@@ -1,6 +1,6 @@
 # IFEngine API - Complexity Assessment
 
-This document tracks what the IFEngine API supports for complex games (like vots-adventure) and identifies gaps that may need addressing.
+This document tracks what the IFEngine API supports for complex interactive fiction games and identifies improvements that can be made to this API.
 
 ---
 
