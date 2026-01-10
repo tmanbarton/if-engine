@@ -39,7 +39,7 @@ public class GameMap implements GameMapInterface {
 
   // Intro configuration
   private boolean skipIntro = false;
-  private String introMessage;
+  private String introQuestion;
   private IntroHandler introHandler;
   private String customYesResponse;
   private String customNoResponse;
@@ -301,13 +301,13 @@ public class GameMap implements GameMapInterface {
    * @return this GameMap for method chaining
    */
   @Nonnull
-  public GameMap withIntro(@Nonnull final String message,
+  public GameMap withIntro(@Nonnull final String introQuestion,
                            @Nonnull final String yesResponse,
                            @Nonnull final String noResponse) {
-    Objects.requireNonNull(message, "message cannot be null");
+    Objects.requireNonNull(introQuestion, "message cannot be null");
     Objects.requireNonNull(yesResponse, "yesResponse cannot be null");
     Objects.requireNonNull(noResponse, "noResponse cannot be null");
-    this.introMessage = message;
+    this.introQuestion = introQuestion;
     this.introHandler = null;
     this.customYesResponse = yesResponse;
     this.customNoResponse = noResponse;
@@ -329,7 +329,7 @@ public class GameMap implements GameMapInterface {
   public GameMap withIntro(@Nonnull final String message, @Nonnull final IntroHandler handler) {
     Objects.requireNonNull(message, "message cannot be null");
     Objects.requireNonNull(handler, "handler cannot be null");
-    this.introMessage = message;
+    this.introQuestion = message;
     this.introHandler = handler;
     this.customYesResponse = null;
     this.customNoResponse = null;
@@ -351,8 +351,8 @@ public class GameMap implements GameMapInterface {
    * @return the intro message, or null if not configured
    */
   @Nullable
-  public String getIntroMessage() {
-    return introMessage;
+  public String getIntroQuestion() {
+    return introQuestion;
   }
 
   /**
@@ -391,7 +391,7 @@ public class GameMap implements GameMapInterface {
    * @return true if a custom intro handler is set
    */
   public boolean hasCustomIntroHandler() {
-    return introMessage != null && introHandler != null;
+    return introQuestion != null && introHandler != null;
   }
 
   /**
@@ -400,7 +400,7 @@ public class GameMap implements GameMapInterface {
    * @return true if a custom intro message and yes response are set (without custom handler)
    */
   public boolean hasCustomIntroMessage() {
-    return introMessage != null && customYesResponse != null;
+    return introQuestion != null && customYesResponse != null;
   }
 
   /**
@@ -409,6 +409,6 @@ public class GameMap implements GameMapInterface {
    * @return true if any custom intro configuration is set
    */
   public boolean hasCustomIntro() {
-    return introMessage != null && (introHandler != null || customYesResponse != null);
+    return introQuestion != null && (introHandler != null || customYesResponse != null);
   }
 }
