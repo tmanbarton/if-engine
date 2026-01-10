@@ -12,9 +12,9 @@ import javax.annotation.Nonnull;
  * <pre>
  * (player, gameMap) -> {
  *     if (player.hasItem("key")) {
- *         return "UNLOCK_SHED";
+ *         return "unlock-shed";
  *     }
- *     return "FIND_KEY";
+ *     return "find-key";
  * }
  * </pre>
  * <p>

@@ -74,15 +74,15 @@ class HintHandlerTest {
     @BeforeEach
     void setUp() {
       config = new HintConfigurationBuilder()
-          .addPhase("PHASE_ONE",
+          .addPhase("phase-one",
               "Phase one hint 1",
               "Phase one hint 2",
               "Phase one hint 3")
-          .addPhase("PHASE_TWO",
+          .addPhase("phase-two",
               "Phase two hint 1",
               "Phase two hint 2",
               "Phase two hint 3")
-          .determiner((p, gm) -> p.hasItem("key") ? "PHASE_TWO" : "PHASE_ONE")
+          .determiner((p, gm) -> p.hasItem("key") ? "phase-two" : "phase-one")
           .build();
       handler = new HintHandler(config, gameMap);
     }
@@ -90,7 +90,7 @@ class HintHandlerTest {
     @Test
     @DisplayName("progressive hints return level 1, then 2, then 3")
     void testHint_progressiveHints_level1Then2Then3() {
-      // Given - player starts in PHASE_ONE (no key)
+      // Given - player starts in phase-one (no key)
 
       // When/Then - first hint is level 1
       final String hint1 = handler.handle(player, createHintCommand());
@@ -123,15 +123,15 @@ class HintHandlerTest {
     @Test
     @DisplayName("phase change resets to level 1")
     void testHint_phaseChange_resetsToLevel1() {
-      // Given - get to level 2 in PHASE_ONE
+      // Given - get to level 2 in phase-one
       handler.handle(player, createHintCommand());
       handler.handle(player, createHintCommand());
 
-      // When - change to PHASE_TWO by giving player the key
+      // When - change to phase-two by giving player the key
       player.addItem(new Item("key", "a key", "A key.", "A key."));
       final String hint = handler.handle(player, createHintCommand());
 
-      // Then - returns level 1 of PHASE_TWO
+      // Then - returns level 1 of phase-two
       assertEquals("Phase two hint 1", hint);
     }
   }

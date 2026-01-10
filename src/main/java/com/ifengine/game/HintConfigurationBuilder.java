@@ -11,19 +11,19 @@ import java.util.Objects;
  * Example usage:
  * <pre>
  * HintConfiguration config = new HintConfigurationBuilder()
- *     .addPhase("FIND_KEY",
+ *     .addPhase("find-key",
  *         "Something important might be nearby...",
  *         "Check around the old tree. Something brass...",
- *         "Take the brass key from the Lightning Tree.")
- *     .addPhase("UNLOCK_SHED",
+ *         "Take the brass key from the table.")
+ *     .addPhase("unlock-shed",
  *         "That key must be for something...",
  *         "Try using the key on the shed's lock.",
  *         "Type 'unlock shed' to use your key.")
  *     .determiner((player, gameMap) -> {
  *         if (player.hasItem("key")) {
- *             return "UNLOCK_SHED";
+ *             return "unlock-shed";
  *         }
- *         return "FIND_KEY";
+ *         return "find-key";
  *     })
  *     .build();
  * </pre>
