@@ -32,7 +32,7 @@ public final class SimpleGameExample {
    * @return a configured GameMap ready for use with GameEngine
    */
   public static GameMap createMap() {
-    return new GameMap()
+    return new GameMap.Builder()
         // Add locations
         .addLocation(new Location(
             "cottage",
@@ -79,7 +79,9 @@ public final class SimpleGameExample {
         .withIntro(
             "Welcome to the Cottage Adventure!\n\nAre you ready to explore? (yes/no)",
             "Excellent! Your adventure begins...",
-            "Take your time. Type 'yes' when you're ready.");
+            "Take your time. Type 'yes' when you're ready.")
+
+        .build();
   }
 
   /**

@@ -4,14 +4,13 @@ import com.ifengine.Direction;
 import com.ifengine.Item;
 import com.ifengine.Location;
 import com.ifengine.test.TestItemFactory;
-import com.ifengine.test.TestLocationFactory;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -24,42 +23,94 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class GameMapTest {
 
   @Nested
+  @DisplayName("Build Validation")
+  class BuildValidation {
+
+    @Test
+    @DisplayName("build - throws when no locations added")
+    void testBuild_throwsWhenNoLocations() {
+      final GameMap.Builder builder = new GameMap.Builder();
+
+      final IllegalStateException exception = assertThrows(
+          IllegalStateException.class,
+          builder::build
+      );
+
+      assertEquals("GameMap must have at least one location", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("build - throws when starting location not set")
+    void testBuild_throwsWhenStartingLocationNotSet() {
+      final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
+      final GameMap.Builder builder = new GameMap.Builder()
+          .addLocation(cottage);
+
+      final IllegalStateException exception = assertThrows(
+          IllegalStateException.class,
+          builder::build
+      );
+
+      assertEquals(
+          "Starting location must be set. Call setStartingLocation() before build()",
+          exception.getMessage()
+      );
+    }
+
+    @Test
+    @DisplayName("build - succeeds with valid configuration")
+    void testBuild_succeedsWithValidConfiguration() {
+      final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
+
+      final GameMap gameMap = new GameMap.Builder()
+          .addLocation(cottage)
+          .setStartingLocation("cottage")
+          .build();
+
+      assertNotNull(gameMap);
+      assertEquals(cottage, gameMap.getStartingLocation());
+    }
+  }
+
+  @Nested
   @DisplayName("Builder API")
   class BuilderApi {
-
-    private GameMap gameMap;
-
-    @BeforeEach
-    void setUp() {
-      gameMap = new GameMap();
-    }
 
     @Test
     @DisplayName("addLocation - adds location to map")
     void testAddLocation_addsToMap() {
       final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
 
-      gameMap.addLocation(cottage);
+      final GameMap gameMap = new GameMap.Builder()
+          .addLocation(cottage)
+          .setStartingLocation("cottage")
+          .build();
 
       assertEquals(cottage, gameMap.getLocation("cottage"));
     }
 
     @Test
-    @DisplayName("addLocation - returns GameMap for chaining")
-    void testAddLocation_returnsGameMapForChaining() {
+    @DisplayName("addLocation - returns Builder for chaining")
+    void testAddLocation_returnsBuilderForChaining() {
       final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
+      final GameMap.Builder builder = new GameMap.Builder();
 
-      final GameMap result = gameMap.addLocation(cottage);
+      final GameMap.Builder result = builder.addLocation(cottage);
 
-      assertEquals(gameMap, result);
+      assertEquals(builder, result);
     }
 
     @Test
     @DisplayName("addItem - adds item to map")
     void testAddItem_addsToMap() {
+      final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
       final Item key = TestItemFactory.createTestKey();
 
-      gameMap.addItem(key);
+      final GameMap gameMap = new GameMap.Builder()
+          .addLocation(cottage)
+          .addItem(key)
+          .setStartingLocation("cottage")
+          .build();
 
       assertEquals(key, gameMap.getItem("key"));
     }
@@ -70,9 +121,12 @@ class GameMapTest {
       final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
       final Location forest = new Location("forest", "A dark forest.", "In the forest.");
 
-      gameMap.addLocation(cottage)
+      new GameMap.Builder()
+          .addLocation(cottage)
           .addLocation(forest)
-          .connect("cottage", Direction.NORTH, "forest");
+          .connect("cottage", Direction.NORTH, "forest")
+          .setStartingLocation("cottage")
+          .build();
 
       assertEquals(forest, cottage.getConnection(Direction.NORTH));
       assertEquals(cottage, forest.getConnection(Direction.SOUTH));
@@ -82,11 +136,12 @@ class GameMapTest {
     @DisplayName("connect - throws when from location not found")
     void testConnect_throwsWhenFromNotFound() {
       final Location forest = new Location("forest", "A dark forest.", "In the forest.");
-      gameMap.addLocation(forest);
+      final GameMap.Builder builder = new GameMap.Builder()
+          .addLocation(forest);
 
       final IllegalArgumentException exception = assertThrows(
           IllegalArgumentException.class,
-          () -> gameMap.connect("cottage", Direction.NORTH, "forest")
+          () -> builder.connect("cottage", Direction.NORTH, "forest")
       );
 
       assertTrue(exception.getMessage().contains("cottage"));
@@ -96,11 +151,12 @@ class GameMapTest {
     @DisplayName("connect - throws when to location not found")
     void testConnect_throwsWhenToNotFound() {
       final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
-      gameMap.addLocation(cottage);
+      final GameMap.Builder builder = new GameMap.Builder()
+          .addLocation(cottage);
 
       final IllegalArgumentException exception = assertThrows(
           IllegalArgumentException.class,
-          () -> gameMap.connect("cottage", Direction.NORTH, "forest")
+          () -> builder.connect("cottage", Direction.NORTH, "forest")
       );
 
       assertTrue(exception.getMessage().contains("forest"));
@@ -112,9 +168,12 @@ class GameMapTest {
       final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
       final Location forest = new Location("forest", "A dark forest.", "In the forest.");
 
-      gameMap.addLocation(cottage)
+      new GameMap.Builder()
+          .addLocation(cottage)
           .addLocation(forest)
-          .connectOneWay("cottage", Direction.NORTH, "forest");
+          .connectOneWay("cottage", Direction.NORTH, "forest")
+          .setStartingLocation("cottage")
+          .build();
 
       assertEquals(forest, cottage.getConnection(Direction.NORTH));
       assertNull(forest.getConnection(Direction.SOUTH));
@@ -125,8 +184,10 @@ class GameMapTest {
     void testSetStartingLocation_setsStartingLocation() {
       final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
 
-      gameMap.addLocation(cottage)
-          .setStartingLocation("cottage");
+      final GameMap gameMap = new GameMap.Builder()
+          .addLocation(cottage)
+          .setStartingLocation("cottage")
+          .build();
 
       assertEquals(cottage, gameMap.getStartingLocation());
     }
@@ -134,21 +195,14 @@ class GameMapTest {
     @Test
     @DisplayName("setStartingLocation - throws when location not found")
     void testSetStartingLocation_throwsWhenNotFound() {
+      final GameMap.Builder builder = new GameMap.Builder();
+
       final IllegalArgumentException exception = assertThrows(
           IllegalArgumentException.class,
-          () -> gameMap.setStartingLocation("cottage")
+          () -> builder.setStartingLocation("cottage")
       );
 
       assertTrue(exception.getMessage().contains("cottage"));
-    }
-
-    @Test
-    @DisplayName("getStartingLocation - throws when not set")
-    void testGetStartingLocation_throwsWhenNotSet() {
-      final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
-      gameMap.addLocation(cottage);
-
-      assertThrows(IllegalStateException.class, gameMap::getStartingLocation);
     }
 
     @Test
@@ -157,9 +211,12 @@ class GameMapTest {
       final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
       final Item key = TestItemFactory.createTestKey();
 
-      gameMap.addLocation(cottage)
+      new GameMap.Builder()
+          .addLocation(cottage)
           .addItem(key)
-          .placeItem("key", "cottage");
+          .placeItem("key", "cottage")
+          .setStartingLocation("cottage")
+          .build();
 
       assertTrue(cottage.hasItem("key"));
     }
@@ -168,11 +225,12 @@ class GameMapTest {
     @DisplayName("placeItem - throws when item not found")
     void testPlaceItem_throwsWhenItemNotFound() {
       final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
-      gameMap.addLocation(cottage);
+      final GameMap.Builder builder = new GameMap.Builder()
+          .addLocation(cottage);
 
       final IllegalArgumentException exception = assertThrows(
           IllegalArgumentException.class,
-          () -> gameMap.placeItem("key", "cottage")
+          () -> builder.placeItem("key", "cottage")
       );
 
       assertTrue(exception.getMessage().contains("key"));
@@ -182,11 +240,12 @@ class GameMapTest {
     @DisplayName("placeItem - throws when location not found")
     void testPlaceItem_throwsWhenLocationNotFound() {
       final Item key = TestItemFactory.createTestKey();
-      gameMap.addItem(key);
+      final GameMap.Builder builder = new GameMap.Builder()
+          .addItem(key);
 
       final IllegalArgumentException exception = assertThrows(
           IllegalArgumentException.class,
-          () -> gameMap.placeItem("key", "cottage")
+          () -> builder.placeItem("key", "cottage")
       );
 
       assertTrue(exception.getMessage().contains("cottage"));
@@ -203,11 +262,12 @@ class GameMapTest {
       final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
       final Item key = TestItemFactory.createTestKey();
 
-      final GameMap gameMap = new GameMap()
+      final GameMap gameMap = new GameMap.Builder()
           .addLocation(cottage)
           .addItem(key)
           .placeItem("key", "cottage")
-          .setStartingLocation("cottage");
+          .setStartingLocation("cottage")
+          .build();
 
       // Simulate taking the item
       cottage.removeItem(key);
@@ -223,13 +283,14 @@ class GameMapTest {
       final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
       cottage.setVisited(true);
 
-      final GameMap gameMap = new GameMap()
+      final GameMap gameMap = new GameMap.Builder()
           .addLocation(cottage)
-          .setStartingLocation("cottage");
+          .setStartingLocation("cottage")
+          .build();
 
       gameMap.resetMap();
 
-      assertTrue(!cottage.isVisited());
+      assertFalse(cottage.isVisited());
     }
   }
 
@@ -237,19 +298,18 @@ class GameMapTest {
   @DisplayName("Direction Opposites")
   class DirectionOpposites {
 
-    private GameMap gameMap;
-
-    @BeforeEach
-    void setUp() {
-      gameMap = new GameMap();
-      gameMap.addLocation(new Location("a", "Location A", "A"));
-      gameMap.addLocation(new Location("b", "Location B", "B"));
-    }
-
     @Test
     @DisplayName("connect NORTH creates SOUTH return")
     void testConnect_northCreatesSouthReturn() {
-      gameMap.connect("a", Direction.NORTH, "b");
+      final Location a = new Location("a", "Location A", "A");
+      final Location b = new Location("b", "Location B", "B");
+
+      final GameMap gameMap = new GameMap.Builder()
+          .addLocation(a)
+          .addLocation(b)
+          .connect("a", Direction.NORTH, "b")
+          .setStartingLocation("a")
+          .build();
 
       assertNotNull(gameMap.getLocation("b").getConnection(Direction.SOUTH));
     }
@@ -257,7 +317,15 @@ class GameMapTest {
     @Test
     @DisplayName("connect EAST creates WEST return")
     void testConnect_eastCreatesWestReturn() {
-      gameMap.connect("a", Direction.EAST, "b");
+      final Location a = new Location("a", "Location A", "A");
+      final Location b = new Location("b", "Location B", "B");
+
+      final GameMap gameMap = new GameMap.Builder()
+          .addLocation(a)
+          .addLocation(b)
+          .connect("a", Direction.EAST, "b")
+          .setStartingLocation("a")
+          .build();
 
       assertNotNull(gameMap.getLocation("b").getConnection(Direction.WEST));
     }
@@ -265,7 +333,15 @@ class GameMapTest {
     @Test
     @DisplayName("connect UP creates DOWN return")
     void testConnect_upCreatesDownReturn() {
-      gameMap.connect("a", Direction.UP, "b");
+      final Location a = new Location("a", "Location A", "A");
+      final Location b = new Location("b", "Location B", "B");
+
+      final GameMap gameMap = new GameMap.Builder()
+          .addLocation(a)
+          .addLocation(b)
+          .connect("a", Direction.UP, "b")
+          .setStartingLocation("a")
+          .build();
 
       assertNotNull(gameMap.getLocation("b").getConnection(Direction.DOWN));
     }
@@ -273,7 +349,15 @@ class GameMapTest {
     @Test
     @DisplayName("connect NORTHEAST creates SOUTHWEST return")
     void testConnect_northeastCreatesSouthwestReturn() {
-      gameMap.connect("a", Direction.NORTHEAST, "b");
+      final Location a = new Location("a", "Location A", "A");
+      final Location b = new Location("b", "Location B", "B");
+
+      final GameMap gameMap = new GameMap.Builder()
+          .addLocation(a)
+          .addLocation(b)
+          .connect("a", Direction.NORTHEAST, "b")
+          .setStartingLocation("a")
+          .build();
 
       assertNotNull(gameMap.getLocation("b").getConnection(Direction.SOUTHWEST));
     }
@@ -281,10 +365,17 @@ class GameMapTest {
     @Test
     @DisplayName("connect IN creates OUT return")
     void testConnect_inCreatesOutReturn() {
-      gameMap.connect("a", Direction.IN, "b");
+      final Location a = new Location("a", "Location A", "A");
+      final Location b = new Location("b", "Location B", "B");
+
+      final GameMap gameMap = new GameMap.Builder()
+          .addLocation(a)
+          .addLocation(b)
+          .connect("a", Direction.IN, "b")
+          .setStartingLocation("a")
+          .build();
 
       assertNotNull(gameMap.getLocation("b").getConnection(Direction.OUT));
     }
   }
-
 }

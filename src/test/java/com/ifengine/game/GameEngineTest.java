@@ -1097,10 +1097,11 @@ class GameEngineTest {
     @DisplayName("skipIntro - player starts in PLAYING state and commands work")
     void testSkipIntro_playerStartsInPlayingState() {
       // Given
-      final GameMap map = new GameMap()
+      final GameMap map = new GameMap.Builder()
           .addLocation(new Location("start", "Start location.", "Start"))
           .setStartingLocation("start")
-          .skipIntro();
+          .skipIntro()
+          .build();
       final GameEngine engine = new GameEngine(map);
 
       // When
@@ -1116,7 +1117,7 @@ class GameEngineTest {
     @DisplayName("withIntro - handler controls state transition")
     void testWithIntro_handlerControlsStateTransition() {
       // Given
-      final GameMap map = new GameMap()
+      final GameMap map = new GameMap.Builder()
           .addLocation(new Location("start", "Start location.", "Start"))
           .setStartingLocation("start")
           .withIntro("Type 'begin' to start.", (player, response, gameMap) -> {
@@ -1124,7 +1125,8 @@ class GameEngineTest {
               return IntroResult.playing("Starting!");
             }
             return IntroResult.waiting("Please type 'begin'.");
-          });
+          })
+          .build();
       final GameEngine engine = new GameEngine(map);
 
       // When - wrong answer keeps waiting
@@ -1140,9 +1142,10 @@ class GameEngineTest {
     @DisplayName("default - uses standard yes/no logic when no intro configured")
     void testDefault_usesStandardYesNoLogic() {
       // Given
-      final GameMap map = new GameMap()
+      final GameMap map = new GameMap.Builder()
           .addLocation(new Location("start", "Start location.", "Start"))
-          .setStartingLocation("start");
+          .setStartingLocation("start")
+          .build();
       final GameEngine engine = new GameEngine(map);
 
       // When
