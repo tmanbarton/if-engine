@@ -5,6 +5,8 @@ import com.ifengine.Item;
 import com.ifengine.Location;
 import com.ifengine.game.GameEngine;
 import com.ifengine.game.GameMap;
+
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -91,22 +93,18 @@ public final class GameExample {
 
         // Progressive hint system
         .withHints(hints -> hints
-            .addPhase("GET_LANTERN",
+            .addPhase("get-lantern",
                 "There might be something useful in this cottage...",
                 "Check around for a light source. You may need it later.",
                 "Take the brass lantern from the shelf.")
-            .addPhase("FIND_KEY",
+            .addPhase("find-key",
                 "The forest beckons. Perhaps there's something to discover.",
                 "Explore the clearing to the east. Something glints in the grass.",
                 "Go north, then east. Take the rusty key from the clearing.")
-            .addPhase("OPEN_CHEST",
+            .addPhase("open-chest",
                 "That key must fit something...",
                 "Remember the chest in the cottage? Return and try the key.",
                 "Go back to the cottage and type 'open chest'.")
-            .addPhase("ADVENTURE_CONTINUES",
-                "You have everything you need for now.",
-                "Explore freely. Who knows what you might find?",
-                "The adventure continues... try different commands!")
             // Check later-game states first; earliest hint goes in else clause.
             // This ensures new players get the starting hint when they first type "hint".
             .determiner((player, gameMap) -> {
@@ -114,18 +112,70 @@ public final class GameExample {
               final var chest = cottage.getItems().stream()
                   .filter(item -> item.getName().equals("chest"))
                   .findFirst();
-              if (chest.isPresent() && chest.get() instanceof Lockbox lockbox
-                  && lockbox.isOpen()) {
-                return "ADVENTURE_CONTINUES";
-              }
               if (player.hasItem("key")) {
-                return "OPEN_CHEST";
+                return "open-chest";
               }
               if (player.hasItem("lantern")) {
-                return "FIND_KEY";
+                return "find-key";
               }
-              return "GET_LANTERN";
+              return "get-lantern";
             }))
+
+        // Custom command: "listen" - hear ambient sounds based on location
+        .withCommand("listen", List.of("hear"), (player, cmd, ctx) -> {
+          final String locationName = ctx.getCurrentLocation().getName();
+          return switch (locationName) {
+            case "cottage" -> "You hear the creak of old floorboards settling and "
+                + "the gentle whisper of wind through gaps in the window frame.";
+            case "forest" -> "Birdsong echoes through the canopy above. "
+                + "Leaves rustle softly in the breeze.";
+            case "clearing" -> "Bees hum lazily among the wildflowers. "
+                + "A distant woodpecker taps rhythmically.";
+            default -> "You pause and listen, but hear nothing unusual.";
+          };
+        })
+
+        // Custom command: "knock on <object>" - demonstrates ParsedCommand usage
+        // Supports: "knock on chest", "knock chest", "knock on door", "rap on chest"
+        .withCommand("knock", List.of("rap", "tap"), (player, cmd, ctx) -> {
+          // Get the target - could be direct object or indirect object after "on"
+          String target = cmd.getFirstDirectObject();
+          if (target.isEmpty()) {
+            target = cmd.getFirstIndirectObject();
+          }
+          if (target.isEmpty()) {
+            return "Knock on what?";
+          }
+
+          // Check what the player is trying to knock on
+          final String normalizedTarget = target.toLowerCase();
+          if (normalizedTarget.contains("chest") || normalizedTarget.contains("box")) {
+            // Check if chest is at current location
+            final boolean chestHere = ctx.getCurrentLocation().getItems().stream()
+                .anyMatch(item -> item.getName().equals("chest"));
+            if (!chestHere) {
+              return "There's no chest here.";
+            }
+            return "You rap your knuckles on the wooden chest. "
+                + "A hollow thud suggests there might be something inside.";
+          }
+
+          if (normalizedTarget.contains("door")) {
+            if (ctx.getCurrentLocation().getName().equals("cottage")) {
+              return "You knock on the wooden door. No one answers, but it creaks slightly ajar.";
+            }
+            return "There's no door here.";
+          }
+
+          if (normalizedTarget.contains("tree")) {
+            if (!ctx.getCurrentLocation().getName().equals("cottage")) {
+              return "You knock on the tree trunk. It feels solid and ancient.";
+            }
+            return "There are no trees inside the cottage.";
+          }
+
+          return "You can't knock on that.";
+        })
 
         .build();
   }
