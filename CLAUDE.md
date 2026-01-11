@@ -103,14 +103,13 @@ void shouldNotTakeItemWhenNotPresent() { }
 
 ### Test Structure
 - Use `@Nested` classes for logical grouping
-- Use `@DisplayName` for readable descriptions
+- Use `@DisplayName` on tests for readable descriptions. DON'T just repeat the test name.
 - Follow Given/When/Then structure
 - Use `final` for all test variables
-- **Never use `.contains()` for string assertions** - verify the complete string
+- **Never use `.contains()` for string assertions when asserting responses from the game** - verify the complete string
 
 ```java
 @Nested
-@DisplayName("Take command response tests")
 class TakeCommand {
     @Test
     @DisplayName("returns success message when item is present")

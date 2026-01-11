@@ -77,22 +77,23 @@ public class Player {
   }
 
   /**
-   * Finds an item in inventory by name (case-insensitive).
-   * @param itemName the name of the item to find
+   * Finds an item in inventory by name or alias (case-insensitive).
+   * @param itemName the name or alias of the item to find
    * @return the first matching item, or null if not found
    */
   @Nullable
   public Item getInventoryItemByName(@Nonnull final String itemName) {
     return inventory.stream()
-        .filter(item -> item.getName().equalsIgnoreCase(itemName))
+        .filter(item -> item.matchesName(itemName))
         .findFirst()
         .orElse(null);
   }
 
   /**
-   * Checks if player has an item with the given name.
+   * Checks if player has an item with the given name or alias.
    * Case-insensitive search through inventory.
-   * @param itemName the name of the item to check for
+   * @param itemName the name or alias of the item to check for
+   * @return true if an item with matching name or alias is in inventory
    */
   public boolean hasItem(@Nonnull final String itemName) {
     return getInventoryItemByName(itemName) != null;

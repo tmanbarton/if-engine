@@ -79,6 +79,18 @@ class PlayerTest {
     }
 
     @Test
+    @DisplayName("Test hasItem - returns true when searching by alias")
+    void testHasItem_matchesByAlias() {
+      final Item item = new Item("brass key", "A shiny brass key",
+          "A brass key lies here", "A shiny brass key", Set.of("key", "shiny key"));
+      player.addItem(item);
+
+      assertTrue(player.hasItem("key"));
+      assertTrue(player.hasItem("shiny key"));
+      assertTrue(player.hasItem("brass key"));
+    }
+
+    @Test
     @DisplayName("Test getInventoryItemByName - returns item when present")
     void testGetInventoryItemByName_itemPresent() {
       final Item key = TestItemFactory.createTestKey();
