@@ -191,13 +191,14 @@ public final class GameExample {
   }
 
   /**
-   * Creates the clearing location with scenery demonstrating custom interactions.
+   * Creates the clearing location with scenery demonstrating custom interactions
+   * and the new scenery container API.
    */
   private static Location createClearing() {
     final Location clearing = new Location(
         "clearing",
         "You emerge into a sun-dappled clearing. Wildflowers dot the grass. "
-            + "The forest path leads west.",
+            + "A weathered stone bench sits beneath an old oak. The forest path leads west.",
         "In a sunny clearing.");
 
     // Scenery with standard interaction + custom interaction for use with custom commands
@@ -207,6 +208,18 @@ public final class GameExample {
         .withCustomInteraction("smell", "The sweet fragrance of wildflowers fills your nose.")
         .build();
     clearing.addSceneryObject(wildflowers);
+
+    // Scenery container using the simplified builder API
+
+    // Container example: a hollow tree stump that uses "in" preposition - "put X in stump"
+    final SceneryObject stump = SceneryObject.builder("stump")
+        .withAliases("tree stump", "hollow stump")
+        .withInteraction(InteractionType.LOOK, "A hollow tree stump with a dark cavity inside.")
+        .asContainer()
+        .withPrepositions("in", "into", "inside")  // Custom prepositions for enclosures
+        .withAllowedItems("key", "coin", "ring")  // Only allow small items to fit
+        .build();
+    clearing.addSceneryObject(stump);
 
     return clearing;
   }

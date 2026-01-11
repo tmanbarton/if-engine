@@ -29,7 +29,6 @@ class CodeBasedUnlockIntegrationTest {
   private static final String SESSION_ID = "test-session";
 
   @Nested
-  @DisplayName("Immediate Unlock with Code")
   class ImmediateUnlockWithCode {
 
     @Test
@@ -79,7 +78,6 @@ class CodeBasedUnlockIntegrationTest {
   }
 
   @Nested
-  @DisplayName("Prompt Flow")
   class PromptFlow {
 
     @Test
@@ -134,7 +132,6 @@ class CodeBasedUnlockIntegrationTest {
   }
 
   @Nested
-  @DisplayName("Open with Code")
   class OpenWithCode {
 
     @Test
@@ -182,7 +179,6 @@ class CodeBasedUnlockIntegrationTest {
   }
 
   @Nested
-  @DisplayName("Word-Based Unlock")
   class WordBasedUnlock {
 
     @Test
@@ -241,7 +237,6 @@ class CodeBasedUnlockIntegrationTest {
   }
 
   @Nested
-  @DisplayName("Implied Object with Code")
   class ImpliedObjectWithCode {
 
     @Test

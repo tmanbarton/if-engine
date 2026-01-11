@@ -37,7 +37,6 @@ class ObjectResolverTest {
   }
 
   @Nested
-  @DisplayName("Basic Resolution")
   class BasicResolution {
 
     @Test
@@ -100,7 +99,6 @@ class ObjectResolverTest {
   }
 
   @Nested
-  @DisplayName("Priority Resolution")
   class PriorityResolution {
 
     @Test
@@ -159,7 +157,6 @@ class ObjectResolverTest {
   }
 
   @Nested
-  @DisplayName("Implied Object Resolution")
   class ImpliedObjectResolution {
 
     @Test
@@ -246,7 +243,6 @@ class ObjectResolverTest {
   }
 
   @Nested
-  @DisplayName("Pronoun Detection")
   class PronounDetection {
 
     @Test
@@ -297,7 +293,6 @@ class ObjectResolverTest {
   }
 
   @Nested
-  @DisplayName("Whitespace Handling")
   class WhitespaceHandling {
 
     @Test
@@ -335,7 +330,6 @@ class ObjectResolverTest {
   }
 
   @Nested
-  @DisplayName("Multi-Word Object Names")
   class MultiWordObjectNames {
 
     @Test
@@ -374,7 +368,6 @@ class ObjectResolverTest {
   }
 
   @Nested
-  @DisplayName("Resolution Result API")
   class ResolutionResultAPI {
 
     @Test

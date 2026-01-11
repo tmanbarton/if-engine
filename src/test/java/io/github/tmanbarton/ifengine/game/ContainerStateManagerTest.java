@@ -42,7 +42,6 @@ class ContainerStateManagerTest {
   }
 
   @Nested
-  @DisplayName("Inventory Container Operations")
   class InventoryContainerOperations {
 
     @Test
@@ -143,7 +142,6 @@ class ContainerStateManagerTest {
   }
 
   @Nested
-  @DisplayName("Location Container Operations")
   class LocationContainerOperations {
 
     @Test
@@ -224,7 +222,6 @@ class ContainerStateManagerTest {
   }
 
   @Nested
-  @DisplayName("Mixed Container Operations")
   class MixedContainerOperations {
 
     @Test

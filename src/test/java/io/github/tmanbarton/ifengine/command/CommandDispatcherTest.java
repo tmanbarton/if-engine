@@ -80,7 +80,6 @@ class CommandDispatcherTest {
   }
 
   @Nested
-  @DisplayName("Handler Registration")
   class HandlerRegistration {
 
     @Test
@@ -110,7 +109,6 @@ class CommandDispatcherTest {
   }
 
   @Nested
-  @DisplayName("Command Dispatch")
   class CommandDispatch {
 
     @Test
@@ -140,7 +138,6 @@ class CommandDispatcherTest {
   }
 
   @Nested
-  @DisplayName("Handler Unregistration")
   class HandlerUnregistration {
 
     @Test
@@ -170,7 +167,6 @@ class CommandDispatcherTest {
   }
 
   @Nested
-  @DisplayName("Query Methods")
   class QueryMethods {
 
     @Test

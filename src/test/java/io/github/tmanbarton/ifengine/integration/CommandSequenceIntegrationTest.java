@@ -27,7 +27,6 @@ class CommandSequenceIntegrationTest {
   private static final ResponseProvider RESPONSES = new DefaultResponses();
 
   @Nested
-  @DisplayName("Then Sequences")
   class ThenSequences {
 
     @Test
@@ -65,7 +64,6 @@ class CommandSequenceIntegrationTest {
   }
 
   @Nested
-  @DisplayName("Response Format")
   class ResponseFormat {
 
     @Test

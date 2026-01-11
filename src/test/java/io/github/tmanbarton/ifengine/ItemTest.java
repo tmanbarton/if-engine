@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ItemTest {
 
   @Nested
-  @DisplayName("Name Matching")
   class NameMatching {
 
     @Test
@@ -65,7 +64,6 @@ class ItemTest {
   }
 
   @Nested
-  @DisplayName("Equality")
   class Equality {
 
     @Test

@@ -48,7 +48,6 @@ class TakeHandlerTest {
   }
 
   @Nested
-  @DisplayName("Basic Take")
   class BasicTake {
 
     @Test
@@ -126,7 +125,6 @@ class TakeHandlerTest {
   }
 
   @Nested
-  @DisplayName("Take All")
   class TakeAll {
 
     @Test
@@ -184,7 +182,6 @@ class TakeHandlerTest {
   }
 
   @Nested
-  @DisplayName("Inferred Object")
   class InferredObject {
 
     @Test
@@ -219,7 +216,6 @@ class TakeHandlerTest {
   }
 
   @Nested
-  @DisplayName("Supported Verbs")
   class SupportedVerbs {
 
     @Test
@@ -263,7 +259,6 @@ class TakeHandlerTest {
   }
 
   @Nested
-  @DisplayName("Case Sensitivity")
   class CaseSensitivity {
 
     @Test
@@ -293,7 +288,6 @@ class TakeHandlerTest {
   }
 
   @Nested
-  @DisplayName("Item State After Take")
   class ItemStateAfterTake {
 
     @Test

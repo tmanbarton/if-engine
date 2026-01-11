@@ -2,8 +2,10 @@ package io.github.tmanbarton.ifengine;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -19,8 +21,33 @@ public record SceneryObject(
     @Nonnull String name,
     @Nonnull Set<String> aliases,
     @Nonnull Map<InteractionType, String> responses,
-    @Nonnull Map<String, String> customResponses
+    @Nonnull Map<String, String> customResponses,
+    boolean isContainer,
+    @Nonnull Set<String> allowedItemNames,
+    @Nonnull List<String> prepositions
 ) {
+
+  /**
+   * Gets the allowed item names for this container.
+   * Empty set means any item is allowed.
+   *
+   * @return the set of allowed item names
+   */
+  @Nonnull
+  public Set<String> getAllowedItemNames() {
+    return allowedItemNames;
+  }
+
+  /**
+   * Gets the valid prepositions for this container.
+   * Returns empty list for non-containers.
+   *
+   * @return the list of valid prepositions
+   */
+  @Nonnull
+  public List<String> getPrepositions() {
+    return prepositions;
+  }
 
   /**
    * Creates a new builder for constructing SceneryObject instances.
@@ -98,6 +125,9 @@ public record SceneryObject(
     private final Set<String> aliases = new HashSet<>();
     private final Map<InteractionType, String> responses = new HashMap<>();
     private final Map<String, String> customResponses = new HashMap<>();
+    private boolean isContainer = false;
+    private final Set<String> allowedItemNames = new HashSet<>();
+    private final List<String> prepositions = new ArrayList<>();
 
     private Builder(@Nonnull final String name) {
       this.name = name;
@@ -184,6 +214,62 @@ public record SceneryObject(
     }
 
     /**
+     * Marks this scenery object as a container that can hold items.
+     * <p>
+     * Containers can have items placed on/in them using the "put" command.
+     * By default, containers use "on" and "onto" prepositions.
+     *
+     * @return this builder for method chaining
+     */
+    @Nonnull
+    public Builder asContainer() {
+      this.isContainer = true;
+      return this;
+    }
+
+    /**
+     * Sets which items can be placed in this container.
+     * <p>
+     * If not called or called with no arguments, any item can be placed.
+     *
+     * @param itemNames the names of items allowed in this container
+     * @return this builder for method chaining
+     */
+    @Nonnull
+    public Builder withAllowedItems(@Nonnull final String... itemNames) {
+      for (final String itemName : itemNames) {
+        if (itemName != null && !itemName.trim().isEmpty()) {
+          allowedItemNames.add(itemName.trim());
+        }
+      }
+      return this;
+    }
+
+    /**
+     * Sets the valid prepositions for this container.
+     * <p>
+     * Common prepositions:
+     * <ul>
+     *   <li>"on", "onto" - for surfaces like tables, shelves</li>
+     *   <li>"in", "into" - for enclosures like drawers, boxes</li>
+     * </ul>
+     * <p>
+     * If not called, defaults to "on" and "onto" for containers.
+     *
+     * @param preps the valid prepositions for this container
+     * @return this builder for method chaining
+     */
+    @Nonnull
+    public Builder withPrepositions(@Nonnull final String... preps) {
+      for (final String prep : preps) {
+        if (prep != null && !prep.trim().isEmpty()) {
+          prepositions.add(prep.trim());
+        }
+      }
+      return this;
+    }
+
+    /**
      * Builds the SceneryObject instance with the configured properties.
      *
      * @return a new SceneryObject instance
@@ -194,7 +280,26 @@ public record SceneryObject(
       if (responses.isEmpty() && customResponses.isEmpty()) {
         throw new IllegalStateException("SceneryObject must have at least one interaction");
       }
-      return new SceneryObject(name, Set.copyOf(aliases), Map.copyOf(responses), Map.copyOf(customResponses));
+
+      // Determine prepositions: use specified ones, or defaults for containers, or empty
+      final List<String> finalPrepositions;
+      if (!prepositions.isEmpty()) {
+        finalPrepositions = List.copyOf(prepositions);
+      } else if (isContainer) {
+        finalPrepositions = List.of("on", "onto");
+      } else {
+        finalPrepositions = List.of();
+      }
+
+      return new SceneryObject(
+          name,
+          Set.copyOf(aliases),
+          Map.copyOf(responses),
+          Map.copyOf(customResponses),
+          isContainer,
+          Set.copyOf(allowedItemNames),
+          finalPrepositions
+      );
     }
   }
 }

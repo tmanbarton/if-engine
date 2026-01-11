@@ -40,7 +40,6 @@ class GameEngineTest {
   private static final ResponseProvider RESPONSES = new DefaultResponses();
 
   @Nested
-  @DisplayName("Session Management")
   class SessionManagement {
 
     @Test
@@ -108,7 +107,6 @@ class GameEngineTest {
   }
 
   @Nested
-  @DisplayName("Intro Flow")
   class IntroFlow {
 
     @Test
@@ -241,7 +239,6 @@ class GameEngineTest {
   }
 
   @Nested
-  @DisplayName("Restart Flow")
   class RestartFlow {
 
     @Test
@@ -374,7 +371,6 @@ class GameEngineTest {
   }
 
   @Nested
-  @DisplayName("Quit Flow")
   class QuitFlow {
 
     @Test
@@ -487,7 +483,6 @@ class GameEngineTest {
   }
 
   @Nested
-  @DisplayName("Movement Handling")
   class MovementHandling {
 
     @Test
@@ -620,7 +615,6 @@ class GameEngineTest {
   }
 
   @Nested
-  @DisplayName("Command Routing")
   class CommandRouting {
 
     @Test
@@ -701,7 +695,6 @@ class GameEngineTest {
   }
 
   @Nested
-  @DisplayName("Semantic Validation")
   class SemanticValidation {
 
     @Test
@@ -721,7 +714,6 @@ class GameEngineTest {
   }
 
   @Nested
-  @DisplayName("JSON Response Format")
   class JsonResponseFormat {
 
     @Test
@@ -757,7 +749,6 @@ class GameEngineTest {
   }
 
   @Nested
-  @DisplayName("Unlock Code Input Flow")
   class UnlockCodeInputFlow {
 
     @Test
@@ -932,7 +923,6 @@ class GameEngineTest {
   }
 
   @Nested
-  @DisplayName("Open Code Input Flow")
   class OpenCodeInputFlow {
 
     @Test
@@ -1090,7 +1080,6 @@ class GameEngineTest {
   }
 
   @Nested
-  @DisplayName("Custom Intro Flow")
   class CustomIntroFlow {
 
     @Test

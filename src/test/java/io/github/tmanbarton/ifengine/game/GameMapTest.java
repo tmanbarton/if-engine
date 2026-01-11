@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class GameMapTest {
 
   @Nested
-  @DisplayName("Build Validation")
   class BuildValidation {
 
     @Test
@@ -73,7 +72,6 @@ class GameMapTest {
   }
 
   @Nested
-  @DisplayName("Builder API")
   class BuilderApi {
 
     @Test
@@ -225,7 +223,6 @@ class GameMapTest {
   }
 
   @Nested
-  @DisplayName("Reset")
   class Reset {
 
     @Test
@@ -266,7 +263,6 @@ class GameMapTest {
   }
 
   @Nested
-  @DisplayName("Direction Opposites")
   class DirectionOpposites {
 
     @Test

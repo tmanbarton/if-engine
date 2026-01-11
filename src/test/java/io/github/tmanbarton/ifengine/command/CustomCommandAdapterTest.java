@@ -51,7 +51,6 @@ class CustomCommandAdapterTest {
   }
 
   @Nested
-  @DisplayName("getSupportedVerbs")
   class GetSupportedVerbs {
 
     @Test
@@ -90,7 +89,6 @@ class CustomCommandAdapterTest {
   }
 
   @Nested
-  @DisplayName("handle")
   class Handle {
 
     @Test

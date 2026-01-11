@@ -27,7 +27,6 @@ class CustomCommandIntegrationTest {
   private static final String SESSION_ID = "test-session";
 
   @Nested
-  @DisplayName("Custom command registration")
   class CustomCommandRegistration {
 
     @Test

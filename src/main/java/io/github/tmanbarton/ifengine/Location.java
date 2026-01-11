@@ -102,8 +102,22 @@ public class Location {
     return getItemByName(itemName) != null;
   }
 
+  /**
+   * Adds a scenery object to this location.
+   * <p>
+   * If the scenery object is configured as a container (via {@code asContainer()} on its builder),
+   * a {@link LocationContainer} is automatically created and registered.
+   *
+   * @param sceneryObject the scenery object to add
+   */
   public void addSceneryObject(@Nonnull final SceneryObject sceneryObject) {
     sceneryObjects.add(sceneryObject);
+
+    // Auto-create LocationContainer if scenery is configured as a container
+    if (sceneryObject.isContainer()) {
+      final LocationContainer container = new LocationContainer(sceneryObject);
+      locationContainers.add(container);
+    }
   }
 
   public void removeSceneryObject(@Nonnull final SceneryObject sceneryObject) {

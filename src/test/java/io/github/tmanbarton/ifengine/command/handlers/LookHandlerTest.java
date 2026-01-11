@@ -50,7 +50,6 @@ class LookHandlerTest {
   }
 
   @Nested
-  @DisplayName("Look Around")
   class LookAround {
 
     @Test
@@ -87,7 +86,6 @@ class LookHandlerTest {
   }
 
   @Nested
-  @DisplayName("Look At Object")
   class LookAtObject {
 
     @Test
@@ -147,7 +145,6 @@ class LookHandlerTest {
   }
 
   @Nested
-  @DisplayName("Look At Scenery")
   class LookAtScenery {
 
     @Test
@@ -180,7 +177,6 @@ class LookHandlerTest {
   }
 
   @Nested
-  @DisplayName("Supported Verbs")
   class SupportedVerbs {
 
     @Test
@@ -233,7 +229,6 @@ class LookHandlerTest {
   }
 
   @Nested
-  @DisplayName("Case Sensitivity")
   class CaseSensitivity {
 
     @Test

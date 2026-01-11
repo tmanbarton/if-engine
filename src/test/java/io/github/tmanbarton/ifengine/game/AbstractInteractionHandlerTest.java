@@ -80,7 +80,6 @@ class AbstractInteractionHandlerTest {
   }
 
   @Nested
-  @DisplayName("Object Inference (No Object Specified)")
   class ObjectInference {
 
     @Test
@@ -143,7 +142,6 @@ class AbstractInteractionHandlerTest {
   }
 
   @Nested
-  @DisplayName("Real Item Fallback")
   class RealItemFallback {
 
     @Test
@@ -188,7 +186,6 @@ class AbstractInteractionHandlerTest {
   }
 
   @Nested
-  @DisplayName("Scenery Interaction")
   class SceneryInteraction {
 
     @Test
@@ -257,7 +254,6 @@ class AbstractInteractionHandlerTest {
   }
 
   @Nested
-  @DisplayName("Not Present Fallback")
   class NotPresentFallback {
 
     @Test
@@ -283,7 +279,6 @@ class AbstractInteractionHandlerTest {
   }
 
   @Nested
-  @DisplayName("Priority Order")
   class PriorityOrder {
 
     @Test

@@ -4,7 +4,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -19,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class SceneryObjectTest {
 
   @Nested
-  @DisplayName("Builder")
   class Builder {
 
     @Test
@@ -71,7 +72,6 @@ class SceneryObjectTest {
   }
 
   @Nested
-  @DisplayName("Name Matching")
   class NameMatching {
 
     @Test
@@ -120,7 +120,6 @@ class SceneryObjectTest {
   }
 
   @Nested
-  @DisplayName("Interaction Responses")
   class InteractionResponses {
 
     @Test
@@ -152,7 +151,6 @@ class SceneryObjectTest {
   }
 
   @Nested
-  @DisplayName("Custom Interactions")
   class CustomInteractions {
 
     @Test
@@ -189,6 +187,97 @@ class SceneryObjectTest {
 
       assertEquals(2, scenery.customResponses().size());
       assertTrue(scenery.responses().isEmpty());
+    }
+  }
+
+  @Nested
+  class ContainerConfiguration {
+
+    @Test
+    @DisplayName("Test asContainer - marks scenery as container")
+    void testAsContainer_marksAsContainer() {
+      final SceneryObject scenery = SceneryObject.builder("table")
+          .withInteraction(InteractionType.LOOK, "A wooden table.")
+          .asContainer()
+          .build();
+
+      assertTrue(scenery.isContainer());
+    }
+
+    @Test
+    @DisplayName("Test isContainer - returns false by default")
+    void testIsContainer_defaultFalse() {
+      final SceneryObject scenery = SceneryObject.builder("tree")
+          .withInteraction(InteractionType.LOOK, "A tree.")
+          .build();
+
+      assertFalse(scenery.isContainer());
+    }
+
+    @Test
+    @DisplayName("Test withAllowedItems - sets allowed item names")
+    void testWithAllowedItems_setsAllowedItems() {
+      final SceneryObject scenery = SceneryObject.builder("table")
+          .withInteraction(InteractionType.LOOK, "A wooden table.")
+          .asContainer()
+          .withAllowedItems("book", "key", "coin")
+          .build();
+
+      final Set<String> allowed = scenery.getAllowedItemNames();
+      assertEquals(3, allowed.size());
+      assertTrue(allowed.contains("book"));
+      assertTrue(allowed.contains("key"));
+      assertTrue(allowed.contains("coin"));
+    }
+
+    @Test
+    @DisplayName("Test getAllowedItemNames - returns empty set by default")
+    void testGetAllowedItemNames_defaultEmpty() {
+      final SceneryObject scenery = SceneryObject.builder("table")
+          .withInteraction(InteractionType.LOOK, "A wooden table.")
+          .asContainer()
+          .build();
+
+      assertTrue(scenery.getAllowedItemNames().isEmpty());
+    }
+
+    @Test
+    @DisplayName("Test withPrepositions - sets valid prepositions")
+    void testWithPrepositions_setsPrepositions() {
+      final SceneryObject scenery = SceneryObject.builder("drawer")
+          .withInteraction(InteractionType.LOOK, "A wooden drawer.")
+          .asContainer()
+          .withPrepositions("in", "into")
+          .build();
+
+      final List<String> prepositions = scenery.getPrepositions();
+      assertEquals(2, prepositions.size());
+      assertTrue(prepositions.contains("in"));
+      assertTrue(prepositions.contains("into"));
+    }
+
+    @Test
+    @DisplayName("Test getPrepositions - defaults to on/onto for containers")
+    void testGetPrepositions_defaultOnOnto() {
+      final SceneryObject scenery = SceneryObject.builder("table")
+          .withInteraction(InteractionType.LOOK, "A wooden table.")
+          .asContainer()
+          .build();
+
+      final List<String> prepositions = scenery.getPrepositions();
+      assertEquals(2, prepositions.size());
+      assertTrue(prepositions.contains("on"));
+      assertTrue(prepositions.contains("onto"));
+    }
+
+    @Test
+    @DisplayName("Test getPrepositions - returns empty for non-containers")
+    void testGetPrepositions_emptyForNonContainers() {
+      final SceneryObject scenery = SceneryObject.builder("tree")
+          .withInteraction(InteractionType.LOOK, "A tree.")
+          .build();
+
+      assertTrue(scenery.getPrepositions().isEmpty());
     }
   }
 }

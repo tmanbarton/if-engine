@@ -23,7 +23,6 @@ class VocabularyManagerTest {
   }
 
   @Nested
-  @DisplayName("Verb Normalization")
   class VerbNormalization {
 
     @Test
@@ -139,7 +138,6 @@ class VocabularyManagerTest {
   }
 
   @Nested
-  @DisplayName("Direction Normalization")
   class DirectionNormalization {
 
     @Test
@@ -240,7 +238,6 @@ class VocabularyManagerTest {
   }
 
   @Nested
-  @DisplayName("Direction Checking")
   class DirectionChecking {
 
     @Test
@@ -295,7 +292,6 @@ class VocabularyManagerTest {
   }
 
   @Nested
-  @DisplayName("Ambiguous Word Resolution")
   class AmbiguousWordResolution {
 
     @Test
@@ -365,7 +361,6 @@ class VocabularyManagerTest {
   }
 
   @Nested
-  @DisplayName("Article and Preposition Detection")
   class ArticlePrepositionDetection {
 
     @Test
@@ -430,7 +425,6 @@ class VocabularyManagerTest {
   }
 
   @Nested
-  @DisplayName("Semantic Validation")
   class SemanticValidation {
 
     @Test
@@ -515,7 +509,6 @@ class VocabularyManagerTest {
   }
 
   @Nested
-  @DisplayName("Strip Articles")
   class StripArticles {
 
     @Test
@@ -552,7 +545,6 @@ class VocabularyManagerTest {
   }
 
   @Nested
-  @DisplayName("Custom Vocabulary")
   class CustomVocabulary {
 
     @Test

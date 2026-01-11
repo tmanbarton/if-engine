@@ -34,7 +34,6 @@ class CommandParserTest {
   }
 
   @Nested
-  @DisplayName("Simple Command Parsing")
   class SimpleCommandParsing {
 
     @Test
@@ -124,7 +123,6 @@ class CommandParserTest {
   }
 
   @Nested
-  @DisplayName("Direction Parsing")
   class DirectionParsing {
 
     @Test
@@ -217,7 +215,6 @@ class CommandParserTest {
   }
 
   @Nested
-  @DisplayName("Preposition Handling")
   class PrepositionHandling {
 
     @Test
@@ -275,7 +272,6 @@ class CommandParserTest {
   }
 
   @Nested
-  @DisplayName("Command Type Classification")
   class CommandTypeClassification {
 
     @Test
@@ -304,7 +300,6 @@ class CommandParserTest {
   }
 
   @Nested
-  @DisplayName("Conjunction Parsing")
   class ConjunctionParsing {
 
     @Test
@@ -343,7 +338,6 @@ class CommandParserTest {
   }
 
   @Nested
-  @DisplayName("Sequence Parsing")
   class SequenceParsing {
 
     @Test
@@ -383,7 +377,6 @@ class CommandParserTest {
   }
 
   @Nested
-  @DisplayName("Edge Cases")
   class EdgeCases {
 
     @Test
@@ -443,7 +436,6 @@ class CommandParserTest {
   }
 
   @Nested
-  @DisplayName("Verb Synonyms")
   class VerbSynonyms {
 
     @Test

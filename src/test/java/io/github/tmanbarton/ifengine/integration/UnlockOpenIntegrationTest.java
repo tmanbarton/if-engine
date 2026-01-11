@@ -33,7 +33,6 @@ class UnlockOpenIntegrationTest {
   private static final String SESSION_ID = "test-session";
 
   @Nested
-  @DisplayName("Cross-Location Key Usage")
   class CrossLocationKeyUsage {
 
     @Test
@@ -109,7 +108,6 @@ class UnlockOpenIntegrationTest {
   }
 
   @Nested
-  @DisplayName("Error Recovery Flow")
   class ErrorRecoveryFlow {
 
     @Test

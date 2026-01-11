@@ -41,7 +41,6 @@ class PlayerTest {
   }
 
   @Nested
-  @DisplayName("Inventory Management")
   class InventoryManagement {
 
     @Test
@@ -93,7 +92,6 @@ class PlayerTest {
   }
 
   @Nested
-  @DisplayName("Container State Tracking")
   class ContainerStateTracking {
 
     @Test
@@ -146,7 +144,6 @@ class PlayerTest {
   }
 
   @Nested
-  @DisplayName("Reset Functionality")
   class ResetFunctionality {
 
     @Test
@@ -183,7 +180,6 @@ class PlayerTest {
   }
 
   @Nested
-  @DisplayName("Hint Tracking")
   class HintTracking {
 
     @Test
@@ -209,7 +205,6 @@ class PlayerTest {
   }
 
   @Nested
-  @DisplayName("Formatted Inventory")
   class FormattedInventory {
 
     @Test
@@ -241,7 +236,6 @@ class PlayerTest {
   }
 
   @Nested
-  @DisplayName("Pending Openable")
   class PendingOpenable {
 
     @Test

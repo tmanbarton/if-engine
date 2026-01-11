@@ -46,7 +46,6 @@ class DropHandlerTest {
   }
 
   @Nested
-  @DisplayName("Basic Drop")
   class BasicDrop {
 
     @Test
@@ -85,7 +84,6 @@ class DropHandlerTest {
   }
 
   @Nested
-  @DisplayName("Drop All")
   class DropAll {
 
     @Test
@@ -143,7 +141,6 @@ class DropHandlerTest {
   }
 
   @Nested
-  @DisplayName("Inferred Object")
   class InferredObject {
 
     @Test
@@ -178,7 +175,6 @@ class DropHandlerTest {
   }
 
   @Nested
-  @DisplayName("Container State")
   class ContainerState {
 
     @Test
@@ -225,7 +221,6 @@ class DropHandlerTest {
   }
 
   @Nested
-  @DisplayName("Supported Verbs")
   class SupportedVerbs {
 
     @Test
@@ -260,7 +255,6 @@ class DropHandlerTest {
   }
 
   @Nested
-  @DisplayName("Case Sensitivity")
   class CaseSensitivity {
 
     @Test
@@ -290,7 +284,6 @@ class DropHandlerTest {
   }
 
   @Nested
-  @DisplayName("Item State After Drop")
   class ItemStateAfterDrop {
 
     @Test

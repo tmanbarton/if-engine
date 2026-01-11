@@ -35,7 +35,6 @@ class InventoryIntegrationTest {
   private static final ResponseProvider RESPONSES = new DefaultResponses();
 
   @Nested
-  @DisplayName("Item Persistence Across Movement")
   class ItemPersistenceAcrossMovement {
 
     @Test
@@ -115,7 +114,6 @@ class InventoryIntegrationTest {
   }
 
   @Nested
-  @DisplayName("Take Drop Cycles")
   class TakeDropCycles {
 
     @Test
@@ -179,7 +177,6 @@ class InventoryIntegrationTest {
   }
 
   @Nested
-  @DisplayName("Inventory Display")
   class InventoryDisplay {
 
     @Test
@@ -218,7 +215,6 @@ class InventoryIntegrationTest {
   }
 
   @Nested
-  @DisplayName("Items From Different Locations")
   class ItemsFromDifferentLocations {
 
     @Test

@@ -47,7 +47,6 @@ class HintHandlerTest {
   }
 
   @Nested
-  @DisplayName("Without configuration")
   class WithoutConfiguration {
 
     @Test
@@ -65,7 +64,6 @@ class HintHandlerTest {
   }
 
   @Nested
-  @DisplayName("With configuration")
   class WithConfiguration {
 
     private HintHandler handler;

@@ -1,5 +1,6 @@
 package io.github.tmanbarton.ifengine.integration;
 
+import io.github.tmanbarton.ifengine.InteractionType;
 import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.Location;
 import io.github.tmanbarton.ifengine.LocationContainer;
@@ -38,7 +39,6 @@ class ContainerIntegrationTest {
   private static final ResponseProvider RESPONSES = new DefaultResponses();
 
   @Nested
-  @DisplayName("Put In Inventory Container")
   class PutInInventoryContainer {
 
     @Test
@@ -242,7 +242,6 @@ class ContainerIntegrationTest {
   }
 
   @Nested
-  @DisplayName("Put On Location Container")
   class PutOnLocationContainer {
 
     @Test
@@ -390,7 +389,6 @@ class ContainerIntegrationTest {
   }
 
   @Nested
-  @DisplayName("Move Inventory Container")
   class MoveInventoryContainer {
 
     @Test
@@ -656,6 +654,145 @@ class ContainerIntegrationTest {
       assertTrue(player.hasItem("large-bag"));
       assertTrue(player.hasItem("coin"));
       assertTrue(player.isItemContained(smallBag));
+    }
+  }
+
+  @Nested
+  @DisplayName("SceneryObject Container API")
+  class SceneryObjectContainerApi {
+
+    @Test
+    @DisplayName("put item on scenery container created via addSceneryObject")
+    void testPut_onSceneryContainerViaAddSceneryObject() {
+      // Given
+      final TestGameMap map = TestGameMapBuilder.singleLocation().build();
+      final Location location = map.getStartingLocation();
+
+      final Item coin = TestItemFactory.createSimpleItem("coin");
+      location.addItem(coin);
+
+      // Create container via new SceneryObject API
+      final SceneryObject table = SceneryObject.builder("table")
+          .withInteraction(InteractionType.LOOK, "A wooden table.")
+          .asContainer()
+          .build();
+      location.addSceneryObject(table);
+
+      final TestGameEngine engine = TestGameEngineBuilder.withCustomMap(map)
+          .withInitialPlayerState(GameState.PLAYING)
+          .build();
+      engine.createPlayer(SESSION_ID);
+
+      // When
+      final String response = engine.processCommand(SESSION_ID, "put coin on table");
+
+      // Then
+      final String message = JsonTestUtils.extractMessage(response);
+      assertEquals(RESPONSES.getPutSuccess("coin", "on", "table") + "\n\n", message);
+      assertTrue(location.hasItem("coin"));
+      assertTrue(location.isItemInContainer(coin));
+    }
+
+    @Test
+    @DisplayName("put item in drawer with custom prepositions")
+    void testPut_inDrawerWithCustomPrepositions() {
+      // Given
+      final TestGameMap map = TestGameMapBuilder.singleLocation().build();
+      final Location location = map.getStartingLocation();
+
+      final Item key = TestItemFactory.createSimpleItem("key");
+      location.addItem(key);
+
+      // Create drawer container with "in" preposition
+      final SceneryObject drawer = SceneryObject.builder("drawer")
+          .withInteraction(InteractionType.LOOK, "A wooden drawer.")
+          .asContainer()
+          .withPrepositions("in", "into")
+          .build();
+      location.addSceneryObject(drawer);
+
+      final TestGameEngine engine = TestGameEngineBuilder.withCustomMap(map)
+          .withInitialPlayerState(GameState.PLAYING)
+          .build();
+      engine.createPlayer(SESSION_ID);
+
+      // When
+      final String response = engine.processCommand(SESSION_ID, "put key in drawer");
+
+      // Then
+      final String message = JsonTestUtils.extractMessage(response);
+      assertEquals(RESPONSES.getPutSuccess("key", "in", "drawer") + "\n\n", message);
+      assertTrue(location.hasItem("key"));
+      assertTrue(location.isItemInContainer(key));
+    }
+
+    @Test
+    @DisplayName("put item in container with allowed items restriction")
+    void testPut_withAllowedItemsRestriction() {
+      // Given
+      final TestGameMap map = TestGameMapBuilder.singleLocation().build();
+      final Location location = map.getStartingLocation();
+
+      final Item book = TestItemFactory.createSimpleItem("book");
+      final Item coin = TestItemFactory.createSimpleItem("coin");
+      location.addItem(book);
+      location.addItem(coin);
+
+      // Create container that only accepts books
+      final SceneryObject shelf = SceneryObject.builder("shelf")
+          .withInteraction(InteractionType.LOOK, "A wooden shelf.")
+          .asContainer()
+          .withAllowedItems("book")
+          .build();
+      location.addSceneryObject(shelf);
+
+      final TestGameEngine engine = TestGameEngineBuilder.withCustomMap(map)
+          .withInitialPlayerState(GameState.PLAYING)
+          .build();
+      engine.createPlayer(SESSION_ID);
+
+      // When - put book (allowed)
+      final String bookResponse = engine.processCommand(SESSION_ID, "put book on shelf");
+      // When - put coin (not allowed)
+      final String coinResponse = engine.processCommand(SESSION_ID, "put coin on shelf");
+
+      // Then
+      final String bookMessage = JsonTestUtils.extractMessage(bookResponse);
+      assertEquals(RESPONSES.getPutSuccess("book", "on", "shelf") + "\n\n", bookMessage);
+
+      final String coinMessage = JsonTestUtils.extractMessage(coinResponse);
+      assertEquals(RESPONSES.getPutItemNotAccepted("shelf", "coin") + "\n\n", coinMessage);
+    }
+
+    @Test
+    @DisplayName("wrong preposition rejected for container")
+    void testPut_wrongPrepositionRejected() {
+      // Given
+      final TestGameMap map = TestGameMapBuilder.singleLocation().build();
+      final Location location = map.getStartingLocation();
+
+      final Item key = TestItemFactory.createSimpleItem("key");
+      location.addItem(key);
+
+      // Create drawer that uses "in"
+      final SceneryObject drawer = SceneryObject.builder("drawer")
+          .withInteraction(InteractionType.LOOK, "A wooden drawer.")
+          .asContainer()
+          .withPrepositions("in", "into")
+          .build();
+      location.addSceneryObject(drawer);
+
+      final TestGameEngine engine = TestGameEngineBuilder.withCustomMap(map)
+          .withInitialPlayerState(GameState.PLAYING)
+          .build();
+      engine.createPlayer(SESSION_ID);
+
+      // When - try to put "on" drawer (wrong preposition)
+      final String response = engine.processCommand(SESSION_ID, "put key on drawer");
+
+      // Then - should be rejected with message about correct preposition
+      final String message = JsonTestUtils.extractMessage(response);
+      assertEquals(RESPONSES.getPutInvalidPreposition("drawer", "in") + "\n\n", message);
     }
   }
 }

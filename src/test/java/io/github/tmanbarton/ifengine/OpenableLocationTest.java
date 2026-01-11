@@ -52,7 +52,6 @@ class OpenableLocationTest {
   }
 
   @Nested
-  @DisplayName("tryUnlock with providedAnswer")
   class TryUnlockWithProvidedAnswer {
 
     @Test
@@ -101,7 +100,6 @@ class OpenableLocationTest {
   }
 
   @Nested
-  @DisplayName("tryOpen with providedAnswer")
   class TryOpenWithProvidedAnswer {
 
     @Test

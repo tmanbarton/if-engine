@@ -47,7 +47,6 @@ class PutHandlerTest {
   }
 
   @Nested
-  @DisplayName("Basic Put")
   class BasicPut {
 
     @Test
@@ -122,7 +121,6 @@ class PutHandlerTest {
   }
 
   @Nested
-  @DisplayName("Preposition Validation")
   class PrepositionValidation {
 
     @Test
@@ -222,7 +220,6 @@ class PutHandlerTest {
   }
 
   @Nested
-  @DisplayName("Container Validation")
   class ContainerValidation {
 
     @Test
@@ -275,7 +272,6 @@ class PutHandlerTest {
   }
 
   @Nested
-  @DisplayName("Circular Containment")
   class CircularContainment {
 
     @Test
@@ -293,7 +289,6 @@ class PutHandlerTest {
   }
 
   @Nested
-  @DisplayName("Container In Container")
   class ContainerInContainer {
 
     @Test
@@ -345,7 +340,6 @@ class PutHandlerTest {
   }
 
   @Nested
-  @DisplayName("Item Movement Between Containers")
   class ItemMovementBetweenContainers {
 
     @Test
@@ -440,7 +434,6 @@ class PutHandlerTest {
   }
 
   @Nested
-  @DisplayName("Supported Verbs")
   class SupportedVerbs {
 
     @Test
@@ -484,7 +477,6 @@ class PutHandlerTest {
   }
 
   @Nested
-  @DisplayName("Item Location After Put")
   class ItemLocationAfterPut {
 
     @Test

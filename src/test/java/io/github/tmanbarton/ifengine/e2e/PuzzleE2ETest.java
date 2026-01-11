@@ -33,7 +33,6 @@ class PuzzleE2ETest {
   private static final String SESSION_ID = "test-session";
 
   @Nested
-  @DisplayName("Unlock Door Puzzle")
   class UnlockDoorPuzzle {
 
     @Test
@@ -137,7 +136,6 @@ class PuzzleE2ETest {
   }
 
   @Nested
-  @DisplayName("Multi-Step Exploration")
   class MultiStepExploration {
 
     @Test

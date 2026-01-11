@@ -32,7 +32,6 @@ class GameFlowE2ETest {
   private static final ResponseProvider RESPONSES = new DefaultResponses();
 
   @Nested
-  @DisplayName("New Player Flow")
   class NewPlayerFlow {
 
     @Test
@@ -75,7 +74,6 @@ class GameFlowE2ETest {
   }
 
   @Nested
-  @DisplayName("Experienced Player Flow")
   class ExperiencedPlayerFlow {
 
     @Test
@@ -98,7 +96,6 @@ class GameFlowE2ETest {
   }
 
   @Nested
-  @DisplayName("Restart Flow")
   class RestartFlow {
 
     @Test
@@ -163,7 +160,6 @@ class GameFlowE2ETest {
   }
 
   @Nested
-  @DisplayName("Quit Flow")
   class QuitFlow {
 
     @Test
@@ -217,7 +213,6 @@ class GameFlowE2ETest {
   }
 
   @Nested
-  @DisplayName("Full Game Session")
   class FullGameSession {
 
     @Test

@@ -60,7 +60,6 @@ class UnlockHandlerTest {
   }
 
   @Nested
-  @DisplayName("Unlock With Key")
   class UnlockWithKey {
 
     @Test
@@ -91,7 +90,6 @@ class UnlockHandlerTest {
   }
 
   @Nested
-  @DisplayName("Unlock Without Key")
   class UnlockWithoutKey {
 
     @Test
@@ -107,7 +105,6 @@ class UnlockHandlerTest {
   }
 
   @Nested
-  @DisplayName("Already Unlocked")
   class AlreadyUnlocked {
 
     @Test
@@ -125,7 +122,6 @@ class UnlockHandlerTest {
   }
 
   @Nested
-  @DisplayName("Nothing To Unlock")
   class NothingToUnlock {
 
     @Test
@@ -166,7 +162,6 @@ class UnlockHandlerTest {
   }
 
   @Nested
-  @DisplayName("Supported Verbs")
   class SupportedVerbs {
 
     @Test
@@ -192,7 +187,6 @@ class UnlockHandlerTest {
   }
 
   @Nested
-  @DisplayName("Case Sensitivity")
   class CaseSensitivity {
 
     @Test
@@ -221,7 +215,6 @@ class UnlockHandlerTest {
   }
 
   @Nested
-  @DisplayName("OpenableItem In Inventory")
   class OpenableItemInInventory {
 
     @Test
@@ -296,7 +289,6 @@ class UnlockHandlerTest {
   }
 
   @Nested
-  @DisplayName("Extract Provided Answer")
   class ExtractProvidedAnswer {
 
     @Test
@@ -404,7 +396,6 @@ class UnlockHandlerTest {
   }
 
   @Nested
-  @DisplayName("Implied Object With Code")
   class ImpliedObjectWithCode {
 
     @Test
@@ -453,7 +444,6 @@ class UnlockHandlerTest {
   }
 
   @Nested
-  @DisplayName("Prompt State Handling")
   class PromptStateHandling {
 
     @Test
@@ -572,7 +562,6 @@ class UnlockHandlerTest {
   }
 
   @Nested
-  @DisplayName("OpenableItem At Location")
   class OpenableItemAtLocation {
 
     @Test

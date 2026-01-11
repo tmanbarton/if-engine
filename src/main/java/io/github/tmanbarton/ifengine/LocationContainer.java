@@ -20,9 +20,26 @@ public class LocationContainer implements Container {
   private final SceneryObject sceneryObject;
   private final Set<String> allowedItemNames;
   private final Set<String> insertedItemNames;
+  private final boolean useSceneryPrepositions;
+
+  /**
+   * Creates a scenery container from a SceneryObject configured as a container.
+   * <p>
+   * The container reads its configuration (allowed items, prepositions) from the SceneryObject.
+   *
+   * @param sceneryObject the scenery object configured as a container
+   */
+  public LocationContainer(@Nonnull final SceneryObject sceneryObject) {
+    this.sceneryObject = sceneryObject;
+    this.allowedItemNames = Set.copyOf(sceneryObject.getAllowedItemNames());
+    this.insertedItemNames = new HashSet<>();
+    this.useSceneryPrepositions = true;
+  }
 
   /**
    * Creates a scenery container that wraps a scenery object.
+   * <p>
+   * This constructor is retained for backwards compatibility.
    *
    * @param sceneryObject the scenery object this container represents
    * @param allowedItemNames names of items that can be placed on/in this container
@@ -31,6 +48,7 @@ public class LocationContainer implements Container {
     this.sceneryObject = sceneryObject;
     this.allowedItemNames = Set.copyOf(allowedItemNames);
     this.insertedItemNames = new HashSet<>();
+    this.useSceneryPrepositions = false;
   }
 
   /**
@@ -133,6 +151,9 @@ public class LocationContainer implements Container {
   @Override
   @Nonnull
   public List<String> getPreferredPrepositions() {
+    if (useSceneryPrepositions) {
+      return sceneryObject.getPrepositions();
+    }
     return List.of(PrepositionConstants.ON, PrepositionConstants.ONTO);
   }
 }

@@ -60,7 +60,6 @@ class OpenHandlerTest {
   }
 
   @Nested
-  @DisplayName("Open Unlocked Door")
   class OpenUnlockedDoor {
 
     @Test
@@ -89,7 +88,6 @@ class OpenHandlerTest {
   }
 
   @Nested
-  @DisplayName("Open Locked Door With Key")
   class OpenLockedWithKey {
 
     @Test
@@ -108,7 +106,6 @@ class OpenHandlerTest {
   }
 
   @Nested
-  @DisplayName("Open Locked Door Without Key")
   class OpenLockedWithoutKey {
 
     @Test
@@ -139,7 +136,6 @@ class OpenHandlerTest {
   }
 
   @Nested
-  @DisplayName("Already Open")
   class AlreadyOpen {
 
     @Test
@@ -156,7 +152,6 @@ class OpenHandlerTest {
   }
 
   @Nested
-  @DisplayName("Nothing To Open")
   class NothingToOpen {
 
     @Test
@@ -195,7 +190,6 @@ class OpenHandlerTest {
   }
 
   @Nested
-  @DisplayName("Supported Verbs")
   class SupportedVerbs {
 
     @Test
@@ -221,7 +215,6 @@ class OpenHandlerTest {
   }
 
   @Nested
-  @DisplayName("Case Sensitivity")
   class CaseSensitivity {
 
     @Test
@@ -248,7 +241,6 @@ class OpenHandlerTest {
   }
 
   @Nested
-  @DisplayName("State Transitions")
   class StateTransitions {
 
     @Test
@@ -281,7 +273,6 @@ class OpenHandlerTest {
   }
 
   @Nested
-  @DisplayName("OpenableItem In Inventory")
   class OpenableItemInInventory {
 
     @Test
@@ -373,7 +364,6 @@ class OpenHandlerTest {
   }
 
   @Nested
-  @DisplayName("Extract Provided Answer")
   class ExtractProvidedAnswer {
 
     @Test
@@ -481,7 +471,6 @@ class OpenHandlerTest {
   }
 
   @Nested
-  @DisplayName("Implied Object With Code")
   class ImpliedObjectWithCode {
 
     @Test
@@ -531,7 +520,6 @@ class OpenHandlerTest {
   }
 
   @Nested
-  @DisplayName("Prompt State Handling")
   class PromptStateHandling {
 
     @Test
@@ -651,7 +639,6 @@ class OpenHandlerTest {
   }
 
   @Nested
-  @DisplayName("OpenableItem At Location")
   class OpenableItemAtLocation {
 
     @Test

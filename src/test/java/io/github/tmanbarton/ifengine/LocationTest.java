@@ -36,7 +36,6 @@ class LocationTest {
   }
 
   @Nested
-  @DisplayName("Item Management")
   class ItemManagement {
 
     @Test
@@ -96,7 +95,6 @@ class LocationTest {
   }
 
   @Nested
-  @DisplayName("Connection Management")
   class ConnectionManagement {
 
     @Test
@@ -141,7 +139,6 @@ class LocationTest {
   }
 
   @Nested
-  @DisplayName("Scenery Object Management")
   class SceneryObjectManagement {
 
     @Test
@@ -191,7 +188,6 @@ class LocationTest {
   }
 
   @Nested
-  @DisplayName("Scenery Container Management")
   class LocationContainerManagement {
 
     @Test
@@ -207,7 +203,38 @@ class LocationTest {
   }
 
   @Nested
-  @DisplayName("Item Containment Tracking")
+  @DisplayName("SceneryObject Container Auto-Registration")
+  class SceneryContainerAutoRegistration {
+
+    @Test
+    @DisplayName("Test addSceneryObject - auto-creates LocationContainer for container scenery")
+    void testAddSceneryObject_autoCreatesLocationContainer() {
+      final SceneryObject table = SceneryObject.builder("table")
+          .withInteraction(InteractionType.LOOK, "A wooden table.")
+          .asContainer()
+          .build();
+
+      location.addSceneryObject(table);
+
+      assertEquals(1, location.getLocationContainers().size());
+      assertEquals(table, location.getLocationContainers().get(0).getSceneryObject());
+    }
+
+    @Test
+    @DisplayName("Test addSceneryObject - does not create container for non-container scenery")
+    void testAddSceneryObject_noContainerForNonContainerScenery() {
+      final SceneryObject tree = SceneryObject.builder("tree")
+          .withInteraction(InteractionType.LOOK, "A tall tree.")
+          .build();
+
+      location.addSceneryObject(tree);
+
+      assertTrue(location.getLocationContainers().isEmpty());
+      assertTrue(location.findSceneryObject("tree").isPresent());
+    }
+  }
+
+  @Nested
   class ItemContainmentTracking {
 
     @Test
