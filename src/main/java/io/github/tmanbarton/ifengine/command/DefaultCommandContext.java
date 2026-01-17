@@ -5,6 +5,7 @@ import io.github.tmanbarton.ifengine.Location;
 import io.github.tmanbarton.ifengine.game.Player;
 import io.github.tmanbarton.ifengine.parser.ObjectResolver;
 import io.github.tmanbarton.ifengine.response.ResponseProvider;
+import io.github.tmanbarton.ifengine.util.ContainerOperations;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -81,5 +82,16 @@ public final class DefaultCommandContext implements CommandContext {
   public boolean playerHasItem(@Nonnull final String itemName) {
     Objects.requireNonNull(itemName, "itemName cannot be null");
     return player.hasItem(itemName);
+  }
+
+  @Override
+  @Nonnull
+  public String putItemInContainer(
+      @Nonnull final String itemName,
+      @Nonnull final String containerName,
+      @Nonnull final String preposition
+  ) {
+    return ContainerOperations.putItemInContainer(
+        player, itemName, containerName, preposition, responseProvider);
   }
 }

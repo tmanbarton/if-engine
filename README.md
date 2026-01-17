@@ -314,6 +314,41 @@ The `ctx` parameter provides access to game utilities:
 })
 ```
 
+### Container Operations in Custom Commands
+
+Use `putItemInContainer` to perform container operations (like the built-in "put" command):
+
+```java
+// Create a wall as a container that accepts a ladder
+SceneryObject wall = SceneryObject.builder("wall")
+    .withInteraction(InteractionType.LOOK, "A tall stone wall.")
+    .asContainer()
+    .withAllowedItems("ladder")
+    .withPrepositions("on", "against")
+    .build();
+
+// Create custom commands that behave like "put ladder on wall"
+.withCommand("lean", (player, cmd, ctx) -> {
+    String item = cmd.getFirstDirectObject();
+    String target = cmd.getFirstIndirectObject();
+    return ctx.putItemInContainer(item, target, "on");
+})
+
+.withCommand("climb", (player, cmd, ctx) -> {
+    // "climb ladder" could put the ladder on a wall
+    String item = cmd.getFirstDirectObject();
+    return ctx.putItemInContainer(item, "wall", "on");
+})
+```
+
+The `putItemInContainer` method handles all aspects of container insertion:
+- Finding the item in inventory or at the current location
+- Finding the container (inventory container or scenery container)
+- Validating the preposition matches the container's accepted prepositions
+- Removing the item from inventory
+- Inserting the item into the container
+- Tracking containment state
+
 ### Delegating to built-in commands
 
 Return `null` from your handler to delegate to the built-in command. This allows you to handle specific cases while using default behavior for everything else:

@@ -102,7 +102,7 @@ void shouldNotTakeItemWhenNotPresent() { }
 ```
 
 ### Test Structure
-- Use `@Nested` classes for logical grouping
+- Use `@Nested` classes for logical grouping. DON'T use `@DisplayName` at the class level.
 - Use `@DisplayName` on tests for readable descriptions. DON'T just repeat the test name.
 - Follow Given/When/Then structure
 - Use `final` for all test variables
