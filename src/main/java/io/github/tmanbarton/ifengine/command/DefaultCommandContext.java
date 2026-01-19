@@ -94,4 +94,35 @@ public final class DefaultCommandContext implements CommandContext {
     return ContainerOperations.putItemInContainer(
         player, itemName, containerName, preposition, responseProvider);
   }
+
+  @Override
+  public boolean isItemInContainer(@Nonnull final String itemName) {
+    Objects.requireNonNull(itemName, "itemName cannot be null");
+
+    final Location location = player.getCurrentLocation();
+    final Item item = location.getItemByName(itemName);
+    if (item == null) {
+      return false;
+    }
+    return location.isItemInContainer(item);
+  }
+
+  @Override
+  public boolean isItemInContainer(@Nonnull final String itemName, @Nonnull final String containerName) {
+    Objects.requireNonNull(itemName, "itemName cannot be null");
+    Objects.requireNonNull(containerName, "containerName cannot be null");
+
+    final Location location = player.getCurrentLocation();
+    final Item item = location.getItemByName(itemName);
+    if (item == null) {
+      return false;
+    }
+
+    final var container = location.getContainerForItem(item);
+    if (container == null) {
+      return false;
+    }
+
+    return container.getSceneryObject().matches(containerName);
+  }
 }

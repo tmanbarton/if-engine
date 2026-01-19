@@ -98,4 +98,21 @@ public interface CommandContext {
    */
   @Nonnull
   String putItemInContainer(@Nonnull String itemName, @Nonnull String containerName, @Nonnull String preposition);
+
+  /**
+   * Checks if an item is in any container at the current location.
+   *
+   * @param itemName the name of the item to check
+   * @return true if the item is in a container, false otherwise
+   */
+  boolean isItemInContainer(@Nonnull String itemName);
+
+  /**
+   * Checks if an item is in a specific container at the current location.
+   *
+   * @param itemName the name of the item to check
+   * @param containerName the name of the container to check
+   * @return true if the item is in the specified container, false otherwise
+   */
+  boolean isItemInContainer(@Nonnull String itemName, @Nonnull String containerName);
 }

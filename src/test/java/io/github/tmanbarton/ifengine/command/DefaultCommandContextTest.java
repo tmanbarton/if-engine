@@ -144,4 +144,128 @@ class DefaultCommandContextTest {
       assertEquals(responses.getPutItemNotAccepted("wall", "rope"), result);
     }
   }
+
+  @Nested
+  class IsItemInContainer {
+
+    @Test
+    @DisplayName("returns true when item is in the specified container")
+    void testIsItemInContainer_withContainerName_true() {
+      // Given
+      final Item key = TestItemFactory.createSimpleItem("key");
+      player.addItem(key);
+
+      final SceneryObject stump = SceneryObject.builder("stump")
+          .withInteraction(InteractionType.LOOK, "A hollow stump.")
+          .asContainer()
+          .withPrepositions("in")
+          .build();
+      location.addSceneryObject(stump);
+
+      context.putItemInContainer("key", "stump", "in");
+
+      // When
+      final boolean result = context.isItemInContainer("key", "stump");
+
+      // Then
+      assertTrue(result);
+    }
+
+    @Test
+    @DisplayName("returns false when item is in a different container")
+    void testIsItemInContainer_withContainerName_wrongContainer() {
+      // Given
+      final Item key = TestItemFactory.createSimpleItem("key");
+      player.addItem(key);
+
+      final SceneryObject stump = SceneryObject.builder("stump")
+          .withInteraction(InteractionType.LOOK, "A hollow stump.")
+          .asContainer()
+          .withPrepositions("in")
+          .build();
+      final SceneryObject box = SceneryObject.builder("box")
+          .withInteraction(InteractionType.LOOK, "A wooden box.")
+          .asContainer()
+          .withPrepositions("in")
+          .build();
+      location.addSceneryObject(stump);
+      location.addSceneryObject(box);
+
+      context.putItemInContainer("key", "stump", "in");
+
+      // When
+      final boolean result = context.isItemInContainer("key", "box");
+
+      // Then
+      assertFalse(result);
+    }
+
+    @Test
+    @DisplayName("returns false when item is not in any container")
+    void testIsItemInContainer_withContainerName_notInContainer() {
+      // Given
+      final Item key = TestItemFactory.createSimpleItem("key");
+      location.addItem(key);
+
+      final SceneryObject stump = SceneryObject.builder("stump")
+          .withInteraction(InteractionType.LOOK, "A hollow stump.")
+          .asContainer()
+          .withPrepositions("in")
+          .build();
+      location.addSceneryObject(stump);
+
+      // When
+      final boolean result = context.isItemInContainer("key", "stump");
+
+      // Then
+      assertFalse(result);
+    }
+
+    @Test
+    @DisplayName("returns true when item is in any container (no container name)")
+    void testIsItemInContainer_anyContainer_true() {
+      // Given
+      final Item key = TestItemFactory.createSimpleItem("key");
+      player.addItem(key);
+
+      final SceneryObject stump = SceneryObject.builder("stump")
+          .withInteraction(InteractionType.LOOK, "A hollow stump.")
+          .asContainer()
+          .withPrepositions("in")
+          .build();
+      location.addSceneryObject(stump);
+
+      context.putItemInContainer("key", "stump", "in");
+
+      // When
+      final boolean result = context.isItemInContainer("key");
+
+      // Then
+      assertTrue(result);
+    }
+
+    @Test
+    @DisplayName("returns false when item is not in any container (no container name)")
+    void testIsItemInContainer_anyContainer_false() {
+      // Given
+      final Item key = TestItemFactory.createSimpleItem("key");
+      location.addItem(key);
+
+      // When
+      final boolean result = context.isItemInContainer("key");
+
+      // Then
+      assertFalse(result);
+    }
+
+    @Test
+    @DisplayName("returns false when item does not exist")
+    void testIsItemInContainer_itemNotFound() {
+      // When
+      final boolean result = context.isItemInContainer("nonexistent");
+
+      // Then
+      assertFalse(result);
+    }
+  }
 }
