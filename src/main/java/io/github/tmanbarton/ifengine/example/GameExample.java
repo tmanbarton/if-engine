@@ -154,8 +154,7 @@ public final class GameExample {
             if (!chestHere) {
               return "There's no chest here.";
             }
-            return "You rap your knuckles on the wooden chest. "
-                + "A hollow thud suggests there might be something inside.";
+            return "You rap your knuckles on the wooden chest. A hollow thud suggests there might be something inside.";
           }
 
           if (normalizedTarget.contains("door")) {
@@ -185,6 +184,30 @@ public final class GameExample {
           return ctx.getCurrentLocation().findSceneryObject(target)
               .flatMap(s -> s.getCustomResponse("smell"))
               .orElse("You can't smell that.");
+        })
+
+        // Custom "put" command demonstrating putItemInContainer with conditional logic.
+        // Handles a special case (lantern in stump), otherwise falls through to default.
+        .withCommand("put", (player, cmd, ctx) -> {
+          final String item = cmd.getFirstDirectObject();
+          final String container = cmd.getFirstIndirectObject();
+
+          // Special case: putting the lantern in the stump illuminates it
+          if (item.equalsIgnoreCase("lantern") && container.equalsIgnoreCase("stump")) {
+            // Use putItemInContainer to handle the mechanics
+            final String result = ctx.putItemInContainer(item, container, "in");
+
+            // If it succeeded (lantern is now in the stump), add flavor text
+            if (result.contains("put") || result.contains("place")) {
+              return "You place the lantern in the hollow stump. Its brass surface catches "
+                  + "the light, illuminating a hidden compartment you hadn't noticed before!";
+            }
+            // Otherwise return the error message (item not found, wrong preposition, etc.)
+            return result;
+          }
+
+          // For all other put commands, return null to use the default PutHandler
+          return null;
         })
 
         .build();
@@ -217,7 +240,7 @@ public final class GameExample {
         .withInteraction(InteractionType.LOOK, "A hollow tree stump with a dark cavity inside.")
         .asContainer()
         .withPrepositions("in", "into", "inside")  // Custom prepositions for enclosures
-        .withAllowedItems("key", "coin", "ring")  // Only allow small items to fit
+        .withAllowedItems("key", "lantern")  // Items that fit in the stump
         .build();
     clearing.addSceneryObject(stump);
 
