@@ -1,8 +1,8 @@
 package io.github.tmanbarton.ifengine.command.handlers;
 
+import io.github.tmanbarton.ifengine.InteractionType;
 import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.Location;
-import io.github.tmanbarton.ifengine.LocationContainer;
 import io.github.tmanbarton.ifengine.SceneryObject;
 import io.github.tmanbarton.ifengine.game.Player;
 import io.github.tmanbarton.ifengine.parser.CommandType;
@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -72,9 +71,8 @@ class PutHandlerTest {
       final Item coin = TestItemFactory.createSimpleItem("coin");
       player.addItem(coin);
 
-      // LocationContainer accepts "on/onto" prepositions by default
-      final LocationContainer table = createLocationContainer("table", "coin");
-      location.addLocationContainer(table);
+      // SceneryObject container accepts "on/onto" prepositions by default
+      location.addSceneryObject(createSceneryContainer("table", "coin"));
 
       final ParsedCommand command = createPutCommand("coin", "on", "table");
 
@@ -147,8 +145,7 @@ class PutHandlerTest {
       player.addItem(coin);
 
       // LocationContainer accepts "on/onto" by default
-      final LocationContainer table = createLocationContainer("table", "coin");
-      location.addLocationContainer(table);
+      location.addSceneryObject(createSceneryContainer("table", "coin"));
 
       final ParsedCommand command = createPutCommand("coin", "on", "table");
 
@@ -192,8 +189,7 @@ class PutHandlerTest {
       player.addItem(coin);
 
       // LocationContainer accepts "on/onto", not "in"
-      final LocationContainer table = createLocationContainer("table", "coin");
-      location.addLocationContainer(table);
+      location.addSceneryObject(createSceneryContainer("table", "coin"));
 
       final ParsedCommand command = createPutCommand("coin", "in", "table");
 
@@ -485,8 +481,7 @@ class PutHandlerTest {
       final Item coin = TestItemFactory.createSimpleItem("coin");
       player.addItem(coin);
 
-      final LocationContainer table = createLocationContainer("table", "coin");
-      location.addLocationContainer(table);
+      location.addSceneryObject(createSceneryContainer("table", "coin"));
 
       final ParsedCommand command = createPutCommand("coin", "on", "table");
 
@@ -504,8 +499,7 @@ class PutHandlerTest {
       final Item coin = TestItemFactory.createSimpleItem("coin");
       location.addItem(coin);
 
-      final LocationContainer table = createLocationContainer("table", "coin");
-      location.addLocationContainer(table);
+      location.addSceneryObject(createSceneryContainer("table", "coin"));
 
       final ParsedCommand command = createPutCommand("coin", "on", "table");
 
@@ -517,13 +511,14 @@ class PutHandlerTest {
   }
 
   /**
-   * Helper method to create a LocationContainer (supports "on/onto" prepositions by default).
+   * Helper method to create a SceneryObject configured as a container (supports "on/onto" prepositions by default).
    */
-  private LocationContainer createLocationContainer(final String name, final String... acceptedItems) {
-    final SceneryObject sceneryObject = SceneryObject.builder(name)
-        .withInteraction(io.github.tmanbarton.ifengine.InteractionType.LOOK, "You see a " + name + ".")
+  private SceneryObject createSceneryContainer(final String name, final String... acceptedItems) {
+    return SceneryObject.builder(name)
+        .withInteraction(InteractionType.LOOK, "You see a " + name + ".")
+        .asContainer()
+        .withAllowedItems(acceptedItems)
         .build();
-    return new LocationContainer(sceneryObject, Set.of(acceptedItems));
   }
 
   /**

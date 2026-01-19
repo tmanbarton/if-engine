@@ -3,7 +3,6 @@ package io.github.tmanbarton.ifengine.integration;
 import io.github.tmanbarton.ifengine.InteractionType;
 import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.Location;
-import io.github.tmanbarton.ifengine.LocationContainer;
 import io.github.tmanbarton.ifengine.SceneryObject;
 import io.github.tmanbarton.ifengine.game.GameState;
 import io.github.tmanbarton.ifengine.game.Player;
@@ -19,8 +18,6 @@ import io.github.tmanbarton.ifengine.test.TestItemFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -168,11 +165,12 @@ class ContainerIntegrationTest {
       location.addItem(coin);
 
       // Scenery container (table) at location
-      final SceneryObject tableScenery = SceneryObject.builder("table")
-          .withInteraction(io.github.tmanbarton.ifengine.InteractionType.LOOK, "A table.")
+      final SceneryObject table = SceneryObject.builder("table")
+          .withInteraction(InteractionType.LOOK, "A table.")
+          .asContainer()
+          .withAllowedItems("coin")
           .build();
-      final LocationContainer table = new LocationContainer(tableScenery, Set.of("coin"));
-      location.addLocationContainer(table);
+      location.addSceneryObject(table);
 
       // Inventory container (bag)
       final TestItemFactory.TestContainer bag = TestItemFactory.createTestContainer("bag", 10, "coin");
@@ -211,11 +209,12 @@ class ContainerIntegrationTest {
       location.addItem(coin);
 
       // Scenery container (table) at location
-      final SceneryObject tableScenery = SceneryObject.builder("table")
-          .withInteraction(io.github.tmanbarton.ifengine.InteractionType.LOOK, "A table.")
+      final SceneryObject table = SceneryObject.builder("table")
+          .withInteraction(InteractionType.LOOK, "A table.")
+          .asContainer()
+          .withAllowedItems("coin")
           .build();
-      final LocationContainer table = new LocationContainer(tableScenery, Set.of("coin"));
-      location.addLocationContainer(table);
+      location.addSceneryObject(table);
 
       // Inventory container (bag) at location
       final TestItemFactory.TestContainer bag = TestItemFactory.createTestContainer("bag", 10, "coin");
@@ -254,11 +253,12 @@ class ContainerIntegrationTest {
       final Item coin = TestItemFactory.createSimpleItem("coin");
       location.addItem(coin);
 
-      final SceneryObject tableScenery = SceneryObject.builder("table")
-          .withInteraction(io.github.tmanbarton.ifengine.InteractionType.LOOK, "A table.")
+      final SceneryObject table = SceneryObject.builder("table")
+          .withInteraction(InteractionType.LOOK, "A table.")
+          .asContainer()
+          .withAllowedItems("coin")
           .build();
-      final LocationContainer table = new LocationContainer(tableScenery, Set.of("coin"));
-      location.addLocationContainer(table);
+      location.addSceneryObject(table);
 
       final TestGameEngine engine = TestGameEngineBuilder.withCustomMap(map)
           .withInitialPlayerState(GameState.PLAYING)
@@ -285,11 +285,12 @@ class ContainerIntegrationTest {
       final Item coin = TestItemFactory.createSimpleItem("coin");
       location.addItem(coin);
 
-      final SceneryObject tableScenery = SceneryObject.builder("table")
-          .withInteraction(io.github.tmanbarton.ifengine.InteractionType.LOOK, "A table.")
+      final SceneryObject table = SceneryObject.builder("table")
+          .withInteraction(InteractionType.LOOK, "A table.")
+          .asContainer()
+          .withAllowedItems("coin")
           .build();
-      final LocationContainer table = new LocationContainer(tableScenery, Set.of("coin"));
-      location.addLocationContainer(table);
+      location.addSceneryObject(table);
 
       final TestGameEngine engine = TestGameEngineBuilder.withCustomMap(map)
           .withInitialPlayerState(GameState.PLAYING)
@@ -322,11 +323,12 @@ class ContainerIntegrationTest {
       location.addItem(coin);
       location.addItem(bag);
 
-      final SceneryObject tableScenery = SceneryObject.builder("table")
-          .withInteraction(io.github.tmanbarton.ifengine.InteractionType.LOOK, "A table.")
+      final SceneryObject table = SceneryObject.builder("table")
+          .withInteraction(InteractionType.LOOK, "A table.")
+          .asContainer()
+          .withAllowedItems("coin")
           .build();
-      final LocationContainer table = new LocationContainer(tableScenery, Set.of("coin"));
-      location.addLocationContainer(table);
+      location.addSceneryObject(table);
 
       final TestGameEngine engine = TestGameEngineBuilder.withCustomMap(map)
           .withInitialPlayerState(GameState.PLAYING)
@@ -362,11 +364,12 @@ class ContainerIntegrationTest {
       location.addItem(coin);
       location.addItem(bag);
 
-      final SceneryObject tableScenery = SceneryObject.builder("table")
-          .withInteraction(io.github.tmanbarton.ifengine.InteractionType.LOOK, "A table.")
+      final SceneryObject table = SceneryObject.builder("table")
+          .withInteraction(InteractionType.LOOK, "A table.")
+          .asContainer()
+          .withAllowedItems("coin")
           .build();
-      final LocationContainer table = new LocationContainer(tableScenery, Set.of("coin"));
-      location.addLocationContainer(table);
+      location.addSceneryObject(table);
 
       final TestGameEngine engine = TestGameEngineBuilder.withCustomMap(map)
           .withInitialPlayerState(GameState.PLAYING)
@@ -454,11 +457,12 @@ class ContainerIntegrationTest {
       final TestItemFactory.TestContainer bag = TestItemFactory.createTestContainer("bag", 10, "coin");
       location.addItem(bag);
 
-      final SceneryObject tableScenery = SceneryObject.builder("table")
-          .withInteraction(io.github.tmanbarton.ifengine.InteractionType.LOOK, "A table.")
+      final SceneryObject table = SceneryObject.builder("table")
+          .withInteraction(InteractionType.LOOK, "A table.")
+          .asContainer()
+          .withAllowedItems("bag")
           .build();
-      final LocationContainer table = new LocationContainer(tableScenery, Set.of("bag"));
-      location.addLocationContainer(table);
+      location.addSceneryObject(table);
 
       final TestGameEngine engine = TestGameEngineBuilder.withCustomMap(map)
           .withInitialPlayerState(GameState.PLAYING)
@@ -589,11 +593,12 @@ class ContainerIntegrationTest {
       location.addItem(coin);
       location.addItem(bag);
 
-      final SceneryObject tableScenery = SceneryObject.builder("table")
-          .withInteraction(io.github.tmanbarton.ifengine.InteractionType.LOOK, "A table.")
+      final SceneryObject table = SceneryObject.builder("table")
+          .withInteraction(InteractionType.LOOK, "A table.")
+          .asContainer()
+          .withAllowedItems("bag", "coin")
           .build();
-      final LocationContainer table = new LocationContainer(tableScenery, Set.of("bag", "coin"));
-      location.addLocationContainer(table);
+      location.addSceneryObject(table);
 
       final TestGameEngine engine = TestGameEngineBuilder.withCustomMap(map)
           .withInitialPlayerState(GameState.PLAYING)
@@ -658,7 +663,6 @@ class ContainerIntegrationTest {
   }
 
   @Nested
-  @DisplayName("SceneryObject Container API")
   class SceneryObjectContainerApi {
 
     @Test

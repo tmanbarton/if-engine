@@ -476,16 +476,6 @@ SceneryObject shelf = SceneryObject.builder("shelf")
     .build();
 ```
 
-**Legacy API** - You can still create containers manually:
-
-```java
-LocationContainer table = new LocationContainer(
-    tableSceneryObject,
-    Set.of("book", "key")  // items allowed on this surface
-);
-location.addLocationContainer(table);
-```
-
 ### Openable Interface
 
 For implementing locked doors, containers, and puzzles:

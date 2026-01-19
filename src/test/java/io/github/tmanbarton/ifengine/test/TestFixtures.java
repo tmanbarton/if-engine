@@ -4,12 +4,10 @@ import io.github.tmanbarton.ifengine.Direction;
 import io.github.tmanbarton.ifengine.InteractionType;
 import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.Location;
-import io.github.tmanbarton.ifengine.LocationContainer;
 import io.github.tmanbarton.ifengine.SceneryObject;
 import io.github.tmanbarton.ifengine.game.GameState;
 
 import javax.annotation.Nonnull;
-import java.util.Set;
 
 /**
  * Pre-built test scenarios for common testing patterns.
@@ -273,12 +271,11 @@ public final class TestFixtures {
     final Location location = map.getStartingLocation();
 
     // Add scenery container
-    final SceneryObject boxScenery = SceneryObject.builder("box").build();
-    final LocationContainer box = new LocationContainer(
-        boxScenery,
-        Set.of("test-coin", "test-widget", "test-token")
-    );
-    location.addLocationContainer(box);
+    final SceneryObject box = SceneryObject.builder("box")
+        .asContainer()
+        .withAllowedItems("test-coin", "test-widget", "test-token")
+        .build();
+    location.addSceneryObject(box);
 
     return TestGameEngineBuilder.withCustomMap(map)
         .withInitialPlayerState(GameState.PLAYING)

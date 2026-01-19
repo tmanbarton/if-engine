@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class LocationContainerTest {
 
   @Nested
-  @DisplayName("Constructor with SceneryObject only")
   class SceneryObjectConstructor {
 
     @Test
@@ -104,7 +103,6 @@ class LocationContainerTest {
   }
 
   @Nested
-  @DisplayName("Legacy constructor")
   class LegacyConstructor {
 
     @Test

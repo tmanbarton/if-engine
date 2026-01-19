@@ -3,7 +3,6 @@ package io.github.tmanbarton.ifengine.test;
 import io.github.tmanbarton.ifengine.Direction;
 import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.Location;
-import io.github.tmanbarton.ifengine.LocationContainer;
 import io.github.tmanbarton.ifengine.SceneryObject;
 
 import javax.annotation.Nonnull;
@@ -255,10 +254,12 @@ public final class TestGameMapBuilder {
 
     // Add scenery containers to starting location
     for (final LocationContainerSpec spec : locationContainers) {
-      final SceneryObject sceneryObject = SceneryObject.builder(spec.containerName).build();
-      final LocationContainer container = new LocationContainer(sceneryObject, spec.allowedItems);
+      final SceneryObject sceneryObject = SceneryObject.builder(spec.containerName)
+          .asContainer()
+          .withAllowedItems(spec.allowedItems.toArray(new String[0]))
+          .build();
       if (startLocation != null) {
-        startLocation.addLocationContainer(container);
+        startLocation.addSceneryObject(sceneryObject);
       }
     }
 

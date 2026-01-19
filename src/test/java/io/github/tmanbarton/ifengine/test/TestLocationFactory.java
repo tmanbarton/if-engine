@@ -1,9 +1,9 @@
 package io.github.tmanbarton.ifengine.test;
 
 import io.github.tmanbarton.ifengine.Direction;
+import io.github.tmanbarton.ifengine.InteractionType;
 import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.Location;
-import io.github.tmanbarton.ifengine.LocationContainer;
 import io.github.tmanbarton.ifengine.SceneryObject;
 
 import javax.annotation.Nonnull;
@@ -187,11 +187,18 @@ public final class TestLocationFactory {
    * Adds a scenery container to an existing location.
    *
    * @param location the location to add the container to
-   * @param container the scenery container to add
+   * @param name the name of the container
+   * @param acceptedItems the names of items that can be placed in the container
    */
-  public static void addLocationContainer(@Nonnull final Location location,
-                                         @Nonnull final LocationContainer container) {
-    location.addLocationContainer(container);
+  public static void addSceneryContainer(@Nonnull final Location location,
+                                         @Nonnull final String name,
+                                         final String... acceptedItems) {
+    final SceneryObject container = SceneryObject.builder(name)
+        .withInteraction(InteractionType.LOOK, "You see a " + name + ".")
+        .asContainer()
+        .withAllowedItems(acceptedItems)
+        .build();
+    location.addSceneryObject(container);
   }
 
   /**

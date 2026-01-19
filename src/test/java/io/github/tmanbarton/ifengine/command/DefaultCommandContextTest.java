@@ -3,7 +3,6 @@ package io.github.tmanbarton.ifengine.command;
 import io.github.tmanbarton.ifengine.InteractionType;
 import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.Location;
-import io.github.tmanbarton.ifengine.LocationContainer;
 import io.github.tmanbarton.ifengine.SceneryObject;
 import io.github.tmanbarton.ifengine.game.Player;
 import io.github.tmanbarton.ifengine.parser.ObjectResolver;
@@ -15,8 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -59,8 +56,7 @@ class DefaultCommandContextTest {
           .withAllowedItems("ladder")
           .withPrepositions("on", "against")
           .build();
-      final LocationContainer wallContainer = new LocationContainer(wall, Set.of("ladder"));
-      location.addLocationContainer(wallContainer);
+      location.addSceneryObject(wall);
 
       // When
       final String result = context.putItemInContainer("ladder", "wall", "on");
@@ -76,13 +72,12 @@ class DefaultCommandContextTest {
     @DisplayName("returns error when item is not found in inventory or location")
     void testPutItemInContainer_itemNotFound() {
       // Given
-      final SceneryObject wall = SceneryObject.builder("wall")
+      final SceneryObject wallContainer = SceneryObject.builder("wall")
           .withInteraction(InteractionType.LOOK, "A tall stone wall.")
           .asContainer()
           .withAllowedItems("ladder")
           .build();
-      final LocationContainer wallContainer = new LocationContainer(wall, Set.of("ladder"));
-      location.addLocationContainer(wallContainer);
+      location.addSceneryObject(wallContainer);
 
       // When
       final String result = context.putItemInContainer("ladder", "wall", "on");
@@ -112,14 +107,13 @@ class DefaultCommandContextTest {
       final Item ladder = TestItemFactory.createSimpleItem("ladder");
       player.addItem(ladder);
 
-      // LocationContainer defaults to "on/onto" prepositions
-      final SceneryObject wall = SceneryObject.builder("wall")
+      // SceneryObject defaults to "on/onto" prepositions when asContainer() is used
+      final SceneryObject wallContainer = SceneryObject.builder("wall")
           .withInteraction(InteractionType.LOOK, "A tall stone wall.")
           .asContainer()
           .withAllowedItems("ladder")
           .build();
-      final LocationContainer wallContainer = new LocationContainer(wall, Set.of("ladder"));
-      location.addLocationContainer(wallContainer);
+      location.addSceneryObject(wallContainer);
 
       // When - using "in" which is not valid for this container
       final String result = context.putItemInContainer("ladder", "wall", "in");
@@ -136,13 +130,12 @@ class DefaultCommandContextTest {
       player.addItem(rope);
 
       // Wall only accepts ladder
-      final SceneryObject wall = SceneryObject.builder("wall")
+      final SceneryObject wallContainer = SceneryObject.builder("wall")
           .withInteraction(InteractionType.LOOK, "A tall stone wall.")
           .asContainer()
           .withAllowedItems("ladder")
           .build();
-      final LocationContainer wallContainer = new LocationContainer(wall, Set.of("ladder"));
-      location.addLocationContainer(wallContainer);
+      location.addSceneryObject(wallContainer);
 
       // When
       final String result = context.putItemInContainer("rope", "wall", "on");

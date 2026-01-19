@@ -130,17 +130,6 @@ public class Location {
   }
 
   /**
-   * Adds a scenery container to this location.
-   * Also adds the wrapped scenery object.
-   *
-   * @param locationContainer the scenery container to add
-   */
-  public void addLocationContainer(@Nonnull final LocationContainer locationContainer) {
-    locationContainers.add(locationContainer);
-    sceneryObjects.add(locationContainer.getSceneryObject());
-  }
-
-  /**
    * Gets all scenery containers at this location.
    *
    * @return defensive copy of scenery containers list

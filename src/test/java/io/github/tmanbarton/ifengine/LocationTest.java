@@ -191,19 +191,22 @@ class LocationTest {
   class LocationContainerManagement {
 
     @Test
-    @DisplayName("Test addLocationContainer - adds container and its scenery object")
-    void testAddLocationContainer_addsContainerAndScenery() {
-      final LocationContainer table = TestItemFactory.createLocationContainer("table");
+    @DisplayName("Test addSceneryObject - auto-registers LocationContainer for container scenery")
+    void testAddSceneryObject_registersContainerForContainerScenery() {
+      final SceneryObject table = SceneryObject.builder("table")
+          .withInteraction(InteractionType.LOOK, "A table.")
+          .asContainer()
+          .build();
 
-      location.addLocationContainer(table);
+      location.addSceneryObject(table);
 
-      assertTrue(location.getLocationContainers().contains(table));
+      assertEquals(1, location.getLocationContainers().size());
+      assertEquals(table, location.getLocationContainers().get(0).getSceneryObject());
       assertTrue(location.findSceneryObject("table").isPresent());
     }
   }
 
   @Nested
-  @DisplayName("SceneryObject Container Auto-Registration")
   class SceneryContainerAutoRegistration {
 
     @Test
@@ -241,9 +244,13 @@ class LocationTest {
     @DisplayName("Test setItemContainer - tracks containment")
     void testSetItemContainer_tracksContainment() {
       final Item key = TestItemFactory.createTestKey();
-      final LocationContainer table = TestItemFactory.createLocationContainer("table");
+      final SceneryObject tableScenery = SceneryObject.builder("table")
+          .withInteraction(InteractionType.LOOK, "A table.")
+          .asContainer()
+          .build();
       location.addItem(key);
-      location.addLocationContainer(table);
+      location.addSceneryObject(tableScenery);
+      final LocationContainer table = location.getLocationContainers().get(0);
 
       location.setItemContainer(key, table);
 
@@ -255,9 +262,13 @@ class LocationTest {
     @DisplayName("Test removeItemFromContainer - removes tracking")
     void testRemoveItemFromContainer_removesTracking() {
       final Item key = TestItemFactory.createTestKey();
-      final LocationContainer table = TestItemFactory.createLocationContainer("table");
+      final SceneryObject tableScenery = SceneryObject.builder("table")
+          .withInteraction(InteractionType.LOOK, "A table.")
+          .asContainer()
+          .build();
       location.addItem(key);
-      location.addLocationContainer(table);
+      location.addSceneryObject(tableScenery);
+      final LocationContainer table = location.getLocationContainers().get(0);
       location.setItemContainer(key, table);
 
       location.removeItemFromContainer(key);
