@@ -79,12 +79,6 @@ public final class DefaultCommandContext implements CommandContext {
   }
 
   @Override
-  public boolean playerHasItem(@Nonnull final String itemName) {
-    Objects.requireNonNull(itemName, "itemName cannot be null");
-    return player.hasItem(itemName);
-  }
-
-  @Override
   @Nonnull
   public String putItemInContainer(
       @Nonnull final String itemName,

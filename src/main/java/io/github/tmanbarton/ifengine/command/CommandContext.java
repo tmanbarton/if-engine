@@ -63,14 +63,6 @@ public interface CommandContext {
   Optional<Item> resolveItem(@Nonnull String name, @Nonnull Player player);
 
   /**
-   * Checks if the player has an item in their inventory.
-   *
-   * @param itemName the name of the item to check for
-   * @return true if the player has the item
-   */
-  boolean playerHasItem(@Nonnull String itemName);
-
-  /**
    * Puts an item into a container, returning a response message.
    * <p>
    * Handles all aspects of container insertion:

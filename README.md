@@ -300,7 +300,7 @@ The `ctx` parameter provides access to game utilities:
     }
 
     // Check player inventory
-    if (ctx.playerHasItem("key")) {
+    if (player.hasItem("key")) {
         return "You have the key!";
     }
 
