@@ -349,6 +349,25 @@ The `putItemInContainer` method handles all aspects of container insertion:
 - Inserting the item into the container
 - Tracking containment state
 
+**Checking container state** - Use `isItemInContainer` to check if an item is in a container:
+
+```java
+.withCommand("climb", (player, cmd, ctx) -> {
+    // Check if ladder is already on the wall
+    if (ctx.isItemInContainer("ladder", "wall")) {
+        return "You climb the ladder and peek over the wall.";
+    }
+    return "You need to put the ladder against the wall first.";
+})
+
+// Check if item is in any container (no container name)
+if (ctx.isItemInContainer("lantern")) {
+    return "The lantern is placed somewhere.";
+}
+```
+
+Both item names and container names support aliases.
+
 ### Delegating to built-in commands
 
 Return `null` from your handler to delegate to the built-in command. This allows you to handle specific cases while using default behavior for everything else:
