@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +22,8 @@ public class Location {
   private final List<SceneryObject> sceneryObjects;
   private final List<LocationContainer> locationContainers;
   private final Map<Item, LocationContainer> itemContainment;
+  private final Set<Item> hiddenItems;
+  private final Map<Item, String> revealedLocationDescriptions;
   private boolean visited;
 
   public Location(@Nonnull final String name, @Nonnull final String longDescription, @Nonnull final String shortDescription) {
@@ -32,6 +35,8 @@ public class Location {
     this.sceneryObjects = new ArrayList<>();
     this.locationContainers = new ArrayList<>();
     this.itemContainment = new HashMap<>();
+    this.hiddenItems = new LinkedHashSet<>();
+    this.revealedLocationDescriptions = new HashMap<>();
     this.visited = false;
   }
 
@@ -44,6 +49,8 @@ public class Location {
     this.sceneryObjects = new ArrayList<>(sceneryObjects);
     this.locationContainers = new ArrayList<>();
     this.itemContainment = new HashMap<>();
+    this.hiddenItems = new LinkedHashSet<>();
+    this.revealedLocationDescriptions = new HashMap<>();
     this.visited = false;
   }
 
@@ -70,6 +77,7 @@ public class Location {
   }
 
   public boolean removeItem(@Nonnull final Item item) {
+    revealedLocationDescriptions.remove(item);
     return items.remove(item);
   }
 
@@ -224,6 +232,92 @@ public class Location {
    */
   public void removeItemFromContainer(@Nonnull final Item item) {
     itemContainment.remove(item);
+  }
+
+  /**
+   * Adds a hidden item to this location.
+   * Hidden items are not visible to the player until revealed.
+   * The revealed location description is shown after the item is revealed
+   * but before the player takes it.
+   *
+   * @param item the item to hide at this location
+   * @param revealedLocationDescription the description shown after the item is revealed
+   */
+  public void addHiddenItem(@Nonnull final Item item, @Nonnull final String revealedLocationDescription) {
+    hiddenItems.add(item);
+    revealedLocationDescriptions.put(item, revealedLocationDescription);
+  }
+
+  /**
+   * Reveals a hidden item, making it visible and takeable.
+   * The item is moved from the hidden set to the visible items list.
+   * Its revealed location description is preserved until the item is taken.
+   *
+   * @param item the item to reveal
+   * @return true if the item was hidden and is now revealed, false if not hidden
+   */
+  public boolean revealItem(@Nonnull final Item item) {
+    if (hiddenItems.remove(item)) {
+      items.add(item);
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Reveals a hidden item by name (case-insensitive).
+   *
+   * @param itemName the name of the hidden item to reveal
+   * @return true if a matching hidden item was found and revealed, false otherwise
+   */
+  public boolean revealHiddenItemByName(@Nonnull final String itemName) {
+    final Optional<Item> match = hiddenItems.stream()
+        .filter(item -> item.matchesName(itemName))
+        .findFirst();
+
+    return match.map(this::revealItem).orElse(false);
+  }
+
+  /**
+   * Checks if an item is hidden at this location.
+   *
+   * @param item the item to check
+   * @return true if the item is hidden, false otherwise
+   */
+  public boolean isItemHidden(@Nonnull final Item item) {
+    return hiddenItems.contains(item);
+  }
+
+  /**
+   * Gets all hidden items at this location.
+   *
+   * @return defensive copy of hidden items set
+   */
+  @Nonnull
+  public Set<Item> getHiddenItems() {
+    return new LinkedHashSet<>(hiddenItems);
+  }
+
+  /**
+   * Removes all hidden items and their revealed descriptions.
+   * Used during game reset to restore initial state.
+   */
+  public void clearHiddenItems() {
+    hiddenItems.clear();
+    revealedLocationDescriptions.clear();
+  }
+
+  /**
+   * Gets the revealed location description for an item, if one exists.
+   * This description is used instead of the item's default location description
+   * when the item was revealed from a hidden state and has not yet been taken.
+   *
+   * @param item the item to check
+   * @return the revealed description, or null if no override exists
+   */
+  @Nullable
+  public String getRevealedLocationDescription(@Nonnull final Item item) {
+    return revealedLocationDescriptions.get(item);
   }
 
   @Override

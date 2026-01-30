@@ -107,7 +107,7 @@ public class LookHandler implements BaseCommandHandler {
     final List<Item> items = location.getItems();
     if (!items.isEmpty()) {
       sb.append("\n\n");
-      sb.append(LocationItemFormatter.formatItems(items, player, true));
+      sb.append(LocationItemFormatter.formatItems(items, player, location, true));
     }
 
     return sb.toString();

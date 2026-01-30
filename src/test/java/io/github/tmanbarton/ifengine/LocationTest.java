@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -234,6 +235,118 @@ class LocationTest {
 
       assertTrue(location.getLocationContainers().isEmpty());
       assertTrue(location.findSceneryObject("tree").isPresent());
+    }
+  }
+
+  @Nested
+  class HiddenItemManagement {
+
+    @Test
+    @DisplayName("revealing an item moves it to getItems()")
+    void testRevealItem_movesItemToGetItems() {
+      // Given
+      final Item key = TestItemFactory.createTestKey();
+      location.addHiddenItem(key, "A key is under the table.");
+
+      // When
+      final boolean result = location.revealItem(key);
+
+      // Then
+      assertTrue(result);
+      assertTrue(location.getItems().contains(key));
+    }
+
+    @Test
+    @DisplayName("revealing an item removes it from getHiddenItems()")
+    void testRevealItem_removesFromHiddenItems() {
+      // Given
+      final Item key = TestItemFactory.createTestKey();
+      location.addHiddenItem(key, "A key is under the table.");
+
+      // When
+      location.revealItem(key);
+
+      // Then
+      assertFalse(location.getHiddenItems().contains(key));
+    }
+
+    @Test
+    @DisplayName("revealHiddenItemByName finds and reveals a hidden item by name")
+    void testRevealHiddenItemByName_findsAndReveals() {
+      // Given
+      final Item key = TestItemFactory.createTestKey();
+      location.addHiddenItem(key, "A key is under the table.");
+
+      // When
+      final boolean result = location.revealHiddenItemByName("key");
+
+      // Then
+      assertTrue(result);
+      assertTrue(location.getItems().contains(key));
+      assertFalse(location.getHiddenItems().contains(key));
+    }
+
+    @Test
+    @DisplayName("revealHiddenItemByName returns false when item not found")
+    void testRevealHiddenItemByName_returnsFalseWhenNotFound() {
+      // When
+      final boolean result = location.revealHiddenItemByName("nonexistent");
+
+      // Then
+      assertFalse(result);
+    }
+
+    @Test
+    @DisplayName("getItemByName excludes hidden items")
+    void testGetItemByName_excludesHiddenItems() {
+      // Given
+      final Item key = TestItemFactory.createTestKey();
+      location.addHiddenItem(key, "A key is under the table.");
+
+      // Then
+      assertNull(location.getItemByName("key"));
+    }
+
+    @Test
+    @DisplayName("clearHiddenItems removes all hidden items")
+    void testClearHiddenItems_removesAllHiddenItems() {
+      // Given
+      final Item key = TestItemFactory.createTestKey();
+      final Item gem = TestItemFactory.createTestGem();
+      location.addHiddenItem(key, "A key is under the table.");
+      location.addHiddenItem(gem, "A gem is hidden in a crack.");
+
+      // When
+      location.clearHiddenItems();
+
+      // Then
+      assertTrue(location.getHiddenItems().isEmpty());
+    }
+
+    @Test
+    @DisplayName("getRevealedLocationDescription returns null for normal item")
+    void testGetRevealedLocationDescription_returnsNullForNormalItem() {
+      // Given
+      final Item key = TestItemFactory.createTestKey();
+      location.addItem(key);
+
+      // Then
+      assertNull(location.getRevealedLocationDescription(key));
+    }
+
+    @Test
+    @DisplayName("removeItem clears the revealed description")
+    void testRemoveItem_clearsRevealedDescription() {
+      // Given
+      final Item key = TestItemFactory.createTestKey();
+      location.addHiddenItem(key, "A key is under the table.");
+      location.revealItem(key);
+
+      // When
+      location.removeItem(key);
+
+      // Then
+      assertNull(location.getRevealedLocationDescription(key));
     }
   }
 

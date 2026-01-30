@@ -687,7 +687,7 @@ public class GameEngine {
     if (!items.isEmpty()) {
       sb.append("\n\n");
       // Use LocationItemFormatter to show container status
-      sb.append(LocationItemFormatter.formatItems(items, player, true));
+      sb.append(LocationItemFormatter.formatItems(items, player, location, true));
     }
 
     return sb.toString();
