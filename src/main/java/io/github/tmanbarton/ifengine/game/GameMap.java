@@ -39,6 +39,7 @@ public class GameMap implements GameMapInterface {
   private final Map<String, Item> items;
   private final String startingLocationKey;
   private final Map<String, String> initialItemPlacements;
+  private final Map<String, HiddenItemPlacement> initialHiddenItemPlacements;
 
   // Intro configuration
   private final boolean skipIntro;
@@ -63,6 +64,7 @@ public class GameMap implements GameMapInterface {
     this.items = new HashMap<>(builder.items);
     this.startingLocationKey = builder.startingLocationKey;
     this.initialItemPlacements = new HashMap<>(builder.initialItemPlacements);
+    this.initialHiddenItemPlacements = new HashMap<>(builder.initialHiddenItemPlacements);
     this.skipIntro = builder.skipIntro;
     this.introHandler = builder.introHandler;
     this.customYesResponse = builder.customYesResponse;
@@ -109,17 +111,28 @@ public class GameMap implements GameMapInterface {
 
   @Override
   public void resetMap() {
-    // Remove all items from all locations
+    // Remove all items and hidden items from all locations
     for (final Location location : locations.values()) {
       location.getItems().forEach(location::removeItem);
+      location.clearHiddenItems();
     }
 
-    // Restore items to their initial locations
+    // Restore visible items to their initial locations
     for (final Map.Entry<String, String> entry : initialItemPlacements.entrySet()) {
       final Item item = items.get(entry.getKey());
       final Location location = locations.get(entry.getValue());
       if (item != null && location != null) {
         location.addItem(item);
+      }
+    }
+
+    // Restore hidden items to their initial locations
+    for (final Map.Entry<String, HiddenItemPlacement> entry : initialHiddenItemPlacements.entrySet()) {
+      final Item item = items.get(entry.getKey());
+      final HiddenItemPlacement placement = entry.getValue();
+      final Location location = locations.get(placement.locationName());
+      if (item != null && location != null) {
+        location.addHiddenItem(item, placement.revealedLocationDescription());
       }
     }
 
@@ -235,6 +248,14 @@ public class GameMap implements GameMapInterface {
   }
 
   /**
+   * Tracks the initial placement of a hidden item for reset purposes.
+   *
+   * @param locationName the name of the location where the item is hidden
+   * @param revealedLocationDescription the description shown after the item is revealed
+   */
+  record HiddenItemPlacement(@Nonnull String locationName, @Nonnull String revealedLocationDescription) {}
+
+  /**
    * Builder for constructing GameMap instances.
    * <p>
    * The builder validates that:
@@ -249,6 +270,7 @@ public class GameMap implements GameMapInterface {
     private final Map<String, Item> items = new HashMap<>();
     private String startingLocationKey;
     private final Map<String, String> initialItemPlacements = new HashMap<>();
+    private final Map<String, HiddenItemPlacement> initialHiddenItemPlacements = new HashMap<>();
 
     // Intro configuration
     private boolean skipIntro = false;
@@ -305,6 +327,37 @@ public class GameMap implements GameMapInterface {
       items.put(item.getName(), item);
       location.addItem(item);
       initialItemPlacements.put(item.getName(), locationKey);
+      return this;
+    }
+
+    /**
+     * Adds a hidden item to a location.
+     * <p>
+     * Hidden items are not visible or interactable until revealed via a custom command
+     * using {@code CommandContext.revealHiddenItem()}. After reveal, the item uses the
+     * provided revealed location description until the player takes it, after which
+     * the item's normal location description is used.
+     *
+     * @param item the item to hide
+     * @param locationKey the key/name of the location to hide it in
+     * @param revealedLocationDescription the description shown after the item is revealed
+     * @return this Builder for method chaining
+     * @throws IllegalArgumentException if the location is not found
+     */
+    @Nonnull
+    public Builder placeHiddenItem(@Nonnull final Item item,
+                                   @Nonnull final String locationKey,
+                                   @Nonnull final String revealedLocationDescription) {
+      Objects.requireNonNull(item, "item cannot be null");
+      Objects.requireNonNull(revealedLocationDescription, "revealedLocationDescription cannot be null");
+      final Location location = locations.get(locationKey);
+      if (location == null) {
+        throw new IllegalArgumentException("Location not found: " + locationKey);
+      }
+      items.put(item.getName(), item);
+      location.addHiddenItem(item, revealedLocationDescription);
+      initialHiddenItemPlacements.put(item.getName(),
+          new HiddenItemPlacement(locationKey, revealedLocationDescription));
       return this;
     }
 

@@ -223,6 +223,40 @@ class GameMapTest {
   }
 
   @Nested
+  class HiddenItemBuilder {
+
+    @Test
+    @DisplayName("placeHiddenItem - item is hidden at location")
+    void testPlaceHiddenItem_itemIsHiddenAtLocation() {
+      final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
+      final Item key = TestItemFactory.createTestKey();
+
+      new GameMap.Builder()
+          .addLocation(cottage)
+          .placeHiddenItem(key, "cottage", "A key is under the table.")
+          .setStartingLocation("cottage")
+          .build();
+
+      assertFalse(cottage.hasItem("key"));
+      assertTrue(cottage.isItemHidden(key));
+    }
+
+    @Test
+    @DisplayName("placeHiddenItem - throws when location not found")
+    void testPlaceHiddenItem_throwsWhenLocationNotFound() {
+      final Item key = TestItemFactory.createTestKey();
+      final GameMap.Builder builder = new GameMap.Builder();
+
+      final IllegalArgumentException exception = assertThrows(
+          IllegalArgumentException.class,
+          () -> builder.placeHiddenItem(key, "cottage", "A key is under the table.")
+      );
+
+      assertTrue(exception.getMessage().contains("cottage"));
+    }
+  }
+
+  @Nested
   class Reset {
 
     @Test
@@ -243,6 +277,51 @@ class GameMapTest {
       gameMap.resetMap();
 
       assertTrue(cottage.hasItem("key"));
+    }
+
+    @Test
+    @DisplayName("resetMap - restores hidden items to hidden state")
+    void testResetMap_restoresHiddenItemsToHiddenState() {
+      final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
+      final Item key = TestItemFactory.createTestKey();
+
+      final GameMap gameMap = new GameMap.Builder()
+          .addLocation(cottage)
+          .placeHiddenItem(key, "cottage", "A key is under the table.")
+          .setStartingLocation("cottage")
+          .build();
+
+      // Simulate reveal + take
+      cottage.revealItem(key);
+      cottage.removeItem(key);
+
+      gameMap.resetMap();
+
+      assertTrue(cottage.isItemHidden(key));
+      assertFalse(cottage.hasItem("key"));
+    }
+
+    @Test
+    @DisplayName("resetMap - revealed item returned to hidden after reset")
+    void testResetMap_revealedItemReturnedToHidden() {
+      final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
+      final Item key = TestItemFactory.createTestKey();
+
+      final GameMap gameMap = new GameMap.Builder()
+          .addLocation(cottage)
+          .placeHiddenItem(key, "cottage", "A key is under the table.")
+          .setStartingLocation("cottage")
+          .build();
+
+      // Simulate reveal only (not taken)
+      cottage.revealItem(key);
+      assertTrue(cottage.hasItem("key"));
+
+      gameMap.resetMap();
+
+      // Should be hidden again
+      assertTrue(cottage.isItemHidden(key));
+      assertFalse(cottage.hasItem("key"));
     }
 
     @Test
