@@ -309,6 +309,30 @@ public final class TestFixtures {
   }
 
   /**
+   * One location with a hidden key under a table scenery object, PLAYING state.
+   * Hidden item: key (revealed description: "There's a key under the table.")
+   * Scenery: table (with LOOK interaction)
+   * Use for: hidden item reveal and take testing
+   *
+   * @return a configured TestGameEngine
+   */
+  @Nonnull
+  public static TestGameEngine hiddenItemScenario() {
+    final TestGameMap map = TestGameMapBuilder.singleLocation()
+        .withHiddenItem("key", "There's a key under the table.")
+        .build();
+    final Location location = map.getStartingLocation();
+
+    location.addSceneryObject(SceneryObject.builder("table")
+        .withInteraction(InteractionType.LOOK, "A sturdy wooden table.")
+        .build());
+
+    return TestGameEngineBuilder.withCustomMap(map)
+        .withInitialPlayerState(GameState.PLAYING)
+        .build();
+  }
+
+  /**
    * Creates a scenario for testing code-based unlock/open.
    * Single location with a TestOpenableItem that requires code "1, 2, 3, 4".
    * Use for: testing WAITING_FOR_UNLOCK_CODE and WAITING_FOR_OPEN_CODE states

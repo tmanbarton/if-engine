@@ -36,17 +36,20 @@ public final class TestGameMapBuilder {
   private final Set<String> itemNames;
   private final List<ConnectionSpec> connections;
   private final List<LocationContainerSpec> locationContainers;
+  private final List<HiddenItemSpec> hiddenItems;
   private final String startingLocationName;
 
   private TestGameMapBuilder(@Nonnull final Set<String> locationNames,
                              @Nonnull final Set<String> itemNames,
                              @Nonnull final List<ConnectionSpec> connections,
                              @Nonnull final List<LocationContainerSpec> locationContainers,
+                             @Nonnull final List<HiddenItemSpec> hiddenItems,
                              @Nonnull final String startingLocationName) {
     this.locationNames = Set.copyOf(locationNames);
     this.itemNames = Set.copyOf(itemNames);
     this.connections = List.copyOf(connections);
     this.locationContainers = List.copyOf(locationContainers);
+    this.hiddenItems = List.copyOf(hiddenItems);
     this.startingLocationName = startingLocationName;
   }
 
@@ -60,6 +63,7 @@ public final class TestGameMapBuilder {
     return new TestGameMapBuilder(
         Set.of(DEFAULT_STARTING_LOCATION),
         Set.of(),
+        List.of(),
         List.of(),
         List.of(),
         DEFAULT_STARTING_LOCATION
@@ -77,6 +81,7 @@ public final class TestGameMapBuilder {
     return new TestGameMapBuilder(
         Set.of(locationName),
         Set.of(),
+        List.of(),
         List.of(),
         List.of(),
         locationName
@@ -97,6 +102,7 @@ public final class TestGameMapBuilder {
         Set.of("key", "rope"),
         List.of(new ConnectionSpec("location1", Direction.NORTH, "location2")),
         List.of(),
+        List.of(),
         "location1"
     );
   }
@@ -114,6 +120,7 @@ public final class TestGameMapBuilder {
         Set.of(),
         List.of(new ConnectionSpec("location1", Direction.NORTH, "location2")),
         List.of(),
+        List.of(),
         "location1"
     );
   }
@@ -128,7 +135,7 @@ public final class TestGameMapBuilder {
   public TestGameMapBuilder withLocations(@Nonnull final String... names) {
     final Set<String> newLocations = new HashSet<>(this.locationNames);
     newLocations.addAll(Set.of(names));
-    return new TestGameMapBuilder(newLocations, itemNames, connections, locationContainers, startingLocationName);
+    return new TestGameMapBuilder(newLocations, itemNames, connections, locationContainers, hiddenItems, startingLocationName);
   }
 
   /**
@@ -154,7 +161,7 @@ public final class TestGameMapBuilder {
   public TestGameMapBuilder withItems(@Nonnull final String... names) {
     final Set<String> newItems = new HashSet<>(this.itemNames);
     newItems.addAll(Set.of(names));
-    return new TestGameMapBuilder(locationNames, newItems, connections, locationContainers, startingLocationName);
+    return new TestGameMapBuilder(locationNames, newItems, connections, locationContainers, hiddenItems, startingLocationName);
   }
 
   /**
@@ -183,7 +190,7 @@ public final class TestGameMapBuilder {
                                            @Nonnull final String toLocation) {
     final List<ConnectionSpec> newConnections = new ArrayList<>(this.connections);
     newConnections.add(new ConnectionSpec(fromLocation, direction, toLocation));
-    return new TestGameMapBuilder(locationNames, itemNames, newConnections, locationContainers, startingLocationName);
+    return new TestGameMapBuilder(locationNames, itemNames, newConnections, locationContainers, hiddenItems, startingLocationName);
   }
 
   /**
@@ -198,7 +205,23 @@ public final class TestGameMapBuilder {
                                                  @Nonnull final String... allowedItemNames) {
     final List<LocationContainerSpec> newContainers = new ArrayList<>(this.locationContainers);
     newContainers.add(new LocationContainerSpec(containerName, Set.of(allowedItemNames)));
-    return new TestGameMapBuilder(locationNames, itemNames, connections, newContainers, startingLocationName);
+    return new TestGameMapBuilder(locationNames, itemNames, connections, newContainers, hiddenItems, startingLocationName);
+  }
+
+  /**
+   * Adds a hidden item to the starting location.
+   * The item will be invisible until revealed via {@code Location.revealHiddenItemByName()}.
+   *
+   * @param itemName the name of the item to hide
+   * @param revealedLocationDescription the description shown after the item is revealed
+   * @return a new builder with the hidden item
+   */
+  @Nonnull
+  public TestGameMapBuilder withHiddenItem(@Nonnull final String itemName,
+                                           @Nonnull final String revealedLocationDescription) {
+    final List<HiddenItemSpec> newHiddenItems = new ArrayList<>(this.hiddenItems);
+    newHiddenItems.add(new HiddenItemSpec(itemName, revealedLocationDescription));
+    return new TestGameMapBuilder(locationNames, itemNames, connections, locationContainers, newHiddenItems, startingLocationName);
   }
 
   /**
@@ -209,7 +232,7 @@ public final class TestGameMapBuilder {
    */
   @Nonnull
   public TestGameMapBuilder withStartingLocation(@Nonnull final String locationName) {
-    return new TestGameMapBuilder(locationNames, itemNames, connections, locationContainers, locationName);
+    return new TestGameMapBuilder(locationNames, itemNames, connections, locationContainers, hiddenItems, locationName);
   }
 
   /**
@@ -263,6 +286,14 @@ public final class TestGameMapBuilder {
       }
     }
 
+    // Place hidden items in starting location
+    for (final HiddenItemSpec spec : hiddenItems) {
+      final Item item = createItemByName(spec.itemName());
+      if (startLocation != null) {
+        map.placeHiddenItem(item, startLocation, spec.revealedLocationDescription());
+      }
+    }
+
     return map;
   }
 
@@ -289,4 +320,9 @@ public final class TestGameMapBuilder {
    * Internal record for scenery container specifications.
    */
   private record LocationContainerSpec(String containerName, Set<String> allowedItems) {}
+
+  /**
+   * Internal record for hidden item specifications.
+   */
+  private record HiddenItemSpec(String itemName, String revealedLocationDescription) {}
 }

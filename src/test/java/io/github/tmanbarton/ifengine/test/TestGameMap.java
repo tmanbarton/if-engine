@@ -30,7 +30,13 @@ public class TestGameMap implements GameMapInterface {
   private final Map<String, Location> locations;
   private final Map<String, Item> items;
   private final Map<String, String> initialItemLocations;
+  private final Map<String, HiddenItemInfo> initialHiddenItemPlacements;
   private Location startingLocation;
+
+  /**
+   * Tracks initial hidden item placement for reset support.
+   */
+  record HiddenItemInfo(@Nonnull String locationName, @Nonnull String revealedLocationDescription) {}
 
   /**
    * Creates an empty TestGameMap.
@@ -40,6 +46,7 @@ public class TestGameMap implements GameMapInterface {
     this.locations = new HashMap<>();
     this.items = new HashMap<>();
     this.initialItemLocations = new HashMap<>();
+    this.initialHiddenItemPlacements = new HashMap<>();
     this.startingLocation = null;
   }
 
@@ -168,6 +175,25 @@ public class TestGameMap implements GameMapInterface {
     recordInitialItemLocation(item.getName(), location.getName());
   }
 
+  /**
+   * Places a hidden item at a location with a revealed location description.
+   * The item will be invisible until revealed via {@code Location.revealHiddenItemByName()}.
+   *
+   * @param item the item to hide
+   * @param location the location to hide it at
+   * @param revealedLocationDescription the description shown after the item is revealed
+   */
+  public void placeHiddenItem(@Nonnull final Item item,
+                              @Nonnull final Location location,
+                              @Nonnull final String revealedLocationDescription) {
+    if (!items.containsKey(item.getName())) {
+      addItem(item);
+    }
+    location.addHiddenItem(item, revealedLocationDescription);
+    initialHiddenItemPlacements.put(item.getName(),
+        new HiddenItemInfo(location.getName(), revealedLocationDescription));
+  }
+
   @Override
   @Nullable
   public Location getLocation(@Nonnull final String locationKey) {
@@ -211,6 +237,9 @@ public class TestGameMap implements GameMapInterface {
 
     // Reset item locations
     resetItemLocations();
+
+    // Reset hidden items
+    resetHiddenItems();
   }
 
   /**
@@ -234,6 +263,31 @@ public class TestGameMap implements GameMapInterface {
 
       if (item != null && location != null) {
         location.addItem(item);
+      }
+    }
+  }
+
+  /**
+   * Resets hidden items to their initial placements.
+   */
+  private void resetHiddenItems() {
+    // Clear all hidden items from all locations
+    for (final Location location : locations.values()) {
+      location.clearHiddenItems();
+    }
+
+    // Restore hidden items to their initial locations
+    for (final Map.Entry<String, HiddenItemInfo> entry : initialHiddenItemPlacements.entrySet()) {
+      final String itemName = entry.getKey();
+      final HiddenItemInfo info = entry.getValue();
+
+      final Item item = items.get(itemName);
+      final Location location = locations.get(info.locationName());
+
+      if (item != null && location != null) {
+        // Remove from visible items if present (could have been revealed + not taken)
+        location.removeItem(item);
+        location.addHiddenItem(item, info.revealedLocationDescription());
       }
     }
   }
