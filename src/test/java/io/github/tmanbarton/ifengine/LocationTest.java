@@ -308,6 +308,49 @@ class LocationTest {
     }
 
     @Test
+    @DisplayName("returns matching hidden item by name")
+    void testGetHiddenItemByName_returnsMatchingItem() {
+      // Given
+      final Item key = TestItemFactory.createTestKey();
+      location.addHiddenItem(key, "A key is under the table.");
+
+      // When
+      final Optional<Item> result = location.getHiddenItemByName("key");
+
+      // Then
+      assertTrue(result.isPresent());
+      assertEquals(key, result.get());
+    }
+
+    @Test
+    @DisplayName("returns empty when no hidden item matches the name")
+    void testGetHiddenItemByName_returnsEmptyWhenNotFound() {
+      // When
+      final Optional<Item> result = location.getHiddenItemByName("nonexistent");
+
+      // Then
+      assertTrue(result.isEmpty());
+    }
+
+    @Test
+    @DisplayName("returns true when a hidden item matches the name")
+    void testIsItemHiddenByName_returnsTrueWhenFound() {
+      // Given
+      final Item key = TestItemFactory.createTestKey();
+      location.addHiddenItem(key, "A key is under the table.");
+
+      // Then
+      assertTrue(location.isItemHiddenByName("key"));
+    }
+
+    @Test
+    @DisplayName("returns false when no hidden item matches the name")
+    void testIsItemHiddenByName_returnsFalseWhenNotFound() {
+      // Then
+      assertFalse(location.isItemHiddenByName("nonexistent"));
+    }
+
+    @Test
     @DisplayName("clearHiddenItems removes all hidden items")
     void testClearHiddenItems_removesAllHiddenItems() {
       // Given

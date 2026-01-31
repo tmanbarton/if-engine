@@ -538,6 +538,13 @@ Call `revealHiddenItemByName()` on the location to make the item visible. A typi
 
 There is also `revealItem(Item)` which does the same thing but requires an `Item` reference directly. `revealHiddenItemByName` is almost always what you want since command handlers work with string input. `revealItem` exists for cases where you already have the `Item` object (e.g., from iterating `location.getHiddenItems()`).
 
+**Querying hidden items:**
+
+- `isItemHiddenByName(String)` — returns `true` if a hidden item matching the name exists at the location (case-insensitive, supports aliases)
+- `isItemHidden(Item)` — checks by `Item` reference
+- `getHiddenItemByName(String)` — returns `Optional<Item>` for the matching hidden item, useful when you need the `Item` reference without revealing it
+- `getHiddenItems()` — returns a defensive copy of all hidden items at the location
+
 **Hidden item lifecycle:**
 
 1. `placeHiddenItem()` — item is invisible; not shown in `look`, cannot be taken

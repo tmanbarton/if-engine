@@ -271,11 +271,9 @@ public class Location {
    * @return true if a matching hidden item was found and revealed, false otherwise
    */
   public boolean revealHiddenItemByName(@Nonnull final String itemName) {
-    final Optional<Item> match = hiddenItems.stream()
-        .filter(item -> item.matchesName(itemName))
-        .findFirst();
-
-    return match.map(this::revealItem).orElse(false);
+    return getHiddenItemByName(itemName)
+        .map(this::revealItem)
+        .orElse(false);
   }
 
   /**
@@ -286,6 +284,29 @@ public class Location {
    */
   public boolean isItemHidden(@Nonnull final Item item) {
     return hiddenItems.contains(item);
+  }
+
+  /**
+   * Checks if an item is hidden at this location by name (case-insensitive, supports aliases).
+   *
+   * @param itemName the name to search for
+   * @return true if a matching hidden item exists, false otherwise
+   */
+  public boolean isItemHiddenByName(@Nonnull final String itemName) {
+    return getHiddenItemByName(itemName).isPresent();
+  }
+
+  /**
+   * Finds a hidden item by name (case-insensitive, supports aliases).
+   *
+   * @param itemName the name to search for
+   * @return the matching hidden item, or empty if not found
+   */
+  @Nonnull
+  public Optional<Item> getHiddenItemByName(@Nonnull final String itemName) {
+    return hiddenItems.stream()
+        .filter(item -> item.matchesName(itemName))
+        .findFirst();
   }
 
   /**
