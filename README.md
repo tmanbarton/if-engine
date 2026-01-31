@@ -188,8 +188,8 @@ GameMap map = new GameMap.Builder()
 Both "yes" and "no" answers transition to PLAYING state. The custom response is shown followed by the starting location description.
 
 **Accepted variants:**
-- Yes: `yes`, `y`, `yeah`, `yep`, `sure`
-- No: `no`, `n`, `nah`, `nope`, `no thanks`
+- Yes: `yes`, `y`, `yeah`, `yep`, `sure`, `yup`, `yuh`, `yeppers`, `ya`, `heck yeah`, `oh yeah`, `uh hu`, `yes sir`, `yes maam`, `yes ma'am`
+- No: `no`, `n`, `nah`, `nope`, `no thanks`, `no way`, `no way jose`, `nah fam`, `heck no`, `no sir`, `no maam`, `no ma'am`
 
 ### Custom intro message
 

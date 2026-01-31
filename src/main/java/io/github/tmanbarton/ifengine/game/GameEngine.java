@@ -425,13 +425,18 @@ public class GameEngine {
   private boolean isYesAnswer(@Nonnull final String answer) {
     final String lowerAnswer = answer.toLowerCase();
     return lowerAnswer.equals("yes") || lowerAnswer.equals("y") || lowerAnswer.equals("yeah") ||
-        lowerAnswer.equals("yep") || lowerAnswer.equals("sure");
+            lowerAnswer.equals("yep") || lowerAnswer.equals("sure") || lowerAnswer.equals("yup") ||
+            lowerAnswer.equals("yuh") || lowerAnswer.equals("yeppers") || lowerAnswer.equals("ya") ||
+            lowerAnswer.equals("heck yeah") || lowerAnswer.equals("oh yeah") || lowerAnswer.equals("uh hu") ||
+            lowerAnswer.equals("yes sir") || lowerAnswer.equals("yes maam") || lowerAnswer.equals("yes ma'am");
   }
 
   private boolean isNoAnswer(@Nonnull final String answer) {
     final String lowerAnswer = answer.toLowerCase();
     return lowerAnswer.equals("no") || lowerAnswer.equals("n") || lowerAnswer.equals("nah") ||
-        lowerAnswer.equals("nope") || lowerAnswer.equals("no thanks");
+            lowerAnswer.equals("nope") || lowerAnswer.equals("no thanks") || lowerAnswer.equals("no way") ||
+            lowerAnswer.equals("no way jose") || lowerAnswer.equals("nah fam") || lowerAnswer.equals("heck no") ||
+            lowerAnswer.equals("no sir") || lowerAnswer.equals("no maam") || lowerAnswer.equals("no ma'am");
   }
 
   /**
