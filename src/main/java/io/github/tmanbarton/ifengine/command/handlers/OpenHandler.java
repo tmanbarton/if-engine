@@ -6,6 +6,8 @@ import io.github.tmanbarton.ifengine.Openable;
 import io.github.tmanbarton.ifengine.OpenResult;
 import io.github.tmanbarton.ifengine.OpenableItem;
 import io.github.tmanbarton.ifengine.OpenableLocation;
+import io.github.tmanbarton.ifengine.OpenableSceneryObject;
+import io.github.tmanbarton.ifengine.SceneryObject;
 import io.github.tmanbarton.ifengine.command.BaseCommandHandler;
 import io.github.tmanbarton.ifengine.game.GameMapInterface;
 import io.github.tmanbarton.ifengine.game.GameState;
@@ -17,8 +19,8 @@ import io.github.tmanbarton.ifengine.response.ResponseProvider;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Handles open commands for opening closed objects.
@@ -110,24 +112,42 @@ public class OpenHandler implements BaseCommandHandler {
     final Location currentLocation = player.getCurrentLocation();
 
     // Priority 1: Check for OpenableItem in player's inventory
-    final Optional<OpenableItem> inventoryItem = findOpenableItemInInventory(player, objectName);
-    if (inventoryItem.isPresent()) {
-      final OpenableItem openable = inventoryItem.get();
+    final List<OpenableItem> inventoryItems = findOpenableItemsInInventory(player, objectName);
+    if (inventoryItems.size() > 1) {
+      return responseProvider.getOpenNeedToSpecify(objectName);
+    }
+    if (inventoryItems.size() == 1) {
+      final OpenableItem openable = inventoryItems.get(0);
       final OpenResult result = openable.tryOpen(player, providedAnswer, gameMap);
       handlePromptState(player, openable, result, providedAnswer);
       return result.message();
     }
 
     // Priority 2: Check for OpenableItem at current location
-    final Optional<OpenableItem> locationItem = findOpenableItemAtLocation(currentLocation, objectName);
-    if (locationItem.isPresent()) {
-      final OpenableItem openable = locationItem.get();
+    final List<OpenableItem> locationItems = findOpenableItemsAtLocation(currentLocation, objectName);
+    if (locationItems.size() > 1) {
+      return responseProvider.getOpenNeedToSpecify(objectName);
+    }
+    if (locationItems.size() == 1) {
+      final OpenableItem openable = locationItems.get(0);
       final OpenResult result = openable.tryOpen(player, providedAnswer, gameMap);
       handlePromptState(player, openable, result, providedAnswer);
       return result.message();
     }
 
-    // Priority 3: Check if at an OpenableLocation and trying to open a valid target
+    // Priority 3: Check for OpenableSceneryObject at current location
+    final List<OpenableSceneryObject> sceneryObjects = findOpenableSceneryAtLocation(currentLocation, objectName);
+    if (sceneryObjects.size() > 1) {
+      return responseProvider.getOpenNeedToSpecify(objectName);
+    }
+    if (sceneryObjects.size() == 1) {
+      final OpenableSceneryObject openable = sceneryObjects.get(0);
+      final OpenResult result = openable.tryOpen(player, providedAnswer, gameMap);
+      handlePromptState(player, openable, result, providedAnswer);
+      return result.message();
+    }
+
+    // Priority 4: Check if at an OpenableLocation and trying to open a valid target
     if (currentLocation instanceof OpenableLocation openable
         && openable.matchesOpenTarget(objectName)) {
       final OpenResult result = openable.tryOpen(player, providedAnswer, gameMap);
@@ -168,22 +188,35 @@ public class OpenHandler implements BaseCommandHandler {
   }
 
   @Nonnull
-  private Optional<OpenableItem> findOpenableItemInInventory(@Nonnull final Player player, @Nonnull final String objectName) {
+  private List<OpenableItem> findOpenableItemsInInventory(@Nonnull final Player player, @Nonnull final String objectName) {
+    final List<OpenableItem> matches = new ArrayList<>();
     for (final Item item : player.getInventory()) {
       if (item instanceof OpenableItem openableItem && openableItem.matchesOpenTarget(objectName)) {
-        return Optional.of(openableItem);
+        matches.add(openableItem);
       }
     }
-    return Optional.empty();
+    return matches;
   }
 
   @Nonnull
-  private Optional<OpenableItem> findOpenableItemAtLocation(@Nonnull final Location location, @Nonnull final String objectName) {
+  private List<OpenableItem> findOpenableItemsAtLocation(@Nonnull final Location location, @Nonnull final String objectName) {
+    final List<OpenableItem> matches = new ArrayList<>();
     for (final Item item : location.getItems()) {
       if (item instanceof OpenableItem openableItem && openableItem.matchesOpenTarget(objectName)) {
-        return Optional.of(openableItem);
+        matches.add(openableItem);
       }
     }
-    return Optional.empty();
+    return matches;
+  }
+
+  @Nonnull
+  private List<OpenableSceneryObject> findOpenableSceneryAtLocation(@Nonnull final Location location, @Nonnull final String objectName) {
+    final List<OpenableSceneryObject> matches = new ArrayList<>();
+    for (final SceneryObject scenery : location.getSceneryObjects()) {
+      if (scenery instanceof OpenableSceneryObject openable && openable.matchesOpenTarget(objectName)) {
+        matches.add(openable);
+      }
+    }
+    return matches;
   }
 }

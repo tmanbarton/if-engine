@@ -144,6 +144,31 @@ assertEquals(responses.getTakeWhat(), message);
 - Tests should validate against the same response methods the code uses
 - When a response changes, both code AND tests update automatically
 
+### Write Useful Assertion Messages
+
+Every assertion should include a message that explains **why** the test failed, not just **what** failed. The testing framework already reports that values didn't match — your message should provide the context a developer needs to diagnose the problem.
+
+**Bad assertion messages** (just restate what the framework already tells you):
+```java
+// ❌ Useless - the framework already shows expected vs actual
+assertEquals(expected, actual, "values should be equal");
+assertTrue(result, "result should be true");
+assertFalse(flag, "flag should be false");
+```
+
+**Good assertion messages** (explain the intent and context):
+```java
+// ✅ Useful - explains what the failure means in domain terms
+assertEquals(expected, actual, "open command on unlocked door should return success response");
+assertTrue(result, "player should have the key in inventory after taking it");
+assertFalse(flag, "door should not be open before unlock command is issued");
+```
+
+**Guidelines:**
+- Describe the scenario or behavior being verified, not the assertion mechanic
+- A developer reading only the failure message should understand what went wrong without reading the test code
+- Include relevant context: what action was performed, what state was expected, and why
+
 ### Avoid Redundant/Duplicate Tests
 
 Don't write multiple tests that verify the exact same behavior. Each test should validate a distinct scenario.
@@ -181,13 +206,15 @@ Not all tests add value. Avoid writing tests for scenarios that cannot occur in 
 | Basic command testing | `TestGameEngineBuilder.singleLocation()` |
 | Navigation testing | `TestGameEngineBuilder.twoLocations()` |
 | Inventory testing | `TestFixtures.itemInteractionScenario()` |
-| Unlock/open mechanics | `TestFixtures.unlockableLocationScenario()` |
+| Unlock/open mechanics | `TestFixtures.openableLocationScenario()` |
+| Openable scenery (locked) | `TestFixtures.openableSceneryScenario()` |
+| Openable scenery (no lock) | `TestFixtures.openableSceneryNoLockScenario()` |
 
 ## Project Structure
 
 ```
 src/main/java/io.github.tmanbarton.ifengine/
-├── *.java                    # Core domain: Direction, Item, Location, SceneryObject, Container
+├── *.java                    # Core domain: Direction, Item, Location, SceneryObject, OpenableSceneryObject, Container
 ├── command/
 │   ├── CommandDispatcher.java    # Routes verbs to handlers
 │   ├── BaseCommandHandler.java   # Handler interface
@@ -275,7 +302,13 @@ In `ObjectResolver.resolveObject()`:
 1. Player inventory items
 2. Current location items
 3. Scenery objects at location
-4. UnlockableLocation (for "unlock door" type commands)
+4. OpenableLocation (for "unlock door" type commands)
+
+For `unlock`/`open` commands specifically (in `UnlockHandler`/`OpenHandler`):
+1. `OpenableItem` in player inventory
+2. `OpenableItem` at current location
+3. `OpenableSceneryObject` at current location
+4. `OpenableLocation` (the location itself)
 
 This matters when debugging "can't find object" issues.
 

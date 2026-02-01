@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -17,15 +18,89 @@ import java.util.Set;
  * Supports both standard {@link InteractionType} responses and custom string-based interactions
  * for use with custom commands registered via {@code GameMap.Builder.withCommand()}.
  */
-public record SceneryObject(
-    @Nonnull String name,
-    @Nonnull Set<String> aliases,
-    @Nonnull Map<InteractionType, String> responses,
-    @Nonnull Map<String, String> customResponses,
-    boolean isContainer,
-    @Nonnull Set<String> allowedItemNames,
-    @Nonnull List<String> prepositions
-) {
+public class SceneryObject {
+
+  @Nonnull
+  private final String name;
+  @Nonnull
+  private final Set<String> aliases;
+  @Nonnull
+  private final Map<InteractionType, String> responses;
+  @Nonnull
+  private final Map<String, String> customResponses;
+  private final boolean isContainer;
+  @Nonnull
+  private final Set<String> allowedItemNames;
+  @Nonnull
+  private final List<String> prepositions;
+
+  /**
+   * Constructs a SceneryObject with all properties.
+   * Protected to allow subclass construction.
+   *
+   * @param name the primary name of the scenery object
+   * @param aliases alternative names for the scenery object
+   * @param responses standard interaction type responses
+   * @param customResponses custom verb responses
+   * @param isContainer whether this scenery object is a container
+   * @param allowedItemNames names of items allowed in this container
+   * @param prepositions valid prepositions for this container
+   */
+  protected SceneryObject(
+      @Nonnull final String name,
+      @Nonnull final Set<String> aliases,
+      @Nonnull final Map<InteractionType, String> responses,
+      @Nonnull final Map<String, String> customResponses,
+      final boolean isContainer,
+      @Nonnull final Set<String> allowedItemNames,
+      @Nonnull final List<String> prepositions
+  ) {
+    this.name = name;
+    this.aliases = aliases;
+    this.responses = responses;
+    this.customResponses = customResponses;
+    this.isContainer = isContainer;
+    this.allowedItemNames = allowedItemNames;
+    this.prepositions = prepositions;
+  }
+
+  // ===== Accessor methods (matching record component names) =====
+
+  @Nonnull
+  public String name() {
+    return name;
+  }
+
+  @Nonnull
+  public Set<String> aliases() {
+    return aliases;
+  }
+
+  @Nonnull
+  public Map<InteractionType, String> responses() {
+    return responses;
+  }
+
+  @Nonnull
+  public Map<String, String> customResponses() {
+    return customResponses;
+  }
+
+  public boolean isContainer() {
+    return isContainer;
+  }
+
+  @Nonnull
+  public Set<String> allowedItemNames() {
+    return allowedItemNames;
+  }
+
+  @Nonnull
+  public List<String> prepositions() {
+    return prepositions;
+  }
+
+  // ===== Convenience accessor methods =====
 
   /**
    * Gets the allowed item names for this container.
@@ -115,6 +190,42 @@ public record SceneryObject(
       return Optional.empty();
     }
     return Optional.ofNullable(customResponses.get(verb.toLowerCase()));
+  }
+
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    final SceneryObject that = (SceneryObject) o;
+    return isContainer == that.isContainer
+        && name.equals(that.name)
+        && aliases.equals(that.aliases)
+        && responses.equals(that.responses)
+        && customResponses.equals(that.customResponses)
+        && allowedItemNames.equals(that.allowedItemNames)
+        && prepositions.equals(that.prepositions);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(name, aliases, responses, customResponses, isContainer, allowedItemNames, prepositions);
+  }
+
+  @Override
+  public String toString() {
+    return "SceneryObject[" +
+        "name=" + name +
+        ", aliases=" + aliases +
+        ", responses=" + responses +
+        ", customResponses=" + customResponses +
+        ", isContainer=" + isContainer +
+        ", allowedItemNames=" + allowedItemNames +
+        ", prepositions=" + prepositions +
+        ']';
   }
 
   /**

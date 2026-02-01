@@ -222,6 +222,18 @@ public class DefaultResponses implements ResponseProvider {
     return String.format("The %s isn't something you can open.", itemName);
   }
 
+  @Override
+  @Nonnull
+  public String getOpenNeedToSpecify(@Nonnull final String objectName) {
+    return String.format("Which %s do you want to open?", objectName);
+  }
+
+  @Override
+  @Nonnull
+  public String getUnlockNeedToSpecify(@Nonnull final String objectName) {
+    return String.format("Which %s do you want to unlock?", objectName);
+  }
+
   // Climb responses
 
   @Override

@@ -26,7 +26,6 @@ This document tracks what the IFEngine API supports for complex interactive fict
 
 | Feature | Current State | Concern |
 |---------|---------------|---------|
-| Custom commands | Handlers hardcoded in GameEngine | Can't add game-specific verbs easily |
 | Item subclasses | Supported (Item is a class) | Works, but no examples in ExampleGameContent |
 | Game flags/events | Not supported | No way to track "met_npc", "visited_cave", etc. beyond inventory |
 | NPC system | Not supported | No infrastructure for characters with dialogue, triggers, or conditional responses |
@@ -36,18 +35,6 @@ This document tracks what the IFEngine API supports for complex interactive fict
 | Score system | Not supported | No built-in point tracking or achievement system |
 | Combinable items | Not supported | No "use X with Y" or "combine X and Y" to create new items |
 | Turn counter | Not supported | No tracking of moves/turns for timed puzzles or events |
-
----
-
-## Recommended Fixes
-
-### Priority 1: Allow custom command handlers
-**Problem:** CommandDispatcher handlers are hardcoded in GameEngine constructor.
-
-**Options:**
-- Add `getCustomHandlers()` to GameContent interface
-- GameEngine registers content-provided handlers after built-in ones
-- Example: game adds "use" command for "use key on door"
 
 ---
 

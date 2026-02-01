@@ -15,6 +15,7 @@ import io.github.tmanbarton.ifengine.test.TestItemFactory;
 import io.github.tmanbarton.ifengine.test.TestLocationFactory;
 import io.github.tmanbarton.ifengine.test.TestOpenableItem;
 import io.github.tmanbarton.ifengine.test.TestOpenableLocation;
+import io.github.tmanbarton.ifengine.test.TestOpenableSceneryObject;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -632,6 +633,173 @@ class UnlockHandlerTest {
       assertEquals(TestOpenableItem.DEFAULT_UNLOCK_MESSAGE, result);
       assertTrue(chest.isUnlocked());
       assertFalse(openableLocation.isUnlocked());
+    }
+  }
+
+  @Nested
+  class OpenableSceneryAtLocation {
+
+    @Test
+    @DisplayName("unlocks scenery with key in inventory")
+    void testHandle_unlockSceneryWithKey() {
+      // Given
+      final Location regularLocation = TestLocationFactory.createDefaultLocation();
+      final TestOpenableSceneryObject safe = TestOpenableSceneryObject.openableBuilder("safe")
+          .withUnlockTargets("safe")
+          .withRequiresUnlocking(true)
+          .withRequiredKey("safe-key")
+          .build();
+      regularLocation.addSceneryObject(safe);
+      final Player testPlayer = new Player(regularLocation);
+      final Item safeKey = new Item("safe-key", "a safe key", "A safe key.", "A small key for the safe.");
+      testPlayer.addItem(safeKey);
+      final ParsedCommand command = createUnlockCommand("safe");
+
+      // When
+      final String result = handler.handle(testPlayer, command);
+
+      // Then
+      assertEquals(TestOpenableSceneryObject.DEFAULT_UNLOCK_MESSAGE, result);
+      assertTrue(safe.isUnlocked());
+    }
+
+    @Test
+    @DisplayName("location items take priority over openable scenery")
+    void testHandle_locationItemPriorityOverScenery() {
+      // Given - both an openable item and openable scenery named "chest"
+      final Location regularLocation = TestLocationFactory.createDefaultLocation();
+      final TestOpenableItem chest = TestOpenableItem.builder("chest")
+          .withUnlockTargets("chest")
+          .withRequiresUnlocking(true)
+          .withRequiredKey("chest-key")
+          .build();
+      regularLocation.addItem(chest);
+      final TestOpenableSceneryObject sceneryChest = TestOpenableSceneryObject.openableBuilder("chest")
+          .withUnlockTargets("chest")
+          .withRequiresUnlocking(true)
+          .withRequiredKey("chest-key")
+          .build();
+      regularLocation.addSceneryObject(sceneryChest);
+      final Player testPlayer = new Player(regularLocation);
+      final Item chestKey = new Item("chest-key", "a small key", "A small key.", "A small brass key.");
+      testPlayer.addItem(chestKey);
+      final ParsedCommand command = createUnlockCommand("chest");
+
+      // When
+      final String result = handler.handle(testPlayer, command);
+
+      // Then - item unlocks, not scenery
+      assertEquals(TestOpenableItem.DEFAULT_UNLOCK_MESSAGE, result);
+      assertTrue(chest.isUnlocked());
+      assertFalse(sceneryChest.isUnlocked());
+    }
+
+    @Test
+    @DisplayName("openable scenery takes priority over OpenableLocation")
+    void testHandle_sceneryPriorityOverOpenableLocation() {
+      // Given - openable scenery at an OpenableLocation, both matching "door"
+      final TestOpenableSceneryObject sceneryDoor = TestOpenableSceneryObject.openableBuilder("door")
+          .withUnlockTargets("door")
+          .withRequiresUnlocking(true)
+          .withRequiredKey("key")
+          .build();
+      openableLocation.addSceneryObject(sceneryDoor);
+      final Item key = TestItemFactory.createTestKey();
+      player.addItem(key);
+      final ParsedCommand command = createUnlockCommand("door");
+
+      // When
+      final String result = handler.handle(player, command);
+
+      // Then - scenery unlocks, not the location
+      assertEquals(TestOpenableSceneryObject.DEFAULT_UNLOCK_MESSAGE, result);
+      assertTrue(sceneryDoor.isUnlocked());
+      assertFalse(openableLocation.isUnlocked());
+    }
+  }
+
+  @Nested
+  class Disambiguation {
+
+    @Test
+    @DisplayName("two openable items in inventory with same name returns disambiguation")
+    void testHandle_disambiguateInventoryItems() {
+      // Given - two openable items in inventory matching "box"
+      final Location regularLocation = TestLocationFactory.createDefaultLocation();
+      final Player testPlayer = new Player(regularLocation);
+      final TestOpenableItem box1 = TestOpenableItem.builder("red box")
+          .withUnlockTargets("box", "red box")
+          .withRequiresUnlocking(true)
+          .build();
+      final TestOpenableItem box2 = TestOpenableItem.builder("blue box")
+          .withUnlockTargets("box", "blue box")
+          .withRequiresUnlocking(true)
+          .build();
+      testPlayer.addItem(box1);
+      testPlayer.addItem(box2);
+      final ParsedCommand command = createUnlockCommand("box");
+
+      // When
+      final String result = handler.handle(testPlayer, command);
+
+      // Then
+      assertEquals(responses.getUnlockNeedToSpecify("box"), result);
+      assertFalse(box1.isUnlocked());
+      assertFalse(box2.isUnlocked());
+    }
+
+    @Test
+    @DisplayName("two openable items at location with same name returns disambiguation")
+    void testHandle_disambiguateLocationItems() {
+      // Given - two openable items at location matching "chest"
+      final Location regularLocation = TestLocationFactory.createDefaultLocation();
+      final TestOpenableItem chest1 = TestOpenableItem.builder("wooden chest")
+          .withUnlockTargets("chest", "wooden chest")
+          .withRequiresUnlocking(true)
+          .build();
+      final TestOpenableItem chest2 = TestOpenableItem.builder("iron chest")
+          .withUnlockTargets("chest", "iron chest")
+          .withRequiresUnlocking(true)
+          .build();
+      regularLocation.addItem(chest1);
+      regularLocation.addItem(chest2);
+      final Player testPlayer = new Player(regularLocation);
+      final ParsedCommand command = createUnlockCommand("chest");
+
+      // When
+      final String result = handler.handle(testPlayer, command);
+
+      // Then
+      assertEquals(responses.getUnlockNeedToSpecify("chest"), result);
+      assertFalse(chest1.isUnlocked());
+      assertFalse(chest2.isUnlocked());
+    }
+
+    @Test
+    @DisplayName("two openable scenery objects with same name returns disambiguation")
+    void testHandle_disambiguateSceneryObjects() {
+      // Given - two openable scenery at location matching "safe"
+      final Location regularLocation = TestLocationFactory.createDefaultLocation();
+      final TestOpenableSceneryObject safe1 = TestOpenableSceneryObject.openableBuilder("wall safe")
+          .withUnlockTargets("safe", "wall safe")
+          .withRequiresUnlocking(true)
+          .build();
+      final TestOpenableSceneryObject safe2 = TestOpenableSceneryObject.openableBuilder("floor safe")
+          .withUnlockTargets("safe", "floor safe")
+          .withRequiresUnlocking(true)
+          .build();
+      regularLocation.addSceneryObject(safe1);
+      regularLocation.addSceneryObject(safe2);
+      final Player testPlayer = new Player(regularLocation);
+      final ParsedCommand command = createUnlockCommand("safe");
+
+      // When
+      final String result = handler.handle(testPlayer, command);
+
+      // Then
+      assertEquals(responses.getUnlockNeedToSpecify("safe"), result);
+      assertFalse(safe1.isUnlocked());
+      assertFalse(safe2.isUnlocked());
     }
   }
 

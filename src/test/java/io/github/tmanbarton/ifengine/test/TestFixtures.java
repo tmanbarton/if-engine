@@ -6,6 +6,7 @@ import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.Location;
 import io.github.tmanbarton.ifengine.SceneryObject;
 import io.github.tmanbarton.ifengine.game.GameState;
+import io.github.tmanbarton.ifengine.OpenableSceneryObject;
 
 import javax.annotation.Nonnull;
 
@@ -400,6 +401,58 @@ public final class TestFixtures {
         .build();
 
     final TestGameMap map = TestGameMap.createWithLocations(openableLocation);
+
+    return TestGameEngineBuilder.withCustomMap(map)
+        .withInitialPlayerState(GameState.PLAYING)
+        .build();
+  }
+
+  /**
+   * Creates a scenario for testing openable scenery objects.
+   * One location with a locked safe (key-based) and a key.
+   * Safe requires "safe-key" to unlock.
+   * Use for: OpenableSceneryObject unlock/open testing
+   *
+   * @return a configured TestGameEngine
+   */
+  @Nonnull
+  public static TestGameEngine openableSceneryScenario() {
+    final TestOpenableSceneryObject safe = TestOpenableSceneryObject.openableBuilder("safe")
+        .withUnlockTargets("safe")
+        .withOpenTargets("safe")
+        .withInferredTargetNames("safe")
+        .withRequiresUnlocking(true)
+        .withRequiredKey("safe-key")
+        .build();
+
+    final TestGameMap map = TestGameMapBuilder.singleLocation()
+        .withItem("safe-key")
+        .build();
+    map.getStartingLocation().addSceneryObject(safe);
+
+    return TestGameEngineBuilder.withCustomMap(map)
+        .withInitialPlayerState(GameState.PLAYING)
+        .build();
+  }
+
+  /**
+   * Creates a scenario for testing openable scenery without a lock.
+   * One location with a cabinet (no lock, can be opened directly).
+   * Use for: direct-open scenery testing
+   *
+   * @return a configured TestGameEngine
+   */
+  @Nonnull
+  public static TestGameEngine openableSceneryNoLockScenario() {
+    final TestOpenableSceneryObject cabinet = TestOpenableSceneryObject.openableBuilder("cabinet")
+        .withUnlockTargets("cabinet")
+        .withOpenTargets("cabinet")
+        .withInferredTargetNames("cabinet")
+        .withRequiresUnlocking(false)
+        .build();
+
+    final TestGameMap map = TestGameMapBuilder.singleLocation().build();
+    map.getStartingLocation().addSceneryObject(cabinet);
 
     return TestGameEngineBuilder.withCustomMap(map)
         .withInitialPlayerState(GameState.PLAYING)

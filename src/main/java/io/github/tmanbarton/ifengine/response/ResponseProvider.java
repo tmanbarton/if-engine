@@ -121,6 +121,12 @@ public interface ResponseProvider {
   @Nonnull
   String getOpenCantOpen(@Nonnull String itemName);
 
+  @Nonnull
+  String getOpenNeedToSpecify(@Nonnull String objectName);
+
+  @Nonnull
+  String getUnlockNeedToSpecify(@Nonnull String objectName);
+
   // Climb responses
 
   @Nonnull
