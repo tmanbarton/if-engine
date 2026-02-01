@@ -4,6 +4,7 @@ import io.github.tmanbarton.ifengine.Direction;
 import io.github.tmanbarton.ifengine.InteractionType;
 import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.Location;
+import io.github.tmanbarton.ifengine.OpenableSceneryObject;
 import io.github.tmanbarton.ifengine.SceneryObject;
 import io.github.tmanbarton.ifengine.game.GameEngine;
 import io.github.tmanbarton.ifengine.game.GameMap;
@@ -38,11 +39,7 @@ public final class GameExample {
   public static GameMap createMap() {
     return new GameMap.Builder()
         // Add locations
-        .addLocation(new Location(
-            "cottage",
-            "You are inside a small, cozy cottage. Sunlight streams through a dusty window. "
-                + "A wooden door leads north to the outside.",
-            "Inside the cottage."))
+        .addLocation(createCottage())
         .addLocation(new Location(
             "forest",
             "You stand on a narrow forest path. Ancient trees tower above you. "
@@ -211,6 +208,22 @@ public final class GameExample {
         })
 
         .build();
+  }
+
+  /**
+   * Creates the cottage location with an openable window scenery object.
+   */
+  private static Location createCottage() {
+    final Location cottage = new Location(
+        "cottage",
+        "You are inside a small, cozy cottage. Sunlight streams through a dusty window. "
+            + "A wooden door leads north to the outside.",
+        "Inside the cottage.");
+
+    final OpenableSceneryObject window = new CottageWindow();
+    cottage.addSceneryObject(window);
+
+    return cottage;
   }
 
   /**
