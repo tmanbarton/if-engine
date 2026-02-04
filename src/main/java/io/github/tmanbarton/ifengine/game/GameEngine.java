@@ -426,9 +426,10 @@ public class GameEngine {
     final String lowerAnswer = answer.toLowerCase();
     return lowerAnswer.equals("yes") || lowerAnswer.equals("y") || lowerAnswer.equals("yeah") ||
             lowerAnswer.equals("yep") || lowerAnswer.equals("sure") || lowerAnswer.equals("yup") ||
-            lowerAnswer.equals("yuh") || lowerAnswer.equals("yeppers") || lowerAnswer.equals("ya") ||
-            lowerAnswer.equals("heck yeah") || lowerAnswer.equals("oh yeah") || lowerAnswer.equals("uh hu") ||
-            lowerAnswer.equals("yes sir") || lowerAnswer.equals("yes maam") || lowerAnswer.equals("yes ma'am");
+            lowerAnswer.equals("yuh") || lowerAnswer.equals("yeppers") || lowerAnswer.equals("yah") ||
+            lowerAnswer.equals("ya") || lowerAnswer.equals("heck yeah") || lowerAnswer.equals("oh yeah") ||
+            lowerAnswer.equals("uh hu") || lowerAnswer.equals("yes sir") || lowerAnswer.equals("yes maam") ||
+            lowerAnswer.equals("yes ma'am");
   }
 
   private boolean isNoAnswer(@Nonnull final String answer) {

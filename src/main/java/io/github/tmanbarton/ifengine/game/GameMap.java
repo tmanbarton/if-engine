@@ -464,7 +464,7 @@ public class GameMap implements GameMapInterface {
      * Both "yes" and "no" answers transition the game to PLAYING state, allowing
      * gameplay to begin. The difference is only in the response message shown.
      * <p>
-     * Accepted yes variants: "yes", "y", "yeah", "yep", "sure", "yup", "yuh", "yeppers", "ya", "heck yeah", "oh yeah", "uh hu", "yes sir", "yes maam", "yes ma'am"
+     * Accepted yes variants: "yes", "y", "yeah", "yep", "sure", "yup", "yuh", "yeppers", "yah", "ya", "heck yeah", "oh yeah", "uh hu", "yes sir", "yes maam", "yes ma'am"
      * Accepted no variants: "no", "n", "nah", "nope", "no thanks", "no way", "no way jose", "nah fam", "heck no", "no sir", "no maam", "no ma'am"
      * <p>
      * The intro question itself should be displayed in the HTML/frontend layer,
