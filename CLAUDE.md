@@ -197,6 +197,57 @@ Not all tests add value. Avoid writing tests for scenarios that cannot occur in 
 
 **Goal**: Tests should document how the system actually behaves, not theoretical edge cases. If you discover a test validates impossible scenarios, delete it rather than maintaining dead test code.
 
+### Only Test Meaningful Logic, Not Java Plumbing
+
+Tests should verify **your application's behavior and logic**, not the Java language or framework. If the code under test has no conditional logic, no branching, and no meaningful computation, it almost certainly doesn't need a dedicated test.
+
+**Do NOT write tests for**:
+- **Constructors** that just assign fields — Java guarantees assignment works
+- **Getters and setters** — these are trivial field access, not logic
+- **Java records** — their `equals()`, `hashCode()`, `toString()`, accessors, and constructors are compiler-generated and guaranteed correct
+- **Simple delegation methods** — e.g., a method that just calls `list.add(item)` or `map.get(key)`
+- **Builder patterns** that just set fields — test the object the builder *produces* through real usage, not the builder itself
+- **Enum declarations** — don't test that an enum has certain values
+- **Interface method signatures** — interfaces have no behavior to test
+- **Data transfer objects (DTOs)** — plain data carriers with no logic
+
+**The litmus test**: Before writing a test, ask:
+1. "Does this code contain a decision (if/else, switch, loop, exception handling)?"
+2. "Could a reasonable implementation of this code be *wrong* in a way my test would catch?"
+3. "Am I testing *my* logic, or testing that Java works?"
+
+If the answers are no, no, and "testing that Java works" — don't write the test.
+
+**Where to focus testing effort instead**:
+- Command handlers that make decisions based on game state
+- Parser logic that resolves ambiguous input
+- State transitions with conditional outcomes
+- Methods with branching logic, edge cases, or error paths
+- Integration points where multiple components interact
+
+```java
+// ❌ WRONG - Testing Java, not application logic
+@Test
+void testConstructor_setsName() {
+    final var item = new Item("key", "A rusty key");
+    assertEquals("key", item.getName()); // Java guarantees this works
+}
+
+@Test
+void testRecord_equality() {
+    final var a = new ParsedCommand("take", "key");
+    final var b = new ParsedCommand("take", "key");
+    assertEquals(a, b); // Records guarantee this works
+}
+
+// ✅ CORRECT - Testing actual game logic with decisions
+@Test
+void testTake_itemAlreadyInInventory() {
+    // This tests a real decision: what happens when the player
+    // tries to take something they already have?
+}
+```
+
 ### Test Infrastructure Usage
 
 **Always use test infrastructure** - never `new GameEngine()` directly.
