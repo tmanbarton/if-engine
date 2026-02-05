@@ -208,6 +208,12 @@ public class DefaultResponses implements ResponseProvider {
     return String.format("The %s isn't something you can unlock.", itemName);
   }
 
+  @Override
+  @Nonnull
+  public String getUnlockNotPresent(@Nonnull final String objectName) {
+    return String.format("You don't see a %s here.", objectName);
+  }
+
   // Open responses
 
   @Override
@@ -220,6 +226,12 @@ public class DefaultResponses implements ResponseProvider {
   @Nonnull
   public String getOpenCantOpen(@Nonnull final String itemName) {
     return String.format("The %s isn't something you can open.", itemName);
+  }
+
+  @Override
+  @Nonnull
+  public String getOpenNotPresent(@Nonnull final String objectName) {
+    return String.format("You don't see a %s here.", objectName);
   }
 
   @Override

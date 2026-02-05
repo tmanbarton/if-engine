@@ -113,6 +113,9 @@ public interface ResponseProvider {
   @Nonnull
   String getUnlockCantUnlock(@Nonnull String itemName);
 
+  @Nonnull
+  String getUnlockNotPresent(@Nonnull String objectName);
+
   // Open responses
 
   @Nonnull
@@ -120,6 +123,9 @@ public interface ResponseProvider {
 
   @Nonnull
   String getOpenCantOpen(@Nonnull String itemName);
+
+  @Nonnull
+  String getOpenNotPresent(@Nonnull String objectName);
 
   @Nonnull
   String getOpenNeedToSpecify(@Nonnull String objectName);

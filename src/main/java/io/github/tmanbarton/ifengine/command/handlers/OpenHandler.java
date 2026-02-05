@@ -155,7 +155,22 @@ public class OpenHandler implements BaseCommandHandler {
       return result.message();
     }
 
-    return responseProvider.getOpenCantOpen(objectName);
+    // Object not found as openable - check if it exists at all
+    if (isObjectPresent(player, currentLocation, objectName)) {
+      return responseProvider.getOpenCantOpen(objectName);
+    }
+    return responseProvider.getOpenNotPresent(objectName);
+  }
+
+  /**
+   * Checks if an object with the given name exists anywhere the player can see,
+   * regardless of whether it is openable.
+   */
+  private boolean isObjectPresent(@Nonnull final Player player, @Nonnull final Location location,
+                                  @Nonnull final String objectName) {
+    return player.getInventory().stream().anyMatch(item -> item.matchesName(objectName))
+        || location.getItems().stream().anyMatch(item -> item.matchesName(objectName))
+        || location.getSceneryObjects().stream().anyMatch(scenery -> scenery.matches(objectName));
   }
 
   /**

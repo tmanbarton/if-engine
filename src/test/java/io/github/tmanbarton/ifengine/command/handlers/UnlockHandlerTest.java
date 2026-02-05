@@ -126,7 +126,7 @@ class UnlockHandlerTest {
   class NothingToUnlock {
 
     @Test
-    @DisplayName("Test handle - unlock at regular location")
+    @DisplayName("returns not-present response when object doesn't exist at regular location")
     void testHandle_unlockAtRegularLocation() {
       final Location regularLocation = TestLocationFactory.createDefaultLocation();
       final Player regularPlayer = new Player(regularLocation);
@@ -134,7 +134,8 @@ class UnlockHandlerTest {
 
       final String result = handler.handle(regularPlayer, command);
 
-      assertEquals(responses.getUnlockCantUnlock("door"), result);
+      assertEquals(responses.getUnlockNotPresent("door"), result,
+          "unlock command at location with no door should return not-present response");
     }
 
     @Test
@@ -150,15 +151,37 @@ class UnlockHandlerTest {
     }
 
     @Test
-    @DisplayName("Test handle - unlock something that doesn't match unlock targets")
-    void testHandle_unlockNonMatchingTarget() {
+    @DisplayName("returns not-present response when object doesn't exist at all")
+    void testHandle_unlockNonExistentObject() {
+      // Given - regular location with no "unicorn" item or scenery
+      final Location regularLocation = TestLocationFactory.createDefaultLocation();
+      final Player testPlayer = new Player(regularLocation);
+      final ParsedCommand command = createUnlockCommand("unicorn");
+
+      // When
+      final String result = handler.handle(testPlayer, command);
+
+      // Then - should say "not present", not "can't unlock"
+      assertEquals(responses.getUnlockNotPresent("unicorn"), result,
+          "unlock command on non-existent object should return not-present response");
+    }
+
+    @Test
+    @DisplayName("returns can't-unlock response when object exists but isn't unlockable")
+    void testHandle_unlockNonUnlockableItem() {
+      // Given - regular item "key" at location (not an OpenableItem)
+      final Location regularLocation = TestLocationFactory.createDefaultLocation();
       final Item key = TestItemFactory.createTestKey();
-      player.addItem(key);
-      final ParsedCommand command = createUnlockCommand("window");
+      regularLocation.addItem(key);
+      final Player testPlayer = new Player(regularLocation);
+      final ParsedCommand command = createUnlockCommand("key");
 
-      final String result = handler.handle(player, command);
+      // When
+      final String result = handler.handle(testPlayer, command);
 
-      assertEquals(responses.getUnlockCantUnlock("window"), result);
+      // Then - key exists but isn't unlockable
+      assertEquals(responses.getUnlockCantUnlock("key"), result,
+          "unlock command on non-unlockable item should return can't-unlock response");
     }
   }
 
@@ -381,7 +404,7 @@ class UnlockHandlerTest {
     }
 
     @Test
-    @DisplayName("Test handle - 'unlock X code' without 'with' treats as single object name")
+    @DisplayName("'unlock X code' without 'with' treats as single object name that doesn't exist")
     void testHandle_unlockWithInlineCodeTreatedAsSingleObject() {
       // Given - "unlock lockbox 1234" is parsed as directObjects=["lockbox 1234"]
       // because the parser treats "lockbox 1234" as a multi-word object name
@@ -390,9 +413,9 @@ class UnlockHandlerTest {
       // When
       final String result = handler.handle(player, command);
 
-      // Then - returns "can't unlock" because no object named "lockbox 1234" exists
-      // This documents that "unlock X code" format does NOT work - use "unlock X with code"
-      assertEquals(responses.getUnlockCantUnlock("lockbox 1234"), result);
+      // Then - no object named "lockbox 1234" exists, returns not-present
+      assertEquals(responses.getUnlockNotPresent("lockbox 1234"), result,
+          "unlock with inline code (no 'with' preposition) should treat as non-existent object name");
     }
   }
 

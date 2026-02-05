@@ -156,7 +156,7 @@ class OpenHandlerTest {
   class NothingToOpen {
 
     @Test
-    @DisplayName("Test handle - open at regular location")
+    @DisplayName("returns not-present response when object doesn't exist at regular location")
     void testHandle_openAtRegularLocation() {
       final Location regularLocation = TestLocationFactory.createDefaultLocation();
       final Player regularPlayer = new Player(regularLocation);
@@ -164,7 +164,8 @@ class OpenHandlerTest {
 
       final String result = handler.handle(regularPlayer, command);
 
-      assertEquals(responses.getOpenCantOpen("door"), result);
+      assertEquals(responses.getOpenNotPresent("door"), result,
+          "open command at location with no door should return not-present response");
     }
 
     @Test
@@ -180,13 +181,37 @@ class OpenHandlerTest {
     }
 
     @Test
-    @DisplayName("Test handle - open something that doesn't match open targets")
-    void testHandle_openNonMatchingTarget() {
-      final ParsedCommand command = createOpenCommand("window");
+    @DisplayName("returns not-present response when object doesn't exist at all")
+    void testHandle_openNonExistentObject() {
+      // Given - regular location with no "unicorn" item or scenery
+      final Location regularLocation = TestLocationFactory.createDefaultLocation();
+      final Player testPlayer = new Player(regularLocation);
+      final ParsedCommand command = createOpenCommand("unicorn");
 
-      final String result = handler.handle(player, command);
+      // When
+      final String result = handler.handle(testPlayer, command);
 
-      assertEquals(responses.getOpenCantOpen("window"), result);
+      // Then - should say "not present", not "can't open"
+      assertEquals(responses.getOpenNotPresent("unicorn"), result,
+          "open command on non-existent object should return not-present response");
+    }
+
+    @Test
+    @DisplayName("returns can't-open response when object exists but isn't openable")
+    void testHandle_openNonOpenableItem() {
+      // Given - regular item "key" at location (not an OpenableItem)
+      final Location regularLocation = TestLocationFactory.createDefaultLocation();
+      final Item key = TestItemFactory.createTestKey();
+      regularLocation.addItem(key);
+      final Player testPlayer = new Player(regularLocation);
+      final ParsedCommand command = createOpenCommand("key");
+
+      // When
+      final String result = handler.handle(testPlayer, command);
+
+      // Then - key exists but isn't openable
+      assertEquals(responses.getOpenCantOpen("key"), result,
+          "open command on non-openable item should return can't-open response");
     }
   }
 
@@ -458,7 +483,7 @@ class OpenHandlerTest {
     }
 
     @Test
-    @DisplayName("Test handle - 'open X code' without 'with' treats as single object name")
+    @DisplayName("'open X code' without 'with' treats as single object name that doesn't exist")
     void testHandle_openWithInlineCodeTreatedAsSingleObject() {
       // Given - "open lockbox 1234" is parsed as directObjects=["lockbox 1234"]
       final ParsedCommand command = createOpenCommand("lockbox 1234");
@@ -466,8 +491,9 @@ class OpenHandlerTest {
       // When
       final String result = handler.handle(player, command);
 
-      // Then - returns "can't open" because no object named "lockbox 1234" exists
-      assertEquals(responses.getOpenCantOpen("lockbox 1234"), result);
+      // Then - no object named "lockbox 1234" exists, returns not-present
+      assertEquals(responses.getOpenNotPresent("lockbox 1234"), result,
+          "open with inline code (no 'with' preposition) should treat as non-existent object name");
     }
   }
 
