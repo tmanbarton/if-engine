@@ -3,10 +3,14 @@ package io.github.tmanbarton.ifengine.test;
 import io.github.tmanbarton.ifengine.Direction;
 import io.github.tmanbarton.ifengine.InteractionType;
 import io.github.tmanbarton.ifengine.Item;
+import io.github.tmanbarton.ifengine.ItemContainer;
 import io.github.tmanbarton.ifengine.Location;
+import io.github.tmanbarton.ifengine.OpenableSceneryObject;
 import io.github.tmanbarton.ifengine.SceneryObject;
 import io.github.tmanbarton.ifengine.game.GameState;
-import io.github.tmanbarton.ifengine.OpenableSceneryObject;
+
+import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 
@@ -453,6 +457,54 @@ public final class TestFixtures {
 
     final TestGameMap map = TestGameMapBuilder.singleLocation().build();
     map.getStartingLocation().addSceneryObject(cabinet);
+
+    return TestGameEngineBuilder.withCustomMap(map)
+        .withInitialPlayerState(GameState.PLAYING)
+        .build();
+  }
+
+  /**
+   * One location with an ItemContainer bag (capacity 5) and items.
+   * Container: bag (capacity 5, accepts any item)
+   * Items: gem, rope
+   * Use for: put command with item containers
+   *
+   * @return a configured TestGameEngine
+   */
+  @Nonnull
+  public static TestGameEngine itemContainerScenario() {
+    final ItemContainer bag = ItemContainer.builder("bag")
+        .withCapacity(5)
+        .build();
+
+    final TestGameMap map = TestGameMapBuilder.singleLocation()
+        .withItems("gem", "rope")
+        .build();
+    map.getStartingLocation().addItem(bag);
+
+    return TestGameEngineBuilder.withCustomMap(map)
+        .withInitialPlayerState(GameState.PLAYING)
+        .build();
+  }
+
+  /**
+   * One location with a locked TestOpenableItemContainer chest, a key, and items.
+   * Container: chest (capacity 5, requires "key" to unlock)
+   * Items: key, gem
+   * Use for: unlock/open/put flow with openable item containers
+   *
+   * @return a configured TestGameEngine
+   */
+  @Nonnull
+  public static TestGameEngine openableItemContainerScenario() {
+    final TestOpenableItemContainer chest = new TestOpenableItemContainer(
+        "chest", "key", true, 5,
+        Set.of(), List.of("in", "into"));
+
+    final TestGameMap map = TestGameMapBuilder.singleLocation()
+        .withItems("key", "gem")
+        .build();
+    map.getStartingLocation().addItem(chest);
 
     return TestGameEngineBuilder.withCustomMap(map)
         .withInitialPlayerState(GameState.PLAYING)

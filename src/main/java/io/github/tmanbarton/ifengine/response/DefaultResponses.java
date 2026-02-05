@@ -194,6 +194,12 @@ public class DefaultResponses implements ResponseProvider {
     return String.format("You can only put things %s the %s.", preferredPreposition, containerName);
   }
 
+  @Override
+  @Nonnull
+  public String getPutContainerClosed(@Nonnull final String containerName) {
+    return String.format("The %s is closed.", containerName);
+  }
+
   // Unlock responses
 
   @Override

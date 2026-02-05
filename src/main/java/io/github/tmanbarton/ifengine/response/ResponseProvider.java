@@ -105,6 +105,9 @@ public interface ResponseProvider {
   @Nonnull
   String getPutInvalidPreposition(@Nonnull String containerName, @Nonnull String preferredPreposition);
 
+  @Nonnull
+  String getPutContainerClosed(@Nonnull String containerName);
+
   // Unlock responses
 
   @Nonnull

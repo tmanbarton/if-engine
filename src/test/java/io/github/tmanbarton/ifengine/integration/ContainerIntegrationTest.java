@@ -2,6 +2,7 @@ package io.github.tmanbarton.ifengine.integration;
 
 import io.github.tmanbarton.ifengine.InteractionType;
 import io.github.tmanbarton.ifengine.Item;
+import io.github.tmanbarton.ifengine.ItemContainer;
 import io.github.tmanbarton.ifengine.Location;
 import io.github.tmanbarton.ifengine.SceneryObject;
 import io.github.tmanbarton.ifengine.game.GameState;
@@ -9,11 +10,16 @@ import io.github.tmanbarton.ifengine.game.Player;
 import io.github.tmanbarton.ifengine.response.DefaultResponses;
 import io.github.tmanbarton.ifengine.response.ResponseProvider;
 import io.github.tmanbarton.ifengine.test.JsonTestUtils;
+import io.github.tmanbarton.ifengine.test.TestFixtures;
 import io.github.tmanbarton.ifengine.test.TestGameEngine;
 import io.github.tmanbarton.ifengine.test.TestGameEngineBuilder;
 import io.github.tmanbarton.ifengine.test.TestGameMap;
 import io.github.tmanbarton.ifengine.test.TestGameMapBuilder;
 import io.github.tmanbarton.ifengine.test.TestItemFactory;
+import io.github.tmanbarton.ifengine.test.TestOpenableItemContainer;
+
+import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -797,6 +803,238 @@ class ContainerIntegrationTest {
       // Then - should be rejected with message about correct preposition
       final String message = JsonTestUtils.extractMessage(response);
       assertEquals(RESPONSES.getPutInvalidPreposition("drawer", "in") + "\n\n", message);
+    }
+  }
+
+  @Nested
+  class PutInItemContainer {
+
+    @Test
+    @DisplayName("put item in ItemContainer - both in inventory")
+    void testPut_bothInInventory() {
+      // Given
+      final TestGameEngine engine = TestFixtures.itemContainerScenario();
+      engine.createPlayer(SESSION_ID);
+      engine.processCommand(SESSION_ID, "take bag");
+      engine.processCommand(SESSION_ID, "take gem");
+
+      // When
+      final String response = engine.processCommand(SESSION_ID, "put gem in bag");
+
+      // Then
+      final String message = JsonTestUtils.extractMessage(response);
+      assertEquals(RESPONSES.getPutSuccess("gem", "in", "bag") + "\n\n", message,
+          "put gem in bag should succeed when both are in inventory");
+
+      final Player player = engine.getPlayer(SESSION_ID);
+      assertTrue(player.hasItem("gem"),
+          "gem should remain in inventory (follows container)");
+      assertTrue(player.hasItem("bag"),
+          "bag should remain in inventory");
+    }
+
+    @Test
+    @DisplayName("put item in ItemContainer - both at location")
+    void testPut_bothAtLocation() {
+      // Given
+      final TestGameEngine engine = TestFixtures.itemContainerScenario();
+      engine.createPlayer(SESSION_ID);
+
+      // When
+      final String response = engine.processCommand(SESSION_ID, "put gem in bag");
+
+      // Then
+      final String message = JsonTestUtils.extractMessage(response);
+      assertEquals(RESPONSES.getPutSuccess("gem", "in", "bag") + "\n\n", message,
+          "put gem in bag should succeed when both are at location");
+    }
+
+    @Test
+    @DisplayName("put item in ItemContainer - item at location, container in inventory")
+    void testPut_itemAtLocation_containerInInventory() {
+      // Given
+      final TestGameEngine engine = TestFixtures.itemContainerScenario();
+      engine.createPlayer(SESSION_ID);
+      engine.processCommand(SESSION_ID, "take bag");
+
+      // When
+      final String response = engine.processCommand(SESSION_ID, "put gem in bag");
+
+      // Then
+      final String message = JsonTestUtils.extractMessage(response);
+      assertEquals(RESPONSES.getPutSuccess("gem", "in", "bag") + "\n\n", message,
+          "put gem in bag should succeed when item is at location and container in inventory");
+
+      final Player player = engine.getPlayer(SESSION_ID);
+      assertTrue(player.hasItem("gem"),
+          "gem should move to inventory to follow its container");
+    }
+
+    @Test
+    @DisplayName("put item in ItemContainer - item in inventory, container at location")
+    void testPut_itemInInventory_containerAtLocation() {
+      // Given
+      final TestGameEngine engine = TestFixtures.itemContainerScenario();
+      engine.createPlayer(SESSION_ID);
+      engine.processCommand(SESSION_ID, "take gem");
+
+      // When
+      final String response = engine.processCommand(SESSION_ID, "put gem in bag");
+
+      // Then
+      final String message = JsonTestUtils.extractMessage(response);
+      assertEquals(RESPONSES.getPutSuccess("gem", "in", "bag") + "\n\n", message,
+          "put gem in bag should succeed when item is in inventory and container at location");
+
+      final Player player = engine.getPlayer(SESSION_ID);
+      assertFalse(player.hasItem("gem"),
+          "gem should move to location to follow its container");
+    }
+
+    @Test
+    @DisplayName("put rejects when ItemContainer is at capacity")
+    void testPut_capacityEnforced() {
+      // Given
+      final TestGameMap map = TestGameMapBuilder.singleLocation().build();
+      final Location location = map.getStartingLocation();
+      final ItemContainer tinyBag = ItemContainer.builder("tiny-bag")
+          .withCapacity(1)
+          .build();
+      location.addItem(tinyBag);
+      location.addItem(TestItemFactory.createSimpleItem("gem"));
+      location.addItem(TestItemFactory.createSimpleItem("rope"));
+
+      final TestGameEngine engine = TestGameEngineBuilder.withCustomMap(map)
+          .withInitialPlayerState(GameState.PLAYING)
+          .build();
+      engine.createPlayer(SESSION_ID);
+
+      engine.processCommand(SESSION_ID, "put gem in tiny-bag");
+
+      // When
+      final String response = engine.processCommand(SESSION_ID, "put rope in tiny-bag");
+
+      // Then
+      final String message = JsonTestUtils.extractMessage(response);
+      assertEquals(RESPONSES.getPutItemNotAccepted("tiny-bag", "rope") + "\n\n", message,
+          "put should fail when container is at capacity");
+    }
+
+    @Test
+    @DisplayName("put rejects when item is not in allowed items")
+    void testPut_allowedItemsEnforced() {
+      // Given
+      final TestGameMap map = TestGameMapBuilder.singleLocation().build();
+      final Location location = map.getStartingLocation();
+      final ItemContainer restrictedBag = ItemContainer.builder("pouch")
+          .withAllowedItems(Set.of("gem"))
+          .build();
+      location.addItem(restrictedBag);
+      location.addItem(TestItemFactory.createSimpleItem("rope"));
+
+      final TestGameEngine engine = TestGameEngineBuilder.withCustomMap(map)
+          .withInitialPlayerState(GameState.PLAYING)
+          .build();
+      engine.createPlayer(SESSION_ID);
+
+      // When
+      final String response = engine.processCommand(SESSION_ID, "put rope in pouch");
+
+      // Then
+      final String message = JsonTestUtils.extractMessage(response);
+      assertEquals(RESPONSES.getPutItemNotAccepted("pouch", "rope") + "\n\n", message,
+          "put should fail when item is not in the container's allowed items");
+    }
+  }
+
+  @Nested
+  class PutInOpenableItemContainer {
+
+    @Test
+    @DisplayName("put into closed openable container returns closed message")
+    void testPut_closedContainerReturnsClosed() {
+      // Given
+      final TestGameEngine engine = TestFixtures.openableItemContainerScenario();
+      engine.createPlayer(SESSION_ID);
+
+      // When - chest is closed by default
+      final String response = engine.processCommand(SESSION_ID, "put gem in chest");
+
+      // Then
+      final String message = JsonTestUtils.extractMessage(response);
+      assertEquals(RESPONSES.getPutContainerClosed("chest") + "\n\n", message,
+          "put into closed openable container should return closed message");
+    }
+
+    @Test
+    @DisplayName("put succeeds after unlock and open")
+    void testPut_afterUnlockAndOpenSucceeds() {
+      // Given
+      final TestGameEngine engine = TestFixtures.openableItemContainerScenario();
+      engine.createPlayer(SESSION_ID);
+      engine.processCommand(SESSION_ID, "take key");
+      engine.processCommand(SESSION_ID, "unlock chest");
+      engine.processCommand(SESSION_ID, "open chest");
+
+      // When
+      final String response = engine.processCommand(SESSION_ID, "put gem in chest");
+
+      // Then
+      final String message = JsonTestUtils.extractMessage(response);
+      assertEquals(RESPONSES.getPutSuccess("gem", "in", "chest") + "\n\n", message,
+          "put should succeed after unlocking and opening the container");
+    }
+  }
+
+  @Nested
+  class MoveItemContainerWithContents {
+
+    @Test
+    @DisplayName("take ItemContainer - contained items follow to inventory")
+    void testTake_containerWithItems() {
+      // Given
+      final TestGameEngine engine = TestFixtures.itemContainerScenario();
+      engine.createPlayer(SESSION_ID);
+      engine.processCommand(SESSION_ID, "put gem in bag");
+
+      // When
+      final String response = engine.processCommand(SESSION_ID, "take bag");
+
+      // Then
+      final String message = JsonTestUtils.extractMessage(response);
+      assertEquals(RESPONSES.getTakeSuccess() + "\n\n", message,
+          "taking a container with items should succeed");
+
+      final Player player = engine.getPlayer(SESSION_ID);
+      assertTrue(player.hasItem("bag"),
+          "bag should be in inventory after take");
+      assertTrue(player.hasItem("gem"),
+          "gem should follow bag into inventory");
+    }
+
+    @Test
+    @DisplayName("drop ItemContainer - contained items follow to location")
+    void testDrop_containerWithItems() {
+      // Given
+      final TestGameEngine engine = TestFixtures.itemContainerScenario();
+      engine.createPlayer(SESSION_ID);
+      engine.processCommand(SESSION_ID, "take bag");
+      engine.processCommand(SESSION_ID, "take gem");
+      engine.processCommand(SESSION_ID, "put gem in bag");
+
+      // When
+      final String response = engine.processCommand(SESSION_ID, "drop bag");
+
+      // Then
+      final String message = JsonTestUtils.extractMessage(response);
+      assertEquals(RESPONSES.getDropSuccess() + "\n\n", message,
+          "dropping a container with items should succeed");
+
+      final Player player = engine.getPlayer(SESSION_ID);
+      assertFalse(player.hasItem("bag"),
+          "bag should no longer be in inventory after drop");
+      assertFalse(player.hasItem("gem"),
+          "gem should follow bag out of inventory");
     }
   }
 }

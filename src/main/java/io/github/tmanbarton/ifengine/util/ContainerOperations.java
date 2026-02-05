@@ -5,6 +5,7 @@ import io.github.tmanbarton.ifengine.ContainerType;
 import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.Location;
 import io.github.tmanbarton.ifengine.LocationContainer;
+import io.github.tmanbarton.ifengine.Openable;
 import io.github.tmanbarton.ifengine.game.Player;
 import io.github.tmanbarton.ifengine.response.ResponseProvider;
 
@@ -70,6 +71,11 @@ public final class ContainerOperations {
         return responses.getPutNotAContainer(containerName);
       }
       return responses.getPutContainerNotFound(containerName);
+    }
+
+    // Check if container is an openable that is currently closed
+    if (container instanceof Openable openable && !openable.isOpen()) {
+      return responses.getPutContainerClosed(containerName);
     }
 
     // Validate preposition for this container

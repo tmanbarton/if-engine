@@ -496,6 +496,78 @@ SceneryObject shelf = SceneryObject.builder("shelf")
     .build();
 ```
 
+### Item Containers
+
+Takeable items that can hold other items. When items are put inside an item container, they follow the container between inventory and location.
+
+```java
+ItemContainer satchel = ItemContainer.builder("satchel")
+    .withInventoryDescription("a leather satchel")
+    .withLocationDescription("A leather satchel lies on the floor.")
+    .withDetailedDescription("A worn leather satchel with a wide opening.")
+    .withAliases(Set.of("bag", "pouch"))
+    .withCapacity(3)                        // Max 3 items (0 = unlimited)
+    .withAllowedItems(Set.of("key", "gem")) // Only these items (empty = any)
+    .withPrepositions(List.of("in", "into")) // Default prepositions
+    .build();
+
+location.addItem(satchel);
+```
+
+Players interact with item containers using `put <item> in <container>`. Items inside follow the container when it is taken, dropped, or moved between containers.
+
+### Openable Item Containers
+
+For lockable item containers that hold other items — chests, lockboxes, etc. Extend `OpenableItemContainer` to combine `OpenableItem` (unlock/open state) with `Container` (hold items). Items can only be inserted when the container is open.
+
+```java
+public class LockableChest extends OpenableItemContainer {
+
+  private final String requiredKeyName;
+
+  public LockableChest(String name, String invDesc, String locDesc,
+                       String detailDesc, Set<String> aliases,
+                       String requiredKeyName, int capacity) {
+    super(name, invDesc, locDesc, detailDesc, aliases,
+        true, capacity, Set.of(), List.of("in", "into"));
+    this.requiredKeyName = requiredKeyName;
+  }
+
+  @Override
+  public UnlockResult tryUnlock(Player player, String code, GameMapInterface gameMap) {
+    if (isUnlocked()) return new UnlockResult(false, "Already unlocked.");
+    if (!player.hasItem(requiredKeyName)) return new UnlockResult(false, "You need a key.");
+    setUnlocked(true);
+    return new UnlockResult(true, "You unlock the " + getName() + ".");
+  }
+
+  @Override
+  public OpenResult tryOpen(Player player, String code, GameMapInterface gameMap) {
+    if (isOpen()) return new OpenResult(false, "Already open.");
+    if (!isUnlocked()) return new OpenResult(false, "It's locked.");
+    setOpen(true);
+    return new OpenResult(true, "You open the " + getName() + ".");
+  }
+
+  // ... matchesUnlockTarget, matchesOpenTarget, getInferredTargetNames
+}
+```
+
+Usage:
+
+```java
+LockableChest chest = new LockableChest(
+    "chest", "a wooden chest",
+    "A sturdy wooden chest sits in the corner.",
+    "An old chest with iron bands and a rusty lock.",
+    Set.of("box"), "key", 5);
+
+location.addItem(chest);
+```
+
+The player must `unlock chest` then `open chest` before `put gem in chest` works. Attempting to put items in a closed container returns "The chest is closed."
+Hidden items can also be in an item container. Once the item container is open, the hidden item is revealed and can be taken.
+
 ### Hidden Items
 
 Items can be placed at a location but hidden from the player until revealed by game logic. This is useful for items concealed under furniture, behind scenery, or in secret compartments.
@@ -575,6 +647,7 @@ Three abstract base classes provide `Openable` support for different object type
 | Base class | Extends | Use case |
 |------------|---------|----------|
 | `OpenableItem` | `Item` | Takeable objects (lockbox, chest) |
+| `OpenableItemContainer` | `OpenableItem` + `Container` | Lockable containers that hold items |
 | `OpenableLocation` | `Location` | The location itself (locked room, vault) |
 | `OpenableSceneryObject` | `SceneryObject` | Non-takeable scenery (wall safe, cabinet) |
 

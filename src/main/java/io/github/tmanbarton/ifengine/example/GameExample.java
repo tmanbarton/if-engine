@@ -3,6 +3,7 @@ package io.github.tmanbarton.ifengine.example;
 import io.github.tmanbarton.ifengine.Direction;
 import io.github.tmanbarton.ifengine.InteractionType;
 import io.github.tmanbarton.ifengine.Item;
+import io.github.tmanbarton.ifengine.ItemContainer;
 import io.github.tmanbarton.ifengine.Location;
 import io.github.tmanbarton.ifengine.OpenableSceneryObject;
 import io.github.tmanbarton.ifengine.SceneryObject;
@@ -65,14 +66,24 @@ public final class GameExample {
             "A small iron key, covered in rust.",
             Set.of("rusty key", "iron key")), "clearing")
 
-        // A locked chest that requires the key to open
-        .placeItem(new Lockbox(
+        // A locked chest that requires the key to open and can hold items
+        .placeItem(new LockableChest(
             "chest",
             "a wooden chest",
             "A sturdy wooden chest sits in the corner.",
             "An old chest with iron bands and a rusty lock.",
             Set.of("box", "wooden chest"),
-            "key"), "cottage")
+            "key",
+            5), "cottage")
+
+        // An open satchel that can hold any item
+        .placeItem(ItemContainer.builder("satchel")
+            .withInventoryDescription("a leather satchel")
+            .withLocationDescription("A leather satchel lies on the floor.")
+            .withDetailedDescription("A worn leather satchel with a wide opening.")
+            .withAliases(Set.of("bag", "pouch"))
+            .withCapacity(3)
+            .build(), "cottage")
 
         // Set where players start
         .setStartingLocation("cottage")

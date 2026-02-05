@@ -57,6 +57,7 @@ Java 17+ required.
 
 ### Variables
 - **Always use `final`** for local variables, parameters, and fields that won't be reassigned
+- **Never use `var`** — always use explicit types for readability and clarity
 - Use `@Nonnull` and `@Nullable` annotations where appropriate
 
 ```java
@@ -66,7 +67,7 @@ final List<Item> items = new ArrayList<>();
 
 // Incorrect
 String name = player.getName();
-List<Item> items = new ArrayList<>();
+List <Item> items = new ArrayList<>();
 ```
 
 ### Formatting
@@ -115,7 +116,7 @@ class TakeCommand {
     @DisplayName("returns success message when item is present")
     void testTake_itemPresent() {
         // Given
-        final var scenario = TestFixtures.itemInteractionScenario();
+        final TestGameEngine scenario = TestFixtures.itemInteractionScenario();
 
         // When
         final String response = scenario.engine().processCommand(sessionId, "take key");
@@ -229,14 +230,14 @@ If the answers are no, no, and "testing that Java works" — don't write the tes
 // ❌ WRONG - Testing Java, not application logic
 @Test
 void testConstructor_setsName() {
-    final var item = new Item("key", "A rusty key");
+    final Item item = new Item("key", "A rusty key");
     assertEquals("key", item.getName()); // Java guarantees this works
 }
 
 @Test
 void testRecord_equality() {
-    final var a = new ParsedCommand("take", "key");
-    final var b = new ParsedCommand("take", "key");
+    final ParsedCommand a = new ParsedCommand("take", "key");
+    final ParsedCommand b = new ParsedCommand("take", "key");
     assertEquals(a, b); // Records guarantee this works
 }
 
@@ -260,6 +261,8 @@ void testTake_itemAlreadyInInventory() {
 | Unlock/open mechanics | `TestFixtures.openableLocationScenario()` |
 | Openable scenery (locked) | `TestFixtures.openableSceneryScenario()` |
 | Openable scenery (no lock) | `TestFixtures.openableSceneryNoLockScenario()` |
+| Item container (bag) | `TestFixtures.itemContainerScenario()` |
+| Openable item container (chest) | `TestFixtures.openableItemContainerScenario()` |
 
 ## Project Structure
 

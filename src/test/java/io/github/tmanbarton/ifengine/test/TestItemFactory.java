@@ -4,6 +4,7 @@ import io.github.tmanbarton.ifengine.Container;
 import io.github.tmanbarton.ifengine.ContainerType;
 import io.github.tmanbarton.ifengine.InteractionType;
 import io.github.tmanbarton.ifengine.Item;
+import io.github.tmanbarton.ifengine.ItemContainer;
 import io.github.tmanbarton.ifengine.LocationContainer;
 import io.github.tmanbarton.ifengine.SceneryObject;
 
@@ -140,6 +141,26 @@ public final class TestItemFactory {
                                                   final int capacity,
                                                   @Nonnull final String... allowedItemNames) {
     return new TestContainer(name, capacity, Set.of(allowedItemNames));
+  }
+
+  /**
+   * Creates an ItemContainer for testing.
+   *
+   * @param name the container name
+   * @param capacity the maximum number of items (0 = unlimited)
+   * @param allowedItemNames names of items that can be inserted (empty = any item)
+   * @return a new ItemContainer
+   */
+  @Nonnull
+  public static ItemContainer createItemContainer(@Nonnull final String name,
+                                                  final int capacity,
+                                                  @Nonnull final String... allowedItemNames) {
+    final ItemContainer.Builder builder = ItemContainer.builder(name)
+        .withCapacity(capacity);
+    if (allowedItemNames.length > 0) {
+      builder.withAllowedItems(Set.of(allowedItemNames));
+    }
+    return builder.build();
   }
 
   /**
