@@ -78,12 +78,12 @@ public class Lockbox extends OpenableItem {
 
   @Override
   public boolean matchesUnlockTarget(@Nonnull final String target) {
-    return getName().equalsIgnoreCase(target) || hasAlias(target);
+    return matchesName(target);
   }
 
   @Override
   public boolean matchesOpenTarget(@Nonnull final String target) {
-    return getName().equalsIgnoreCase(target) || hasAlias(target);
+    return matchesName(target);
   }
 
   @Override

@@ -12,11 +12,11 @@ public class Item {
   @Nonnull
   private final String name;
   @Nonnull
-  private final String inventoryDescription;
+  private String inventoryDescription;
   @Nonnull
-  private final String locationDescription;
+  private String locationDescription;
   @Nonnull
-  private final String detailedDescription;
+  private String detailedDescription;
   @Nonnull
   private final Set<String> aliases;
 
@@ -96,6 +96,18 @@ public class Item {
     final String normalizedAlias = alias.toLowerCase().trim();
     return aliases.stream()
         .anyMatch(a -> a.toLowerCase().equals(normalizedAlias));
+  }
+
+  public void setInventoryDescription(@Nonnull final String inventoryDescription) {
+    this.inventoryDescription = inventoryDescription;
+  }
+
+  public void setLocationDescription(@Nonnull final String locationDescription) {
+    this.locationDescription = locationDescription;
+  }
+
+  public void setDetailedDescription(@Nonnull final String detailedDescription) {
+    this.detailedDescription = detailedDescription;
   }
 
   @Override
