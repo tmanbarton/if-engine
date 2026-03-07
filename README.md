@@ -1,7 +1,7 @@
 # IF-Engine
 
 A Java library for creating parser/text-based interactive fiction games with a fluent builder API.
-(WIP, but can be used as-is)
+(WIP but can be used as-is)
 
 ## Requirements
 
