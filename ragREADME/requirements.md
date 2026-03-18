@@ -1,2 +1,0 @@
-# Requirements
-- Java 17+

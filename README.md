@@ -573,7 +573,7 @@ Hidden items can also be in an item container. Once the item container is open, 
 
 Items can be placed at a location but hidden from the player until revealed by game logic. This is useful for items concealed under furniture, behind scenery, or in secret compartments.
 
-**Placing a hidden item during map construction:**
+#### Placing a hidden item during map construction
 
 ```java
 Item key = new Item("key", "a brass key", "A key lies here.", "A small brass key.");
@@ -587,7 +587,7 @@ GameMap map = new GameMap.Builder()
 
 The third argument is the **revealed location description** — shown in the location after the item is revealed but before the player takes it. Once taken and dropped, the item uses its normal location description (`"A key lies here."`).
 
-**Revealing a hidden item:**
+#### Revealing a hidden item
 
 Call `revealHiddenItemByName()` on the location to make the item visible. A typical trigger is examining scenery — for example, overriding `look` to handle "look under table":
 
@@ -611,14 +611,14 @@ Call `revealHiddenItemByName()` on the location to make the item visible. A typi
 
 There is also `revealItem(Item)` which does the same thing but requires an `Item` reference directly. `revealHiddenItemByName` is almost always what you want since command handlers work with string input. `revealItem` exists for cases where you already have the `Item` object (e.g., from iterating `location.getHiddenItems()`).
 
-**Querying hidden items:**
+#### Querying hidden items
 
 - `isItemHiddenByName(String)` — returns `true` if a hidden item matching the name exists at the location (case-insensitive, supports aliases)
 - `isItemHidden(Item)` — checks by `Item` reference
 - `getHiddenItemByName(String)` — returns `Optional<Item>` for the matching hidden item, useful when you need the `Item` reference without revealing it
 - `getHiddenItems()` — returns a defensive copy of all hidden items at the location
 
-**Hidden item lifecycle:**
+#### Hidden item lifecycle
 
 1. `placeHiddenItem()` — item is invisible; not shown in `look`, cannot be taken
 2. `revealHiddenItemByName()` — item becomes visible with its revealed location description
@@ -756,13 +756,13 @@ GameMap map = new GameMap.Builder()
     .build();
 ```
 
-**How hints work:**
+#### How hints work
 - Each `hint` command returns progressively more direct hints (1 → 2 → 3)
 - Level 3 stays as the maximum (repeated `hint` commands keep returning level 3)
 - When the player advances to a new phase, hints reset to level 1 for the new phase
 - If no hint configuration is set, returns a default "No hints available" message
 
-**Determining hint phase:**
+#### Determining hint phase
 
 The `determiner` function receives `Player` and `GameMap`, allowing you to check game state directly.
 
