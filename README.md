@@ -3,6 +3,9 @@
 A Java library for creating parser/text-based interactive fiction games with a fluent builder API.
 (WIP but can be used as-is)
 
+Use the Python-based CLI [chatbot](https://github.com/tmanbarton/if-engineREADME_RAG) I made to answer questions about how to use the API.
+(You'll need an Anthropic API key)
+
 ## Requirements
 
 - Java 17+
@@ -152,9 +155,17 @@ Players can use abbreviations: `n`, `s`, `e`, `w`, `ne`, `nw`, `se`, `sw`, `u`, 
 
 ## Intro Configuration
 
-By default, games start in `WAITING_FOR_START_ANSWER` state, expecting a response to an intro question like "Have you played this adventure before?".
+### Default behavior
+Games start in `WAITING_FOR_START_ANSWER` state by default, expecting a response to an intro question like "Have you played this adventure before?".
+The engine automatically handles yes/no questions, assuming the initial question will be something like "Have you played before?"
 
-**Important:** The engine does **not** display the intro question - your frontend must handle this. Display the question when:
+Both "yes" and "no" answers transition to PLAYING state. After, it shows the location description of your first location or a custom intro message if one is set then the location description.
+
+**Accepted variants:**
+- Yes: `yes`, `y`, `yeah`, `yep`, `sure`, `yup`, `yuh`, `yeppers`, `yah`, `ya`, `heck yeah`, `oh yeah`, `uh hu`, `yes sir`, `yes maam`, `yes ma'am`
+- No: `no`, `n`, `nah`, `nope`, `no thanks`, `no way`, `no way jose`, `nah fam`, `heck no`, `no sir`, `no maam`, `no ma'am`
+
+**Important:** The engine does **not** display the intro question - your front end must handle this. Display the question when:
 - The user first connects (e.g., on WebSocket connect)
 - The page loads in a web app
 - The session starts in a CLI application
@@ -185,12 +196,6 @@ GameMap map = new GameMap.Builder()
     )
     .build();
 ```
-
-Both "yes" and "no" answers transition to PLAYING state. The custom response is shown followed by the starting location description.
-
-**Accepted variants:**
-- Yes: `yes`, `y`, `yeah`, `yep`, `sure`, `yup`, `yuh`, `yeppers`, `yah`, `ya`, `heck yeah`, `oh yeah`, `uh hu`, `yes sir`, `yes maam`, `yes ma'am`
-- No: `no`, `n`, `nah`, `nope`, `no thanks`, `no way`, `no way jose`, `nah fam`, `heck no`, `no sir`, `no maam`, `no ma'am`
 
 ### Custom intro message
 
