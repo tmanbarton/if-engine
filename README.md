@@ -238,7 +238,7 @@ You are in a cozy cottage...
 
 ### Custom intro handler
 
-For full control over intro logic (including keeping player in intro state on certain answers):
+If you want answers besides "yes" and "no" for a different intro question and for full control over intro logic (including keeping player in intro state on certain answers):
 
 ```java
 GameMap map = new GameMap.Builder()
