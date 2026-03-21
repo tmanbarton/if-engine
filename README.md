@@ -1,10 +1,29 @@
 # IF-Engine
 
-A Java library for creating parser/text-based interactive fiction games with a fluent builder API.
+A Java library for creating parser/text-based interactive fiction games.
 (WIP but can be used as-is)
 
-Use the Python-based CLI [chatbot](https://github.com/tmanbarton/if-engineREADME_RAG) I made to answer questions about how to use the API.
+Use the Python-based CLI [chatbot](https://github.com/tmanbarton/if-engineREADME_RAG) I made to answer questions about how to use the library.
 (You'll need an Anthropic API key)
+
+## Overview
+
+IF-Engine is a reusable game engine for parser-based interactive fiction written in Java. Instead of rebuilding the engine from scratch for every text adventure, you define your game world — locations, items, connections, and puzzles — and the engine handles command parsing, state management, and player interaction.
+
+**What it provides:**
+
+- **Command parsing** — Understands natural-language input like "take key", "go north", "put gem in chest", and "unlock door". Handles verb synonyms, abbreviations, and prepositions out of the box.
+- **World building** — A builder-based API for defining locations, connections, items, scenery, containers, locked doors, and hidden objects. Wire up a complete game map without writing engine logic.
+- **Built-in commands** — Navigation, inventory management, item interaction (take, drop, examine, read, eat, drink, and more), unlock/open mechanics, and a progressive hint system are all included.
+- **Custom commands** — Register your own verbs with full access to game state. Override or extend built-in commands as needed.
+- **Session management** — Supports multiple concurrent players, each with independent game state.
+- **Customizable responses** — All player-facing text is routed through a `ResponseProvider` interface, so you can restyle every message without touching engine internals.
+
+**What you provide:**
+
+- The game world: locations, items, scenery, and how they connect
+- Any custom commands or puzzle logic specific to your game
+- A frontend (CLI, web, etc.) that sends player input to the engine and displays its JSON responses
 
 ## Requirements
 
