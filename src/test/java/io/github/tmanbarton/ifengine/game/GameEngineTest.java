@@ -1168,8 +1168,8 @@ class GameEngineTest {
     }
 
     @Test
-    @DisplayName("withIntroMessage - shows intro message before location description")
-    void testWithIntroMessage_showsIntroMessageBeforeLocation() {
+    @DisplayName("withGameIntro - shows intro message before location description")
+    void testwithGameIntro_showsIntroMessageBeforeLocation() {
       // Given
       final GameMap map = new GameMap.Builder()
           .addLocation(new Location("start", "Start location.", "Start"))
@@ -1188,8 +1188,8 @@ class GameEngineTest {
     }
 
     @Test
-    @DisplayName("withIntroMessage and withIntroResponses - shows custom response then intro message then location")
-    void testWithIntroMessageAndResponses_showsAllThree() {
+    @DisplayName("withGameIntro and withIntroResponses - shows custom response then intro message then location")
+    void testwithGameIntroAndResponses_showsAllThree() {
       // Given
       final GameMap map = new GameMap.Builder()
           .addLocation(new Location("start", "Start location.", "Start"))

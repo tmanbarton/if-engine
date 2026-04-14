@@ -79,7 +79,7 @@ GameMap map = new GameMap.Builder()
     .setStartingLocation("room") // Required: where players start
     .skipIntro()                 // Optional: skip intro question
     .withIntroResponses(yes, no) // Custom yes/no responses
-    .withIntroMessage(message)   // Story intro before location
+    .withGameIntro(message)   // Story intro before location
     .withCommand("verb", handler)  // Register custom command
     .withHints(configurer)       // Configure hint system
     .build();  // Validates and returns GameMap
@@ -216,15 +216,15 @@ GameMap map = new GameMap.Builder()
     .build();
 ```
 
-### Custom intro message
+### Custom game intro message
 
-Use `withIntroMessage()` to add story context before the first location description:
+Use `withGameIntro()` to add story context before the first location description:
 
 ```java
 GameMap map = new GameMap.Builder()
     .addLocation(...)
     .setStartingLocation("cottage")
-    .withIntroMessage("You find yourself at the edge of a mysterious forest...")
+    .withGameIntro("You find yourself at the edge of a mysterious forest...")
     .build();
 ```
 
@@ -241,7 +241,7 @@ GameMap map = new GameMap.Builder()
     .withIntroResponses(
         "Excellent! Let's begin...",
         "No worries. Let's begin anyway...")
-    .withIntroMessage("You find yourself at the edge of a mysterious forest. "
+    .withGameIntro("You find yourself at the edge of a mysterious forest. "
         + "A small cottage catches your eye...")
     .build();
 ```
