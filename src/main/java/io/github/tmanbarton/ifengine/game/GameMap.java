@@ -510,11 +510,13 @@ public class GameMap implements GameMapInterface {
     }
 
     /**
-     * Configures an intro message shown before the first location description.
+     * Configures the game introduction that's shown before the first location description.
      * <p>
      * This message is displayed after the yes/no response (if any) and before
      * showing the player's starting location. Use this to set the scene or
      * provide story context when the game begins.
+     * <p>
+     * You can skip the intro and go straight to the first location description with {@link #skipIntro()}.
      * <p>
      * Can be used alone (with default yes/no handling) or combined with
      * {@link #withIntroResponses(String, String)} for custom yes/no messages.
@@ -523,7 +525,7 @@ public class GameMap implements GameMapInterface {
      * @return this Builder for method chaining
      */
     @Nonnull
-    public Builder withIntroMessage(@Nonnull final String introMessage) {
+    public Builder withGameIntro(@Nonnull final String introMessage) {
       Objects.requireNonNull(introMessage, "introMessage cannot be null");
       this.customIntroMessage = introMessage;
       return this;

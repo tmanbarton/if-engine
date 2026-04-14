@@ -94,7 +94,7 @@ public final class GameExample {
             "No worries. Let's begin anyway...")
 
         // Intro message shown before the first location description
-        .withIntroMessage("You find yourself at the edge of a mysterious forest. "
+        .withGameIntro("You find yourself at the edge of a mysterious forest. "
             + "A small cottage catches your eye...")
 
         // Progressive hint system

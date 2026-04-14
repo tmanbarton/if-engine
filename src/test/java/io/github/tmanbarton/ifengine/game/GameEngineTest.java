@@ -1174,7 +1174,7 @@ class GameEngineTest {
       final GameMap map = new GameMap.Builder()
           .addLocation(new Location("start", "Start location.", "Start"))
           .setStartingLocation("start")
-          .withIntroMessage("Welcome to the adventure!")
+          .withGameIntro("Welcome to the adventure!")
           .build();
       final GameEngine engine = new GameEngine(map);
 
@@ -1195,7 +1195,7 @@ class GameEngineTest {
           .addLocation(new Location("start", "Start location.", "Start"))
           .setStartingLocation("start")
           .withIntroResponses("Let's go!", "Come back later.")
-          .withIntroMessage("Welcome to the adventure!")
+          .withGameIntro("Welcome to the adventure!")
           .build();
       final GameEngine engine = new GameEngine(map);
 
