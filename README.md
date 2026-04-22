@@ -3,17 +3,17 @@
 A Java library for creating parser/text-based interactive fiction games.
 (WIP but can be used as-is)
 
-Use the Python-based CLI [chatbot](https://github.com/tmanbarton/if-engineREADME_RAG) I made to answer questions about how to use the library.
+Use the Python-based CLI [chatbot](https://github.com/tmanbarton/if-engineREADME_RAG) I made to answer questions about how to use the library using AI instead of directly referencing the docs.
 (You'll need an Anthropic API key)
 
 ## Overview
 
-IF-Engine is a reusable game engine for parser-based interactive fiction written in Java. Instead of rebuilding the engine from scratch for every text adventure, you define your game world — locations, items, connections, and puzzles — and the engine handles command parsing, state management, and player interaction.
+IF-Engine is a reusable game engine for parser-based interactive fiction written in Java. Instead of rebuilding the engine from scratch for every game, you define your game world — locations, items, connections, puzzles, etc. — and the engine handles command parsing, state management, and most game world interaction.
 
 **What it provides:**
 
-- **Command parsing** — Understands natural-language input like "take key", "go north", "put gem in chest", and "unlock door". Handles verb synonyms, abbreviations, and prepositions out of the box.
-- **World building** — A builder-based API for defining locations, connections, items, scenery, containers, locked doors, and hidden objects. Wire up a complete game map without writing engine logic.
+- **Command parsing** — Handles all common interactive fiction commands: "take key", "go north", "put gem in chest", and "unlock the door", etc. Handles verb synonyms, abbreviations, and prepositions out of the box. (NPCs "talk", "ask", "tell" work in progress)
+- **World building** — A builder-based API for defining locations, connections, items, scenery, containers, locked objects, and hidden objects. Wire up a complete game map without writing engine logic.
 - **Built-in commands** — Navigation, inventory management, item interaction (take, drop, examine, read, eat, drink, and more), unlock/open mechanics, and a progressive hint system are all included.
 - **Custom commands** — Register your own verbs with full access to game state. Override or extend built-in commands as needed.
 - **Session management** — Supports multiple concurrent players, each with independent game state.
@@ -57,17 +57,31 @@ The engine returns JSON responses:
 ```json
 {
   "message": "A cozy cottage.\n\nA key lies here.",
-  "boldableText": "A cozy cottage.",
+  "locationDescription": "A cozy cottage.",
   "gameState": "PLAYING",
   "validDirections": ["north"]
 }
 ```
+- **"message"** is what the game returns in response to the user's input.
+- **"locationDescription"** is for when the location's long description is returned (first visit or "look" command) and you want to do something with it such as bold the directions. "locationDescription" doesn't include the item list.
+- **"gameState"** is the state of the game. Possible values:
+  - `PLAYING`: The user has started the game and is playing.
+  - `WAITING_FOR_START_ANSWER`: The game hasn't started yet, the user hasn't answered the intro question at the beginning of the game if it exists or hasn't entered a valid answer. e.g. "Have you played interactive fiction before?"
+  - `WAITING_FOR_QUIT_CONFIRMATION`: Similar to `WAITING_FOR_START_ANSWER`, this is for when the game is waiting for a yes/no answer for "Are you sure you want to quit?" or a similar yes/no question.
+  - `WAITING_FOR_RESTART_CONFIRMATION`: Same as above, but for restarting: "Are you sure you want to restart?"
+    - Note on the difference between quitting and restarting: quitting goes back to the intro question, restarting stays in the current game and resets the game state.
+  - `WAITING_FOR_UNLOCK_CODE`: This is for when something requires some sort of code to unlock and the user says something like
+    - User: "unlock the vault"
+    - Game: "Enter the code" (State goes to `WAITING_FOR_UNLOCK_CODE`)
+    - User: "1, 2, 3, 4"
+    - The vault unlocks and the state goes back to `PLAYING`
+  - `WAITING_FOR_OPEN_CODE`: same as above, but for when the user says "open".
 
 ## Core Concepts
 
 ### GameMap
 
-Use `GameMap.Builder` to construct your game world with fluent method chaining. The `build()` method validates your configuration:
+Use `GameMap.Builder` to construct your game world with fluent method chaining. The `build()` method validates and builds your configuration:
 
 ```java
 GameMap map = new GameMap.Builder()
