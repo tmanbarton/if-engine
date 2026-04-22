@@ -70,7 +70,7 @@ public final class JsonTestUtils {
    * Extracts the locationDescriptionResponse from a JSON game response.
    *
    * @param jsonResponse the JSON response string from the game engine
-   * @return the boldable text, or null if not present or not valid JSON
+   * @return the location description response, or null if not present or not valid JSON
    */
   public static String extractLocationDescriptionResponse(@Nonnull final String jsonResponse) {
     if (jsonResponse == null || jsonResponse.trim().isEmpty()) {

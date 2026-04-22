@@ -732,7 +732,7 @@ class GameEngineTest {
     }
 
     @Test
-    @DisplayName("Test processCommand - look command sets boldable text")
+    @DisplayName("Test processCommand - look command sets location description response")
     void testProcessCommand_lookSetsLocationDescriptionResponse() {
       // Given
       final TestGameEngine engine = TestFixtures.singleLocationPlayingScenario();

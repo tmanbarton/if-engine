@@ -198,7 +198,7 @@ public class GameEngine {
    */
   @Nonnull
   public String processCommand(@Nonnull final String sessionId, @Nonnull final String command) {
-    // Clear boldable text at start of each command
+    // Clear location description response at start of each command
     sessionLocationDescriptionResponse.remove(sessionId);
 
     // Get or create player for this session
@@ -261,7 +261,7 @@ public class GameEngine {
         ? "\"" + escapeJsonString(locationDescriptionResponse) + "\""
         : "null";
 
-    // Create a JSON response with message, boldable text, game state, and valid directions
+    // Create a JSON response with message, location description response, game state, and valid directions
     return String.format("""
         {
           "type": "game_response",
@@ -343,7 +343,7 @@ public class GameEngine {
       }
     }
 
-    // Check if this is a bare "look" command - set boldable text
+    // Check if this is a bare "look" command - set location description response
     if (isLookAtLocationCommand(verb, command)) {
       final String description = getLocationDescription(player.getCurrentLocation(), true);
       sessionLocationDescriptionResponse.put(player.getSessionId(), description);
@@ -685,7 +685,7 @@ public class GameEngine {
     final String description = getLocationDescription(location, useLongDescription);
     sb.append(description);
 
-    // Set boldable text to ONLY the location description (not item listing)
+    // Set location description response to ONLY the location description (not item listing)
     sessionLocationDescriptionResponse.put(player.getSessionId(), description);
 
     // Always show items when moving to a location
