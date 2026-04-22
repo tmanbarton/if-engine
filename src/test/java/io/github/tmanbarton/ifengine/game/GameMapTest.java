@@ -104,14 +104,14 @@ class GameMapTest {
 
     @Test
     @DisplayName("connect - creates bidirectional connection")
-    void testConnect_createsBidirectionalConnection() {
+    void testConnect_BidirectionalConnection() {
       final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
       final Location forest = new Location("forest", "A dark forest.", "In the forest.");
 
       new GameMap.Builder()
           .addLocation(cottage)
           .addLocation(forest)
-          .connect("cottage", Direction.NORTH, "forest")
+          .connectBidirectional("cottage", Direction.NORTH, "forest")
           .setStartingLocation("cottage")
           .build();
 
@@ -121,14 +121,14 @@ class GameMapTest {
 
     @Test
     @DisplayName("connect - throws when from location not found")
-    void testConnect_throwsWhenFromNotFound() {
+    void testBidirectionalConnect_throwsWhenFromNotFound() {
       final Location forest = new Location("forest", "A dark forest.", "In the forest.");
       final GameMap.Builder builder = new GameMap.Builder()
           .addLocation(forest);
 
       final IllegalArgumentException exception = assertThrows(
           IllegalArgumentException.class,
-          () -> builder.connect("cottage", Direction.NORTH, "forest")
+          () -> builder.connectBidirectional("cottage", Direction.NORTH, "forest")
       );
 
       assertTrue(exception.getMessage().contains("cottage"));
@@ -136,14 +136,14 @@ class GameMapTest {
 
     @Test
     @DisplayName("connect - throws when to location not found")
-    void testConnect_throwsWhenToNotFound() {
+    void testBidirectionalConnect_throwsWhenToNotFound() {
       final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
       final GameMap.Builder builder = new GameMap.Builder()
           .addLocation(cottage);
 
       final IllegalArgumentException exception = assertThrows(
           IllegalArgumentException.class,
-          () -> builder.connect("cottage", Direction.NORTH, "forest")
+          () -> builder.connectBidirectional("cottage", Direction.NORTH, "forest")
       );
 
       assertTrue(exception.getMessage().contains("forest"));
@@ -151,14 +151,14 @@ class GameMapTest {
 
     @Test
     @DisplayName("connectOneWay - creates unidirectional connection")
-    void testConnectOneWay_createsUnidirectionalConnection() {
+    void testConnect_createsUnidirectionalConnection() {
       final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
       final Location forest = new Location("forest", "A dark forest.", "In the forest.");
 
       new GameMap.Builder()
           .addLocation(cottage)
           .addLocation(forest)
-          .connectOneWay("cottage", Direction.NORTH, "forest")
+          .connect("cottage", Direction.NORTH, "forest")
           .setStartingLocation("cottage")
           .build();
 
@@ -353,7 +353,7 @@ class GameMapTest {
       final GameMap gameMap = new GameMap.Builder()
           .addLocation(a)
           .addLocation(b)
-          .connect("a", Direction.NORTH, "b")
+          .connectBidirectional("a", Direction.NORTH, "b")
           .setStartingLocation("a")
           .build();
 
@@ -369,7 +369,7 @@ class GameMapTest {
       final GameMap gameMap = new GameMap.Builder()
           .addLocation(a)
           .addLocation(b)
-          .connect("a", Direction.EAST, "b")
+          .connectBidirectional("a", Direction.EAST, "b")
           .setStartingLocation("a")
           .build();
 
@@ -385,7 +385,7 @@ class GameMapTest {
       final GameMap gameMap = new GameMap.Builder()
           .addLocation(a)
           .addLocation(b)
-          .connect("a", Direction.UP, "b")
+          .connectBidirectional("a", Direction.UP, "b")
           .setStartingLocation("a")
           .build();
 
@@ -401,7 +401,7 @@ class GameMapTest {
       final GameMap gameMap = new GameMap.Builder()
           .addLocation(a)
           .addLocation(b)
-          .connect("a", Direction.NORTHEAST, "b")
+          .connectBidirectional("a", Direction.NORTHEAST, "b")
           .setStartingLocation("a")
           .build();
 
@@ -417,7 +417,7 @@ class GameMapTest {
       final GameMap gameMap = new GameMap.Builder()
           .addLocation(a)
           .addLocation(b)
-          .connect("a", Direction.IN, "b")
+          .connectBidirectional("a", Direction.IN, "b")
           .setStartingLocation("a")
           .build();
 

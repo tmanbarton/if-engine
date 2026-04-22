@@ -49,8 +49,8 @@ public final class GameExample {
         .addLocation(createClearing())
 
         // Connect locations (bidirectional)
-        .connect("cottage", Direction.NORTH, "forest")
-        .connect("forest", Direction.EAST, "clearing")
+        .connectBidirectional("cottage", Direction.NORTH, "forest")
+        .connectBidirectional("forest", Direction.EAST, "clearing")
 
         // Add and place items
         .placeItem(new Item(

@@ -362,17 +362,11 @@ public class GameMap implements GameMapInterface {
     }
 
     /**
-     * Creates a bidirectional connection between two locations.
-     * <p>
-     * For example, {@code connect("cottage", Direction.NORTH, "forest")} creates:
-     * <ul>
-     *   <li>cottage -> NORTH -> forest</li>
-     *   <li>forest -> SOUTH -> cottage</li>
-     * </ul>
+     * Creates a one-way connection between two locations.
      *
-     * @param fromLocationKey the key of the first location
-     * @param direction the direction from the first location to the second
-     * @param toLocationKey the key of the second location
+     * @param fromLocationKey the key of the source location
+     * @param direction the direction of travel
+     * @param toLocationKey the key of the destination location
      * @return this Builder for method chaining
      * @throws IllegalArgumentException if either location is not found
      */
@@ -391,26 +385,28 @@ public class GameMap implements GameMapInterface {
       }
 
       from.addConnection(direction, to);
-      to.addConnection(getOppositeDirection(direction), from);
       return this;
     }
 
     /**
-     * Creates a one-way connection between two locations.
+     * Creates a bidirectional connection between two locations.
      * <p>
-     * Unlike {@link #connect(String, Direction, String)}, this does not create
-     * a connection in the opposite direction.
+     * For example, {@code connect("cottage", Direction.NORTH, "forest")} creates:
+     * <ul>
+     *   <li>cottage -> NORTH -> forest</li>
+     *   <li>forest -> SOUTH -> cottage</li>
+     * </ul>
      *
-     * @param fromLocationKey the key of the source location
-     * @param direction the direction of travel
-     * @param toLocationKey the key of the destination location
+     * @param fromLocationKey the key of the first location
+     * @param direction the direction from the first location to the second
+     * @param toLocationKey the key of the second location
      * @return this Builder for method chaining
      * @throws IllegalArgumentException if either location is not found
      */
     @Nonnull
-    public Builder connectOneWay(@Nonnull final String fromLocationKey,
-                                 @Nonnull final Direction direction,
-                                 @Nonnull final String toLocationKey) {
+    public Builder connectBidirectional(@Nonnull final String fromLocationKey,
+                                        @Nonnull final Direction direction,
+                                        @Nonnull final String toLocationKey) {
       final Location from = locations.get(fromLocationKey);
       final Location to = locations.get(toLocationKey);
 
@@ -422,6 +418,7 @@ public class GameMap implements GameMapInterface {
       }
 
       from.addConnection(direction, to);
+      to.addConnection(getOppositeDirection(direction), from);
       return this;
     }
 

@@ -43,6 +43,7 @@ GameMap map = new GameMap.Builder()
     .addLocation(new Location("cottage", "A cozy cottage.", "In the cottage."))
     .addLocation(new Location("forest", "A dark forest.", "In the forest."))
     .connect("cottage", Direction.NORTH, "forest")
+    .connect("forest", Direction.SOUTH, "cottage")
     .placeItem(new Item("key", "a key", "A key lies here.", "A rusty key."), "cottage")
     .setStartingLocation("cottage")
     .build();  // Validates configuration
@@ -85,18 +86,18 @@ Use `GameMap.Builder` to construct your game world with fluent method chaining. 
 
 ```java
 GameMap map = new GameMap.Builder()
-    .addLocation(location)       // Add a location
-    .placeItem(item, "room")     // Add and place item in location
-    .placeHiddenItem(item, "room", "revealed desc")  // Hidden until revealed
-    .connect("a", Direction.NORTH, "b")  // Bidirectional connection
-    .connectOneWay("a", Direction.DOWN, "b")  // One-way connection
-    .setStartingLocation("room") // Required: where players start
-    .skipIntro()                 // Optional: skip intro question
-    .withIntroResponses(yes, no) // Custom yes/no responses
-    .withGameIntro(message)   // Story intro before location
-    .withCommand("verb", handler)  // Register custom command
-    .withHints(configurer)       // Configure hint system
-    .build();  // Validates and returns GameMap
+        .addLocation(location)       // Add a location
+        .placeItem(item, "room")     // Add and place item in location
+        .placeHiddenItem(item, "room", "revealed desc")  // Hidden until revealed
+        .connect("a", Direction.DOWN, "b")  // One-way connection
+        .connectBidirectional("a", Direction.NORTH, "b")  // Bidirectional connection
+        .setStartingLocation("room") // Required: where players start
+        .skipIntro()                 // Optional: skip intro question
+        .withIntroResponses(yes, no) // Custom yes/no responses
+        .withGameIntro(message)   // Story intro before location
+        .withCommand("verb", handler)  // Register custom command
+        .withHints(configurer)       // Configure hint system
+        .build();  // Validates and returns GameMap
 ```
 
 The `build()` method throws `IllegalStateException` if:
@@ -110,7 +111,7 @@ Locations represent places in your game world:
 ```java
 new Location(
     "cottage",                              // name (used as key)
-    "You are in a cozy cottage...",         // long description (first visit)
+    "You are in a cozy cottage...",         // long description (first visit and "look" command)
     "In the cottage."                       // short description (subsequent visits)
 )
 ```
@@ -130,7 +131,7 @@ new Item(
     "key",                    // name (used as key)
     "a rusty key",            // inventory description ("You have: a rusty key")
     "A key lies here.",       // location description (shown when at location)
-    "A small iron key.",      // detailed description (shown on examine)
+    "A small iron key.",      // detailed description (shown on "examine" or "look at" command)
     Set.of("rusty key")       // aliases (optional alternate names)
 )
 ```
@@ -149,8 +150,11 @@ public class TreasureItem extends Item {
   public TreasureItem(String name, String invDesc, String locDesc,
                       String detailDesc, int pointValue, boolean cursed) {
     super(name, invDesc, locDesc, detailDesc);
-    this.pointValue = pointValue;
     this.cursed = cursed;
+    if (cursed) {
+      pointValue *= -1;
+    }
+    this.pointValue = pointValue;
   }
 
   public int getPointValue() { return pointValue; }
@@ -225,8 +229,8 @@ GameMap map = new GameMap.Builder()
     .setStartingLocation("start")
     .withIntroResponses(
         "Great! Let's begin...",     // shown on "yes"
-        "No problem! Here we go..."  // shown on "no"
-    )
+        "Ok, here's more info: (blah blah blah, how IF works). Here we go..."  // shown on "no"
+    ).
     .build();
 ```
 
