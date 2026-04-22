@@ -62,8 +62,8 @@ public class GameEngine {
   private GameMapInterface gameMap;
   private final ConcurrentHashMap<String, Player> players = new ConcurrentHashMap<>();
 
-  // Tracks boldable text (location descriptions) per session for JSON response
-  private final ConcurrentHashMap<String, String> sessionBoldableText = new ConcurrentHashMap<>();
+  // Tracks location description responses per session for JSON response
+  private final ConcurrentHashMap<String, String> sessionLocationDescriptionResponse = new ConcurrentHashMap<>();
 
   private final CommandParser commandParser;
   private final ObjectResolver objectResolver;
@@ -199,7 +199,7 @@ public class GameEngine {
   @Nonnull
   public String processCommand(@Nonnull final String sessionId, @Nonnull final String command) {
     // Clear boldable text at start of each command
-    sessionBoldableText.remove(sessionId);
+    sessionLocationDescriptionResponse.remove(sessionId);
 
     // Get or create player for this session
     final Player player = players.computeIfAbsent(sessionId, id -> {
@@ -255,10 +255,10 @@ public class GameEngine {
     final List<String> validDirections = DirectionHelper.getDirectionWordsFromSet(
         player.getCurrentLocation().getAvailableDirections());
 
-    // Get boldable text (location description) for this session, if set
-    final String boldableText = sessionBoldableText.get(sessionId);
-    final String boldableTextJson = boldableText != null
-        ? "\"" + escapeJsonString(boldableText) + "\""
+    // Get location description response for JSON for this session, if set
+    final String locationDescriptionResponse = sessionLocationDescriptionResponse.get(sessionId);
+    final String locationDescriptionResponseJson = locationDescriptionResponse != null
+        ? "\"" + escapeJsonString(locationDescriptionResponse) + "\""
         : "null";
 
     // Create a JSON response with message, boldable text, game state, and valid directions
@@ -266,12 +266,12 @@ public class GameEngine {
         {
           "type": "game_response",
           "message": "%s",
-          "boldableText": %s,
+          "locationDescriptionResponse": %s,
           "gameState": "%s",
           "validDirections": %s
         }""",
         escapeJsonString(message),
-        boldableTextJson,
+        locationDescriptionResponseJson,
         player.getGameState().name(),
         toJsonArray(validDirections)
     );
@@ -346,7 +346,7 @@ public class GameEngine {
     // Check if this is a bare "look" command - set boldable text
     if (isLookAtLocationCommand(verb, command)) {
       final String description = getLocationDescription(player.getCurrentLocation(), true);
-      sessionBoldableText.put(player.getSessionId(), description);
+      sessionLocationDescriptionResponse.put(player.getSessionId(), description);
     }
 
     // Try command dispatcher first (for refactored commands)
@@ -686,7 +686,7 @@ public class GameEngine {
     sb.append(description);
 
     // Set boldable text to ONLY the location description (not item listing)
-    sessionBoldableText.put(player.getSessionId(), description);
+    sessionLocationDescriptionResponse.put(player.getSessionId(), description);
 
     // Always show items when moving to a location
     final List<Item> items = location.getItems();

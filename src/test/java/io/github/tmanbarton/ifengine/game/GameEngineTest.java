@@ -733,7 +733,7 @@ class GameEngineTest {
 
     @Test
     @DisplayName("Test processCommand - look command sets boldable text")
-    void testProcessCommand_lookSetsBoldableText() {
+    void testProcessCommand_lookSetsLocationDescriptionResponse() {
       // Given
       final TestGameEngine engine = TestFixtures.singleLocationPlayingScenario();
       engine.createPlayer(SESSION_ID);
@@ -743,8 +743,8 @@ class GameEngineTest {
       final String response = engine.processCommand(SESSION_ID, "look");
 
       // Then
-      final String boldableText = JsonTestUtils.extractBoldableText(response);
-      assertEquals(location.getLongDescription(), boldableText);
+      final String locationDescriptionResponse = JsonTestUtils.extractLocationDescriptionResponse(response);
+      assertEquals(location.getLongDescription(), locationDescriptionResponse);
     }
   }
 

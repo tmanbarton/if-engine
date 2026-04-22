@@ -67,12 +67,12 @@ public final class JsonTestUtils {
   }
 
   /**
-   * Extracts the boldableText from a JSON game response.
+   * Extracts the locationDescriptionResponse from a JSON game response.
    *
    * @param jsonResponse the JSON response string from the game engine
    * @return the boldable text, or null if not present or not valid JSON
    */
-  public static String extractBoldableText(@Nonnull final String jsonResponse) {
+  public static String extractLocationDescriptionResponse(@Nonnull final String jsonResponse) {
     if (jsonResponse == null || jsonResponse.trim().isEmpty()) {
       return null;
     }
@@ -84,10 +84,10 @@ public final class JsonTestUtils {
 
     try {
       final JSONObject json = new JSONObject(trimmed);
-      if (json.isNull("boldableText")) {
+      if (json.isNull("locationDescriptionResponse")) {
         return null;
       }
-      return json.optString("boldableText", null);
+      return json.optString("locationDescriptionResponse", null);
     } catch (final Exception e) {
       return null;
     }
