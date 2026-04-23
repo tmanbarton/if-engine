@@ -221,16 +221,16 @@ GameMap map = new GameMap.Builder()
 
 ### Custom yes/no responses
 
-For yes/no questions where both answers start the game (e.g., "Have you played IF before?" or "Ready to begin?"):
+For yes/no questions where both answers start the game (e.g., "Have you played IF before?" or "Would you like help?"):
 
 ```java
 GameMap map = new GameMap.Builder()
     .addLocation(...)
     .setStartingLocation("start")
     .withIntroResponses(
-        "Great! Let's begin...",     // shown on "yes"
-        "Ok, here's more info: (blah blah blah, how IF works). Here we go..."  // shown on "no"
-    ).
+        "Great! Let's begin.",     // shown on "yes"
+        "Ok, here's more info: (blah blah blah, how IF works). Here we go."  // shown on "no"
+    )
     .build();
 ```
 
@@ -242,11 +242,12 @@ Use `withGameIntro()` to add story context before the first location description
 GameMap map = new GameMap.Builder()
     .addLocation(...)
     .setStartingLocation("cottage")
-    .withGameIntro("You find yourself at the edge of a mysterious forest...")
+    .withGameIntro("On the outskirts of Smalltown, a petite cottage sits along a wall of trees. Smalltown " +
+                           "residents try to ignore the screams from the forest, but adventurous you is intrigued. Chilled, but still intrigued.")
     .build();
 ```
 
-When the player answers yes/no, they'll see: intro message → location description.
+When the player answers yes/no, they'll see: intro message followed by the description of the starting location.
 
 ### Combining intro responses and message
 
@@ -254,23 +255,23 @@ You can use both together for full customization:
 
 ```java
 GameMap map = new GameMap.Builder()
-    .addLocation(...)
-    .setStartingLocation("cottage")
-    .withIntroResponses(
-        "Excellent! Let's begin...",
-        "No worries. Let's begin anyway...")
-    .withGameIntro("You find yourself at the edge of a mysterious forest. "
-        + "A small cottage catches your eye...")
-    .build();
+        .addLocation(new Location("cottage", "You're in a cozy cottage along a line of trees.", "In the cottage."))
+        .setStartingLocation("cottage")
+        .withIntroResponses(
+                "Excellent! Let's begin.",
+                "Ok, here's more info: (blah blah blah, how IF works). Here we go.")
+        .withGameIntro("On the outskirts of Smalltown, a petite cottage sits along a wall of trees. Smalltown " +
+                "residents try to ignore the screams from the forest, but adventurous you is intrigued. Chilled, but still intrigued.")
+        .build();
 ```
 
 Output on "yes":
 ```
-Excellent! Let's begin...
+Excellent! Let's begin.
 
-You find yourself at the edge of a mysterious forest. A small cottage catches your eye...
+On the outskirts of Smalltown, a petite cottage sits along a wall of trees. Smalltown residents try to ignore the screams from the forest, but adventurous you is intrigued. Chilled, but still intrigued.
 
-You are in a cozy cottage...
+You're in a cozy cottage along a line of trees.
 ```
 
 ### Custom intro handler
