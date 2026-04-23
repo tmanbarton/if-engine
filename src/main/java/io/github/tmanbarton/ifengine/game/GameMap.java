@@ -42,7 +42,7 @@ public class GameMap implements GameMapInterface {
   private final Map<String, HiddenItemPlacement> initialHiddenItemPlacements;
 
   // Intro configuration
-  private final boolean skipIntro;
+  private final boolean skipIntroQuestion;
   private final IntroHandler introHandler;
   private final String customYesResponse;
   private final String customNoResponse;
@@ -65,7 +65,7 @@ public class GameMap implements GameMapInterface {
     this.startingLocationKey = builder.startingLocationKey;
     this.initialItemPlacements = new HashMap<>(builder.initialItemPlacements);
     this.initialHiddenItemPlacements = new HashMap<>(builder.initialHiddenItemPlacements);
-    this.skipIntro = builder.skipIntro;
+    this.skipIntroQuestion = builder.skipIntroQuestion;
     this.introHandler = builder.introHandler;
     this.customYesResponse = builder.customYesResponse;
     this.customNoResponse = builder.customNoResponse;
@@ -143,12 +143,14 @@ public class GameMap implements GameMapInterface {
   }
 
   /**
-   * Returns whether the intro should be skipped.
+   * Returns whether the intro question should be skipped.
+   * <p>
+   * When true, new players bypass the intro question and start directly in gameplay.
    *
-   * @return true if the intro should be skipped
+   * @return true if the intro question should be skipped
    */
-  public boolean shouldSkipIntro() {
-    return skipIntro;
+  public boolean shouldSkipIntroQuestion() {
+    return skipIntroQuestion;
   }
 
   /**
@@ -273,7 +275,7 @@ public class GameMap implements GameMapInterface {
     private final Map<String, HiddenItemPlacement> initialHiddenItemPlacements = new HashMap<>();
 
     // Intro configuration
-    private boolean skipIntro = false;
+    private boolean skipIntroQuestion = false;
     private IntroHandler introHandler;
     private String customYesResponse;
     private String customNoResponse;
@@ -439,16 +441,16 @@ public class GameMap implements GameMapInterface {
     }
 
     /**
-     * Configures the game to skip the intro and start directly in PLAYING state.
+     * Configures the game to skip the intro question and start directly in PLAYING state.
      * <p>
-     * When enabled, new players will not be asked the "have you played before?" question
-     * and will start immediately in gameplay.
+     * When enabled, new players bypass the intro question (configured on the frontend)
+     * and start immediately in gameplay. No intro response handling is needed.
      *
      * @return this Builder for method chaining
      */
     @Nonnull
-    public Builder skipIntro() {
-      this.skipIntro = true;
+    public Builder skipIntroQuestion() {
+      this.skipIntroQuestion = true;
       return this;
     }
 
@@ -507,16 +509,17 @@ public class GameMap implements GameMapInterface {
     }
 
     /**
-     * Configures the game introduction that's shown before the first location description.
+     * Optionally configures a game introduction shown before the first location description.
      * <p>
-     * This message is displayed after the yes/no response (if any) and before
+     * This message is displayed after the intro question response (if any) and before
      * showing the player's starting location. Use this to set the scene or
      * provide story context when the game begins.
      * <p>
-     * You can skip the intro and go straight to the first location description with {@link #skipIntro()}.
+     * This is optional — if not called, the player goes straight to the starting
+     * location description after the intro question response.
      * <p>
-     * Can be used alone (with default yes/no handling) or combined with
-     * {@link #withIntroResponses(String, String)} for custom yes/no messages.
+     * Can be combined with {@link #withIntroResponses(String, String)} or
+     * {@link #withIntroHandler(IntroHandler)} for custom intro question handling.
      *
      * @param introMessage the message to show before the location description
      * @return this Builder for method chaining
@@ -643,9 +646,9 @@ public class GameMap implements GameMapInterface {
         throw new IllegalStateException(
             "Starting location must be set. Call setStartingLocation() before build()");
       }
-      if (!skipIntro && introHandler == null && customYesResponse == null) {
+      if (!skipIntroQuestion && introHandler == null && customYesResponse == null) {
         throw new IllegalStateException(
-            "Intro behavior must be configured. Call skipIntro(), withIntroResponses(), or withIntroHandler() before build()");
+            "Intro behavior must be configured. Call skipIntroQuestion(), withIntroResponses(), or withIntroHandler() before build()");
       }
       return new GameMap(this);
     }

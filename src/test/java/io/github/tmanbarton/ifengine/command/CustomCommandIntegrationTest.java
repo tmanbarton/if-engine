@@ -36,7 +36,7 @@ class CustomCommandIntegrationTest {
       final GameMap map = new GameMap.Builder()
               .addLocation(new Location("room", "A test room.", "Test room."))
               .setStartingLocation("room")
-              .skipIntro()
+              .skipIntroQuestion()
               .withCommand("xyzzy", (player, cmd, ctx) -> "Nothing happens.")
               .build();
       final GameEngine engine = new GameEngine(map);
@@ -56,7 +56,7 @@ class CustomCommandIntegrationTest {
       final GameMap map = new GameMap.Builder()
               .addLocation(new Location("room", "A test room.", "Test room."))
               .setStartingLocation("room")
-              .skipIntro()
+              .skipIntroQuestion()
               .withCommand("search", List.of("find", "look for"), (player, cmd, ctx) ->
                       "You search carefully but find nothing.")
               .build();
@@ -77,7 +77,7 @@ class CustomCommandIntegrationTest {
       final GameMap map = new GameMap.Builder()
               .addLocation(new Location("room", "A test room.", "Test room."))
               .setStartingLocation("room")
-              .skipIntro()
+              .skipIntroQuestion()
               .withCommand("poke", (player, cmd, ctx) -> {
                 final String target = cmd.getFirstDirectObject();
                 if (target.isEmpty()) {
@@ -103,7 +103,7 @@ class CustomCommandIntegrationTest {
       final GameMap map = new GameMap.Builder()
               .addLocation(new Location("room", "A test room.", "Test room."))
               .setStartingLocation("room")
-              .skipIntro()
+              .skipIntroQuestion()
               .withCommand("look", (player, cmd, ctx) -> "You see nothing special.")
               .build();
       final GameEngine engine = new GameEngine(map);
@@ -125,7 +125,7 @@ class CustomCommandIntegrationTest {
               .addLocation(new Location("room", "A test room.", "Test room."))
               .placeItem(key, "room")
               .setStartingLocation("room")
-              .skipIntro()
+              .skipIntroQuestion()
               .withCommand("locate", (player, cmd, ctx) -> {
                 final String target = cmd.getFirstDirectObject();
                 final var resolved = ctx.resolveItem(target, player);
@@ -152,7 +152,7 @@ class CustomCommandIntegrationTest {
       final GameMap map = new GameMap.Builder()
               .addLocation(new Location("room", "A test room.", "Test room."))
               .setStartingLocation("room")
-              .skipIntro()
+              .skipIntroQuestion()
               .withCommand("look", (player, cmd, ctx) -> null)
               .build();
       final GameEngine engine = new GameEngine(map);
@@ -173,7 +173,7 @@ class CustomCommandIntegrationTest {
       final GameMap map = new GameMap.Builder()
               .addLocation(new Location("room", "A test room.", "Test room."))
               .setStartingLocation("room")
-              .skipIntro()
+              .skipIntroQuestion()
               .withCommand("look", (player, cmd, ctx) -> {
                 final String target = cmd.getFirstDirectObject();
                 if ("mirror".equals(target)) {

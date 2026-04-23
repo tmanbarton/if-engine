@@ -70,23 +70,23 @@ class GameMapTest {
       );
 
       assertEquals(
-          "Intro behavior must be configured. Call skipIntro(), withIntroResponses(), or withIntroHandler() before build()",
+          "Intro behavior must be configured. Call skipIntroQuestion(), withIntroResponses(), or withIntroHandler() before build()",
           exception.getMessage()
       );
     }
 
     @Test
-    @DisplayName("build - succeeds with skipIntro")
-    void testBuild_succeedsWithSkipIntro() {
+    @DisplayName("build - succeeds with skipIntroQuestion")
+    void testBuild_succeedsWithSkipIntroQuestion() {
       final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
 
       final GameMap gameMap = new GameMap.Builder()
           .addLocation(cottage)
           .setStartingLocation("cottage")
-          .skipIntro()
+          .skipIntroQuestion()
           .build();
 
-      assertNotNull(gameMap, "build should succeed when skipIntro is configured");
+      assertNotNull(gameMap, "build should succeed when skipIntroQuestion is configured");
     }
 
     @Test
@@ -129,7 +129,7 @@ class GameMapTest {
       final GameMap gameMap = new GameMap.Builder()
           .addLocation(cottage)
           .setStartingLocation("cottage")
-          .skipIntro()
+          .skipIntroQuestion()
           .build();
 
       assertEquals(cottage, gameMap.getLocation("cottage"));
@@ -145,7 +145,7 @@ class GameMapTest {
           .addLocation(cottage)
           .placeItem(key, "cottage")
           .setStartingLocation("cottage")
-          .skipIntro()
+          .skipIntroQuestion()
           .build();
 
       assertEquals(key, gameMap.getItem("key"));
@@ -162,7 +162,7 @@ class GameMapTest {
           .addLocation(forest)
           .connectBidirectional("cottage", Direction.NORTH, "forest")
           .setStartingLocation("cottage")
-          .skipIntro()
+          .skipIntroQuestion()
           .build();
 
       assertEquals(forest, cottage.getConnection(Direction.NORTH));
@@ -210,7 +210,7 @@ class GameMapTest {
           .addLocation(forest)
           .connect("cottage", Direction.NORTH, "forest")
           .setStartingLocation("cottage")
-          .skipIntro()
+          .skipIntroQuestion()
           .build();
 
       assertEquals(forest, cottage.getConnection(Direction.NORTH));
@@ -225,7 +225,7 @@ class GameMapTest {
       final GameMap gameMap = new GameMap.Builder()
           .addLocation(cottage)
           .setStartingLocation("cottage")
-          .skipIntro()
+          .skipIntroQuestion()
           .build();
 
       assertEquals(cottage, gameMap.getStartingLocation());
@@ -254,7 +254,7 @@ class GameMapTest {
           .addLocation(cottage)
           .placeItem(key, "cottage")
           .setStartingLocation("cottage")
-          .skipIntro()
+          .skipIntroQuestion()
           .build();
 
       assertTrue(cottage.hasItem("key"));
@@ -288,7 +288,7 @@ class GameMapTest {
           .addLocation(cottage)
           .placeHiddenItem(key, "cottage", "A key is under the table.")
           .setStartingLocation("cottage")
-          .skipIntro()
+          .skipIntroQuestion()
           .build();
 
       assertFalse(cottage.hasItem("key"));
@@ -323,7 +323,7 @@ class GameMapTest {
           .addLocation(cottage)
           .placeItem(key, "cottage")
           .setStartingLocation("cottage")
-          .skipIntro()
+          .skipIntroQuestion()
           .build();
 
       // Simulate taking the item
@@ -344,7 +344,7 @@ class GameMapTest {
           .addLocation(cottage)
           .placeHiddenItem(key, "cottage", "A key is under the table.")
           .setStartingLocation("cottage")
-          .skipIntro()
+          .skipIntroQuestion()
           .build();
 
       // Simulate reveal + take
@@ -367,7 +367,7 @@ class GameMapTest {
           .addLocation(cottage)
           .placeHiddenItem(key, "cottage", "A key is under the table.")
           .setStartingLocation("cottage")
-          .skipIntro()
+          .skipIntroQuestion()
           .build();
 
       // Simulate reveal only (not taken)
@@ -390,7 +390,7 @@ class GameMapTest {
       final GameMap gameMap = new GameMap.Builder()
           .addLocation(cottage)
           .setStartingLocation("cottage")
-          .skipIntro()
+          .skipIntroQuestion()
           .build();
 
       gameMap.resetMap();
@@ -413,7 +413,7 @@ class GameMapTest {
           .addLocation(b)
           .connectBidirectional("a", Direction.NORTH, "b")
           .setStartingLocation("a")
-          .skipIntro()
+          .skipIntroQuestion()
           .build();
 
       assertNotNull(gameMap.getLocation("b").getConnection(Direction.SOUTH));
@@ -430,7 +430,7 @@ class GameMapTest {
           .addLocation(b)
           .connectBidirectional("a", Direction.EAST, "b")
           .setStartingLocation("a")
-          .skipIntro()
+          .skipIntroQuestion()
           .build();
 
       assertNotNull(gameMap.getLocation("b").getConnection(Direction.WEST));
@@ -447,7 +447,7 @@ class GameMapTest {
           .addLocation(b)
           .connectBidirectional("a", Direction.UP, "b")
           .setStartingLocation("a")
-          .skipIntro()
+          .skipIntroQuestion()
           .build();
 
       assertNotNull(gameMap.getLocation("b").getConnection(Direction.DOWN));
@@ -464,7 +464,7 @@ class GameMapTest {
           .addLocation(b)
           .connectBidirectional("a", Direction.NORTHEAST, "b")
           .setStartingLocation("a")
-          .skipIntro()
+          .skipIntroQuestion()
           .build();
 
       assertNotNull(gameMap.getLocation("b").getConnection(Direction.SOUTHWEST));
@@ -481,7 +481,7 @@ class GameMapTest {
           .addLocation(b)
           .connectBidirectional("a", Direction.IN, "b")
           .setStartingLocation("a")
-          .skipIntro()
+          .skipIntroQuestion()
           .build();
 
       assertNotNull(gameMap.getLocation("b").getConnection(Direction.OUT));

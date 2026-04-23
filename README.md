@@ -92,7 +92,7 @@ GameMap map = new GameMap.Builder()
         .connect("a", Direction.DOWN, "b")  // One-way connection
         .connectBidirectional("a", Direction.NORTH, "b")  // Bidirectional connection
         .setStartingLocation("room") // Required: where players start
-        .skipIntro()                 // Optional: skip intro question
+        .skipIntroQuestion()         // Optional: When the frontend doesn't show an intro question, skip intro question handling and go straight to gameplay
         .withIntroResponses(yes, no) // Custom yes/no responses
         .withGameIntro(message)   // Story intro before location
         .withCommand("verb", handler)  // Register custom command
@@ -215,11 +215,11 @@ The engine only processes the player's response and returns the appropriate mess
 GameMap map = new GameMap.Builder()
     .addLocation(...)
     .setStartingLocation("start")
-    .skipIntro()
+    .skipIntroQuestion()
     .build();
 ```
 
-### Custom yes/no responses
+### Set yes/no responses
 
 For yes/no questions where both answers start the game (e.g., "Have you played IF before?" or "Would you like help?"):
 
@@ -243,11 +243,11 @@ GameMap map = new GameMap.Builder()
     .addLocation(...)
     .setStartingLocation("cottage")
     .withGameIntro("On the outskirts of Smalltown, a petite cottage sits along a wall of trees. Smalltown " +
-                           "residents try to ignore the screams from the forest, but adventurous you is intrigued. Chilled, but still intrigued.")
+                           "residents try to ignore the screams from the forest, but you with your adventurous ways are intrigued. Chilled, but still intrigued.")
     .build();
 ```
 
-When the player answers yes/no, they'll see: intro message followed by the description of the starting location.
+When the player answers yes/no, they'll see the intro message followed by the description of the starting location.
 
 ### Combining intro responses and message
 
@@ -261,7 +261,7 @@ GameMap map = new GameMap.Builder()
                 "Excellent! Let's begin.",
                 "Ok, here's more info: (blah blah blah, how IF works). Here we go.")
         .withGameIntro("On the outskirts of Smalltown, a petite cottage sits along a wall of trees. Smalltown " +
-                "residents try to ignore the screams from the forest, but adventurous you is intrigued. Chilled, but still intrigued.")
+                "residents try to ignore the screams from the forest, but you with your adventurous ways are intrigued. Chilled, but still intrigued.")
         .build();
 ```
 

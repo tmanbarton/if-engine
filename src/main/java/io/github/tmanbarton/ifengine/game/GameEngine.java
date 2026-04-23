@@ -206,8 +206,8 @@ public class GameEngine {
       final Player newPlayer = new Player(gameMap.getStartingLocation());
       // Mark starting location as visited for new players
       newPlayer.getCurrentLocation().setVisited(true);
-      // Check if intro should be skipped
-      if (gameMap instanceof GameMap map && map.shouldSkipIntro()) {
+      // Check if game intro should be skipped
+      if (gameMap instanceof GameMap map && map.shouldSkipIntroQuestion()) {
         newPlayer.setGameState(GameState.PLAYING);
       }
       return newPlayer;

@@ -1057,13 +1057,13 @@ class GameEngineTest {
   class CustomIntroFlow {
 
     @Test
-    @DisplayName("skipIntro - player starts in PLAYING state and commands work")
-    void testSkipIntro_playerStartsInPlayingState() {
+    @DisplayName("skipIntroQuestion - player starts in PLAYING state and commands work")
+    void testSkipIntroQuestion_playerStartsInPlayingState() {
       // Given
       final GameMap map = new GameMap.Builder()
           .addLocation(new Location("start", "Start location.", "Start"))
           .setStartingLocation("start")
-          .skipIntro()
+          .skipIntroQuestion()
           .build();
       final GameEngine engine = new GameEngine(map);
 
@@ -1150,14 +1150,14 @@ class GameEngineTest {
           .setStartingLocation("start")
           .withGameIntro("Welcome to the adventure!");
 
-      // When/Then - withGameIntro alone is not enough, need skipIntro/withIntroResponses/withIntroHandler
+      // When/Then - withGameIntro alone is not enough, need skipIntroQuestion/withIntroResponses/withIntroHandler
       final IllegalStateException exception = assertThrows(
           IllegalStateException.class,
           builder::build
       );
 
       assertEquals(
-          "Intro behavior must be configured. Call skipIntro(), withIntroResponses(), or withIntroHandler() before build()",
+          "Intro behavior must be configured. Call skipIntroQuestion(), withIntroResponses(), or withIntroHandler() before build()",
           exception.getMessage()
       );
     }
@@ -1198,7 +1198,7 @@ class GameEngineTest {
       );
 
       assertEquals(
-          "Intro behavior must be configured. Call skipIntro(), withIntroResponses(), or withIntroHandler() before build()",
+          "Intro behavior must be configured. Call skipIntroQuestion(), withIntroResponses(), or withIntroHandler() before build()",
           exception.getMessage()
       );
     }
