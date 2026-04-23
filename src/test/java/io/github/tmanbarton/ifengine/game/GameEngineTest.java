@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -46,14 +47,14 @@ class GameEngineTest {
     @DisplayName("Test processCommand - creates player on first command")
     void testProcessCommand_createsPlayerOnFirstCommand() {
       // Given
-      final TestGameEngine engine = TestFixtures.singleLocationInstructionScenario();
+      final TestGameEngine engine = TestFixtures.singleLocationPlayingScenario();
 
       // When
-      engine.processCommand(SESSION_ID, "yes");
+      engine.processCommand(SESSION_ID, "look");
 
       // Then
       final Player player = engine.getPlayer(SESSION_ID);
-      assertNotNull(player);
+      assertNotNull(player, "player should be created on first command");
     }
 
     @Test
@@ -109,132 +110,105 @@ class GameEngineTest {
   @Nested
   class IntroFlow {
 
+    private GameEngine createIntroEngine() {
+      final GameMap map = new GameMap.Builder()
+          .addLocation(new Location("start", "Start location.", "Start"))
+          .setStartingLocation("start")
+          .withIntroResponses("Welcome back!", "Let me explain the basics.")
+          .build();
+      return new GameEngine(map);
+    }
+
     @Test
-    @DisplayName("Test processCommand - 'yes' answer sets experienced player flag")
-    void testProcessCommand_yesAnswerSetsExperiencedFlag() {
+    @DisplayName("yes answer transitions from WAITING_FOR_START_ANSWER to PLAYING")
+    void testProcessCommand_yesTransitionsToPlaying() {
       // Given
-      final TestGameEngine engine = TestFixtures.singleLocationInstructionScenario();
+      final GameEngine engine = createIntroEngine();
 
       // When
       engine.processCommand(SESSION_ID, "yes");
 
       // Then
       final Player player = engine.getPlayer(SESSION_ID);
-      assertTrue(player.isExperiencedPlayer());
+      assertEquals(GameState.PLAYING, player.getGameState(),
+          "yes answer should transition to PLAYING state");
     }
 
     @Test
-    @DisplayName("Test processCommand - 'no' answer does not set experienced player flag")
-    void testProcessCommand_noAnswerDoesNotSetExperiencedFlag() {
+    @DisplayName("no answer transitions from WAITING_FOR_START_ANSWER to PLAYING")
+    void testProcessCommand_noTransitionsToPlaying() {
       // Given
-      final TestGameEngine engine = TestFixtures.singleLocationInstructionScenario();
+      final GameEngine engine = createIntroEngine();
 
       // When
       engine.processCommand(SESSION_ID, "no");
 
       // Then
       final Player player = engine.getPlayer(SESSION_ID);
-      assertFalse(player.isExperiencedPlayer());
+      assertEquals(GameState.PLAYING, player.getGameState(),
+          "no answer should transition to PLAYING state");
     }
 
     @Test
-    @DisplayName("Test processCommand - intro answer transitions to PLAYING state")
-    void testProcessCommand_introAnswerTransitionsToPlaying() {
+    @DisplayName("yes answer shows custom yes response and location description")
+    void testProcessCommand_yesShowsCustomResponse() {
       // Given
-      final TestGameEngine engine = TestFixtures.singleLocationInstructionScenario();
-
-      // When
-      engine.processCommand(SESSION_ID, "yes");
-
-      // Then
-      final Player player = engine.getPlayer(SESSION_ID);
-      assertEquals(GameState.PLAYING, player.getGameState());
-    }
-
-    @Test
-    @DisplayName("Test processCommand - 'yes' answer shows experienced player intro")
-    void testProcessCommand_yesAnswerShowsExperiencedIntro() {
-      // Given
-      final TestGameEngine engine = TestFixtures.singleLocationInstructionScenario();
+      final GameEngine engine = createIntroEngine();
 
       // When
       final String response = engine.processCommand(SESSION_ID, "yes");
 
       // Then
       final String message = JsonTestUtils.extractMessage(response);
-      assertTrue(message.startsWith(RESPONSES.getExperiencedPlayerIntro()));
+      assertEquals("Welcome back!\n\nStart location.\n\n", message,
+          "yes answer should show custom yes response followed by location");
     }
 
     @Test
-    @DisplayName("Test processCommand - 'no' answer shows new player intro")
-    void testProcessCommand_noAnswerShowsNewPlayerIntro() {
+    @DisplayName("no answer shows custom no response and location description")
+    void testProcessCommand_noShowsCustomResponse() {
       // Given
-      final TestGameEngine engine = TestFixtures.singleLocationInstructionScenario();
+      final GameEngine engine = createIntroEngine();
 
       // When
       final String response = engine.processCommand(SESSION_ID, "no");
 
       // Then
       final String message = JsonTestUtils.extractMessage(response);
-      assertTrue(message.startsWith(RESPONSES.getNewPlayerIntro()));
+      assertEquals("Let me explain the basics.\n\nStart location.\n\n", message,
+          "no answer should show custom no response followed by location");
     }
 
     @Test
-    @DisplayName("Test processCommand - invalid intro answer keeps state unchanged")
-    void testProcessCommand_invalidIntroAnswerKeepsState() {
+    @DisplayName("invalid intro answer keeps WAITING_FOR_START_ANSWER state")
+    void testProcessCommand_invalidAnswerKeepsState() {
       // Given
-      final TestGameEngine engine = TestFixtures.singleLocationInstructionScenario();
+      final GameEngine engine = createIntroEngine();
+      engine.processCommand(SESSION_ID, "look");
 
       // When
       engine.processCommand(SESSION_ID, "maybe");
 
       // Then
       final Player player = engine.getPlayer(SESSION_ID);
-      assertEquals(GameState.WAITING_FOR_START_ANSWER, player.getGameState());
+      assertEquals(GameState.WAITING_FOR_START_ANSWER, player.getGameState(),
+          "invalid answer should not change state from WAITING_FOR_START_ANSWER");
     }
 
     @Test
-    @DisplayName("Test processCommand - invalid intro answer shows please answer message")
-    void testProcessCommand_invalidIntroAnswerShowsMessage() {
+    @DisplayName("invalid intro answer shows please answer message")
+    void testProcessCommand_invalidAnswerShowsMessage() {
       // Given
-      final TestGameEngine engine = TestFixtures.singleLocationInstructionScenario();
+      final GameEngine engine = createIntroEngine();
+      engine.processCommand(SESSION_ID, "look");
 
       // When
       final String response = engine.processCommand(SESSION_ID, "maybe");
 
       // Then
       final String message = JsonTestUtils.extractMessage(response);
-      assertEquals(RESPONSES.getPleaseAnswerQuestion() + "\n\n", message);
-    }
-
-    @Test
-    @DisplayName("Test processCommand - 'y' accepted as yes")
-    void testProcessCommand_yAcceptedAsYes() {
-      // Given
-      final TestGameEngine engine = TestFixtures.singleLocationInstructionScenario();
-
-      // When
-      engine.processCommand(SESSION_ID, "y");
-
-      // Then
-      final Player player = engine.getPlayer(SESSION_ID);
-      assertEquals(GameState.PLAYING, player.getGameState());
-      assertTrue(player.isExperiencedPlayer());
-    }
-
-    @Test
-    @DisplayName("Test processCommand - 'n' accepted as no")
-    void testProcessCommand_nAcceptedAsNo() {
-      // Given
-      final TestGameEngine engine = TestFixtures.singleLocationInstructionScenario();
-
-      // When
-      engine.processCommand(SESSION_ID, "n");
-
-      // Then
-      final Player player = engine.getPlayer(SESSION_ID);
-      assertEquals(GameState.PLAYING, player.getGameState());
-      assertFalse(player.isExperiencedPlayer());
+      assertEquals(RESPONSES.getPleaseAnswerQuestion() + "\n\n", message,
+          "invalid answer should show please answer message");
     }
   }
 
@@ -1168,23 +1142,24 @@ class GameEngineTest {
     }
 
     @Test
-    @DisplayName("withGameIntro - shows intro message before location description")
-    void testwithGameIntro_showsIntroMessageBeforeLocation() {
+    @DisplayName("withGameIntro only - throws when no intro behavior configured")
+    void testWithGameIntroOnly_throwsWhenNoIntroBehaviorConfigured() {
       // Given
-      final GameMap map = new GameMap.Builder()
+      final GameMap.Builder builder = new GameMap.Builder()
           .addLocation(new Location("start", "Start location.", "Start"))
           .setStartingLocation("start")
-          .withGameIntro("Welcome to the adventure!")
-          .build();
-      final GameEngine engine = new GameEngine(map);
+          .withGameIntro("Welcome to the adventure!");
 
-      // When - yes answer with default handling
-      final String response = engine.processCommand(SESSION_ID, "yes");
+      // When/Then - withGameIntro alone is not enough, need skipIntro/withIntroResponses/withIntroHandler
+      final IllegalStateException exception = assertThrows(
+          IllegalStateException.class,
+          builder::build
+      );
 
-      // Then - shows intro message followed by location description
-      final String message = JsonTestUtils.extractMessage(response);
-      assertEquals("Welcome to the adventure!\n\nStart location.\n\n", message);
-      assertEquals(GameState.PLAYING, engine.getPlayer(SESSION_ID).getGameState());
+      assertEquals(
+          "Intro behavior must be configured. Call skipIntro(), withIntroResponses(), or withIntroHandler() before build()",
+          exception.getMessage()
+      );
     }
 
     @Test
@@ -1209,22 +1184,23 @@ class GameEngineTest {
     }
 
     @Test
-    @DisplayName("default - uses standard yes/no logic when no intro configured")
-    void testDefault_usesStandardYesNoLogic() {
+    @DisplayName("default - throws when no intro behavior configured")
+    void testDefault_throwsWhenNoIntroBehaviorConfigured() {
       // Given
-      final GameMap map = new GameMap.Builder()
+      final GameMap.Builder builder = new GameMap.Builder()
           .addLocation(new Location("start", "Start location.", "Start"))
-          .setStartingLocation("start")
-          .build();
-      final GameEngine engine = new GameEngine(map);
+          .setStartingLocation("start");
 
-      // When
-      engine.processCommand(SESSION_ID, "yes");
+      // When/Then
+      final IllegalStateException exception = assertThrows(
+          IllegalStateException.class,
+          builder::build
+      );
 
-      // Then
-      final Player player = engine.getPlayer(SESSION_ID);
-      assertEquals(GameState.PLAYING, player.getGameState());
-      assertTrue(player.isExperiencedPlayer());
+      assertEquals(
+          "Intro behavior must be configured. Call skipIntro(), withIntroResponses(), or withIntroHandler() before build()",
+          exception.getMessage()
+      );
     }
   }
 }

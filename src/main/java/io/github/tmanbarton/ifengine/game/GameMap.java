@@ -643,6 +643,10 @@ public class GameMap implements GameMapInterface {
         throw new IllegalStateException(
             "Starting location must be set. Call setStartingLocation() before build()");
       }
+      if (!skipIntro && introHandler == null && customYesResponse == null) {
+        throw new IllegalStateException(
+            "Intro behavior must be configured. Call skipIntro(), withIntroResponses(), or withIntroHandler() before build()");
+      }
       return new GameMap(this);
     }
 

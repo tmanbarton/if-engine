@@ -470,26 +470,8 @@ public class GameEngine {
       }
     }
 
-    // Default yes/no handling
-    if (isYesAnswer(answer)) {
-      player.setExperiencedPlayer(true);
-      player.setGameState(GameState.PLAYING);
-      // If custom intro message is set, use it instead of default yes response
-      if (gameMap instanceof GameMap map && map.hasCustomIntroMessage()) {
-        return buildIntroWithLocation(map, player);
-      }
-      return responseProvider.getExperiencedPlayerIntro() + "\n\n" + lookAtLocation(player, true);
-    } else if (isNoAnswer(answer)) {
-      player.setExperiencedPlayer(false);
-      player.setGameState(GameState.PLAYING);
-      // If custom intro message is set, use it instead of default no response
-      if (gameMap instanceof GameMap map && map.hasCustomIntroMessage()) {
-        return buildIntroWithLocation(map, player);
-      }
-      return responseProvider.getNewPlayerIntro() + "\n\n" + lookAtLocation(player, true);
-    } else {
-      return responseProvider.getPleaseAnswerQuestion();
-    }
+    // No intro behavior configured — this should be unreachable due to build() validation
+    throw new IllegalStateException("No intro behavior configured");
   }
 
   /**
