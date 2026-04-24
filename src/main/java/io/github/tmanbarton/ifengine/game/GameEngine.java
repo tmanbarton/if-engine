@@ -422,7 +422,7 @@ public class GameEngine {
     return contextManager.isPronoun(word);
   }
 
-  private boolean isYesAnswer(@Nonnull final String answer) {
+  static boolean isYesAnswer(@Nonnull final String answer) {
     final String lowerAnswer = answer.toLowerCase();
     return lowerAnswer.equals("yes") || lowerAnswer.equals("y") || lowerAnswer.equals("yeah") ||
             lowerAnswer.equals("yep") || lowerAnswer.equals("sure") || lowerAnswer.equals("yup") ||
@@ -432,7 +432,7 @@ public class GameEngine {
             lowerAnswer.equals("yes ma'am");
   }
 
-  private boolean isNoAnswer(@Nonnull final String answer) {
+  static boolean isNoAnswer(@Nonnull final String answer) {
     final String lowerAnswer = answer.toLowerCase();
     return lowerAnswer.equals("no") || lowerAnswer.equals("n") || lowerAnswer.equals("nah") ||
             lowerAnswer.equals("nope") || lowerAnswer.equals("no thanks") || lowerAnswer.equals("no way") ||

@@ -33,4 +33,32 @@ public interface IntroHandler {
    */
   @Nonnull
   IntroResult handle(@Nonnull Player player, @Nonnull String response, @Nonnull GameMapInterface gameMap);
+
+  /**
+   * Checks if the given response is a recognized "yes" answer.
+   * <p>
+   * Recognized variants include: "yes", "y", "yeah", "yep", "sure", "yup",
+   * "yuh", "yeppers", "yah", "ya", "heck yeah", "oh yeah", "uh hu",
+   * "yes sir", "yes maam", "yes ma'am".
+   *
+   * @param response the player's input text
+   * @return true if the response is a recognized yes answer
+   */
+  static boolean isYesAnswer(@Nonnull final String response) {
+    return GameEngine.isYesAnswer(response);
+  }
+
+  /**
+   * Checks if the given response is a recognized "no" answer.
+   * <p>
+   * Recognized variants include: "no", "n", "nah", "nope", "no thanks",
+   * "no way", "no way jose", "nah fam", "heck no", "no sir", "no maam",
+   * "no ma'am".
+   *
+   * @param response the player's input text
+   * @return true if the response is a recognized no answer
+   */
+  static boolean isNoAnswer(@Nonnull final String response) {
+    return GameEngine.isNoAnswer(response);
+  }
 }
