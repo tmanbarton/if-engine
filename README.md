@@ -64,7 +64,7 @@ The engine returns JSON responses:
 }
 ```
 - **"message"** is what the game returns in response to the user's input.
-- **"locationDescription"** is for when the location's long description is returned (first visit or "look" command) and you want to do something with it such as bold the directions. "locationDescription" doesn't include the item list.
+- **"locationDescription"** is for when the location's long description is returned (first visit or "look" command) and you want to do something with it such as bold the directions. "locationDescription" doesn't include the item list - my initial intent here was for bolding the directions - which include "in" and "out" - but avoid bolding anything in the items list e.g. "gold flakes in jar."
 - **"gameState"** is the state of the game. Possible values:
   - `PLAYING`: The user has started the game and is playing.
   - `WAITING_FOR_START_ANSWER`: The game hasn't started yet, the user hasn't answered the intro question at the beginning of the game if it exists or hasn't entered a valid answer. e.g. "Have you played interactive fiction before?"
@@ -82,7 +82,7 @@ The engine returns JSON responses:
 
 ### GameMap
 
-Use `GameMap.Builder` to construct your game world with fluent method chaining. The `build()` method validates and builds your configuration:
+Use `GameMap.Builder` to construct your game world with method chaining. The `build()` method validates and builds your configuration:
 
 ```java
 GameMap map = new GameMap.Builder()
@@ -103,6 +103,10 @@ GameMap map = new GameMap.Builder()
 The `build()` method throws `IllegalStateException` if:
 - No locations have been added
 - Starting location has not been set
+- Intro question handling hasn't been set. One of these must be configured:
+  - Yes/no responses set if using yes/no question: `.withIntroResponses("response on 'yes'", "response on 'no'")`
+  - Custom intro handler: `.withIntroHandler((player, response, map) -> {// Custom intro handling`
+  - Skip intro question if going straight to the start location without asking an intro question: `.skipIntroQuestion()`
 
 ### Location
 
@@ -136,7 +140,7 @@ new Item(
 )
 ```
 
-Items support aliases for flexible player input - "take rusty key" works if "rusty key" is an alias.
+Items support aliases for flexible player input - "take rusty key" works if "rusty key" is an alias of the "key" item.
 
 ### Custom Item Subclasses
 
@@ -171,12 +175,6 @@ int score = player.getInventory().stream()
     .mapToInt(item -> ((TreasureItem) item).getPointValue())
     .sum();
 ```
-
-Common patterns for custom item properties:
-- **Point values** - Track score/treasure value
-- **Readability/Edibility** - Item-level behavior flags
-- **Game state** - Track phases, quests, or progress
-- **Custom attributes** - Color, weight, material, etc.
 
 ### Direction
 
@@ -234,7 +232,30 @@ GameMap map = new GameMap.Builder()
     .build();
 ```
 
-### Custom game intro message
+### Fully custom intro handler
+
+If you want answers besides "yes" and "no" for a different intro question and for full control over intro logic, use `withIntroHandler()`. This allows you to set the custom answers with custom responses and also change game state when the user answers the question. For example, you can change the start location based on whether the user chooses "easy" or "hard" mode.
+
+```java
+GameMap map = new GameMap.Builder()
+        .addLocation(new Location("cave", "A cave.", "Cave"))
+        .addLocation(new Location("cottage", "A cozy cottage.", "In a cottage."))
+        // create the rest of the map and game.
+        .setStartingLocation("cottage")
+        .withIntroHandler((player, response, gameMap) -> {
+          if ("easy".equalsIgnoreCase(response)) {
+            return IntroResult.playing("Easy mode selected!");
+          } else if ("hard".equalsIgnoreCase(response)) {
+            gameMap.setStartingLocation("cave");
+            return IntroResult.playing("Hard mode selected!");
+          }
+          return IntroResult.waiting("Please choose easy or hard.");
+        })
+        .build();
+```
+You can also use this for custom logic on yes/no answers. Use `IntroHandler.isYesAnswer(response)` and `IntroHandler.isNoAnswer(response)` to check if the input is yes/no.
+
+### Game intro message
 
 Use `withGameIntro()` to add story context before the first location description:
 
@@ -251,7 +272,7 @@ When the player answers yes/no, they'll see the intro message followed by the de
 
 ### Combining intro responses and message
 
-You can use both together for full customization:
+Use both together for a full game introduction:
 
 ```java
 GameMap map = new GameMap.Builder()
@@ -265,32 +286,13 @@ GameMap map = new GameMap.Builder()
         .build();
 ```
 
-Output on "yes":
+Question in the UI: "Have you played before?" 
 ```
-Excellent! Let's begin.
+User: Yes
 
+Game: Excellent! Let's begin.
 On the outskirts of Smalltown, a petite cottage sits along a wall of trees. Smalltown residents try to ignore the screams from the forest, but adventurous you is intrigued. Chilled, but still intrigued.
-
 You're in a cozy cottage along a line of trees.
-```
-
-### Custom intro handler
-
-If you want answers besides "yes" and "no" for a different intro question and for full control over intro logic (including keeping player in intro state on certain answers):
-
-```java
-GameMap map = new GameMap.Builder()
-    .addLocation(...)
-    .setStartingLocation("start")
-    .withIntroHandler((player, response, gameMap) -> {
-        if ("easy".equalsIgnoreCase(response)) {
-            return IntroResult.playing("Easy mode selected!");
-        } else if ("hard".equalsIgnoreCase(response)) {
-            return IntroResult.playing("Hard mode selected!");
-        }
-        return IntroResult.waiting("Please choose easy or hard.");
-    })
-    .build();
 ```
 
 ## Built-in Commands
@@ -312,10 +314,12 @@ Register custom commands via `GameMap.Builder.withCommand()`:
 
 ```java
 GameMap map = new GameMap.Builder()
-    .addLocation(new Location("room", "A test room.", "Test room."))
-    .setStartingLocation("room")
-    .withCommand("xyzzy", (player, cmd, ctx) -> "Nothing happens.")
-    .build();
+        .addLocation(new Location("street", "You're on an unnamed street in an unnamed town.", "You're on the street."))
+        .setStartingLocation("street")
+        .withCommand("xyzzy", (player, cmd, ctx) -> "Nothing happens.")
+        .withCommane("beg", (player, cmd, ctx) -> "You get on your knees with cupped hands extended and give your best puppy eyes. " +
+                "No one's around for you to look at with those pitiful puppy eyes or put anything in your grubby hands, so you dust yourself off and stand back up.")
+        .build();
 ```
 
 ### Custom command with aliases

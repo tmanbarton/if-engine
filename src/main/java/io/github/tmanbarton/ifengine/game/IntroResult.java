@@ -26,10 +26,10 @@ public record IntroResult(
   }
 
   /**
-   * Creates a result that stays in WAITING state.
+   * Creates a result that stays in WAITING_FOR_START_ANSWER state.
    *
    * @param message the message to display
-   * @return an IntroResult that stays in WAITING
+   * @return an IntroResult that stays in WAITING_FOR_START_ANSWER.
    */
   @Nonnull
   public static IntroResult waiting(@Nonnull final String message) {
