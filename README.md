@@ -916,6 +916,36 @@ Represents a location in the game.
 
 ### SceneryObject
 
+#### Accessor methods:
+- `String getName()`: Scenery object name
+- `Set<String> getAliases()`: Scenery object aliases
+- `Map<InteractionType, String> getResponses()`: Returns all defined responses to interaction types for this scenery object
+- `Map<String, String> getCustomResponses()`: Returns all defined responses to custom verbs
+- `boolean isContainer()`: Flag for if this scenery object is a container or not
+- `Set<String> getAllowedItemNames()`: Gets the allowed item names for this container. Empty set means any item is allowed.
+- `List<String> getPrepositions()`: Gets the valid prepositions for this container (i.e. are things put **in** the container, **on** it, etc.). Returns empty list for non-containers.
+- `boolean matches(String objectName)`: Checks if this scenery object matches the given object name or any of its aliases. The comparison is case-insensitive and handles null input safely.
+- `Optional<String> getResponse(InteractionType interaction)`: Gets the response for a specific interaction type.
+- `Optional<String> getCustomResponse(String verb)`: Gets the response for a custom interaction verb. Custom interactions are defined via `withCustomInteraction()` and can be used with custom commands registered via `GameMap.Builder.withCommand()`.
+- `static Builder builder(String name)`: Creates a new builder for constructing SceneryObject instances.
+
+### SceneryObject.Builder
+- `void addAlias(String alias)`: Adds an alias for this scenery object.
+- `Builder withAliases(String... aliasArray)`: Adds one or multiple aliases for this scenery object.
+- `Builder withInteraction(InteractionType interaction, String response)`: Adds an interaction response for this scenery object. This is a hard-coded response for when the user tries to interact with the scenery object.
+- `Builder withCustomInteraction(String verb, String response)`: Adds a custom interaction response for this scenery object. Custom interactions allow scenery to respond to verbs beyond the standard `InteractionType` enum. Use with custom commands registered via code `GameMap.Builder.withCommand()`.
+
+Example:
+  ``` java
+  SceneryObject.builder("flower")
+    .withCustomInteraction("smell", "It smells lovely!")
+    .build();
+  ```
+
+- `Builder asContainer()`: Marks this scenery object as a container that can hold items. Containers can have items placed on/in them using the "put" command. By default, containers use "on" and "onto" prepositions. Other prepositions like "under" can be added with `withPrepositions(String... preps)`
+- `Builder withAllowedItems(String... itemNames)`: Sets which items can be placed in this container by name (alias not included). If not called or called with no arguments, any item can be placed.
+- `Builder withPrepositions(String... preps)`: Sets the valid prepositions for this container. Default prepositions: "on" and "in".
+- `SceneryOject build()`: Builds the SceneryObject instance with the configured properties and runs some validations. If no interactions are defined, throw `IllegalStateException`
 
 ### ParsedCommand
 
@@ -945,3 +975,14 @@ Represents a location in the game.
 
 
 ### GameMapInterface
+
+
+### ContainerType
+
+
+### Direction
+
+
+### InteractionType
+
+

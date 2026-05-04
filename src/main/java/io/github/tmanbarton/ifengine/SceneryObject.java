@@ -64,43 +64,29 @@ public class SceneryObject {
     this.prepositions = prepositions;
   }
 
-  // ===== Accessor methods (matching record component names) =====
-
   @Nonnull
-  public String name() {
+  public String getName() {
     return name;
   }
 
   @Nonnull
-  public Set<String> aliases() {
+  public Set<String> getAliases() {
     return aliases;
   }
 
   @Nonnull
-  public Map<InteractionType, String> responses() {
+  public Map<InteractionType, String> getResponses() {
     return responses;
   }
 
   @Nonnull
-  public Map<String, String> customResponses() {
+  public Map<String, String> getCustomResponses() {
     return customResponses;
   }
 
   public boolean isContainer() {
     return isContainer;
   }
-
-  @Nonnull
-  public Set<String> allowedItemNames() {
-    return allowedItemNames;
-  }
-
-  @Nonnull
-  public List<String> prepositions() {
-    return prepositions;
-  }
-
-  // ===== Convenience accessor methods =====
 
   /**
    * Gets the allowed item names for this container.
@@ -122,21 +108,6 @@ public class SceneryObject {
   @Nonnull
   public List<String> getPrepositions() {
     return prepositions;
-  }
-
-  /**
-   * Creates a new builder for constructing SceneryObject instances.
-   *
-   * @param name the primary name of the scenery object (must not be null or blank)
-   * @return a new Builder instance
-   * @throws IllegalArgumentException if name is null, empty, or blank
-   */
-  @Nonnull
-  public static Builder builder(@Nonnull final String name) {
-    if (name == null || name.trim().isEmpty()) {
-      throw new IllegalArgumentException("Name cannot be null or blank");
-    }
-    return new Builder(name.trim());
   }
 
   /**
@@ -192,40 +163,19 @@ public class SceneryObject {
     return Optional.ofNullable(customResponses.get(verb.toLowerCase()));
   }
 
-  @Override
-  public boolean equals(final Object o) {
-    if (this == o) {
-      return true;
+  /**
+   * Creates a new builder for constructing SceneryObject instances.
+   *
+   * @param name the primary name of the scenery object (must not be null or blank)
+   * @return a new Builder instance
+   * @throws IllegalArgumentException if name is null, empty, or blank
+   */
+  @Nonnull
+  public static Builder builder(@Nonnull final String name) {
+    if (name == null || name.trim().isEmpty()) {
+      throw new IllegalArgumentException("Name cannot be null or blank");
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    final SceneryObject that = (SceneryObject) o;
-    return isContainer == that.isContainer
-        && name.equals(that.name)
-        && aliases.equals(that.aliases)
-        && responses.equals(that.responses)
-        && customResponses.equals(that.customResponses)
-        && allowedItemNames.equals(that.allowedItemNames)
-        && prepositions.equals(that.prepositions);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(name, aliases, responses, customResponses, isContainer, allowedItemNames, prepositions);
-  }
-
-  @Override
-  public String toString() {
-    return "SceneryObject[" +
-        "name=" + name +
-        ", aliases=" + aliases +
-        ", responses=" + responses +
-        ", customResponses=" + customResponses +
-        ", isContainer=" + isContainer +
-        ", allowedItemNames=" + allowedItemNames +
-        ", prepositions=" + prepositions +
-        ']';
+    return new Builder(name.trim());
   }
 
   /**
@@ -339,7 +289,7 @@ public class SceneryObject {
     }
 
     /**
-     * Sets which items can be placed in this container.
+     * Sets which items can be placed in this container by name (alias not included).
      * <p>
      * If not called or called with no arguments, any item can be placed.
      *
@@ -359,13 +309,10 @@ public class SceneryObject {
     /**
      * Sets the valid prepositions for this container.
      * <p>
-     * Common prepositions:
-     * <ul>
-     *   <li>"on", "onto" - for surfaces like tables, shelves</li>
-     *   <li>"in", "into" - for enclosures like drawers, boxes</li>
-     * </ul>
+     * Default prepositions: "on" and "in".
+     * Example of another prepositions to consider:
+     * <li>"under" - perhaps for a secret compartment under a bed.</li>
      * <p>
-     * If not called, defaults to "on" and "onto" for containers.
      *
      * @param preps the valid prepositions for this container
      * @return this builder for method chaining
@@ -381,7 +328,7 @@ public class SceneryObject {
     }
 
     /**
-     * Builds the SceneryObject instance with the configured properties.
+     * Builds the SceneryObject instance with the configured properties and runs some validations.
      *
      * @return a new SceneryObject instance
      * @throws IllegalStateException if no interactions (standard or custom) have been added

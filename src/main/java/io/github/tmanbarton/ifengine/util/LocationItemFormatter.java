@@ -64,7 +64,7 @@ public final class LocationItemFormatter {
         // Scenery container (table, desk, etc.)
         else if (container instanceof SceneryContainer sceneryContainer) {
           final List<String> prepositions = sceneryContainer.getPreferredPrepositions();
-          containedDescriptions.add(itemDescription + " - " + prepositions.getFirst() + " " + sceneryContainer.getSceneryObject().name());
+          containedDescriptions.add(itemDescription + " - " + prepositions.getFirst() + " " + sceneryContainer.getSceneryObject().getName());
         } else {
           // Shouldn't happen, but fallback to plain description
           containedDescriptions.add(itemDescription);

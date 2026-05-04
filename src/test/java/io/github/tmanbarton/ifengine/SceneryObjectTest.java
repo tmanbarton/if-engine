@@ -30,9 +30,9 @@ class SceneryObjectTest {
           .withInteraction(InteractionType.CLIMB, "You climb the tree.")
           .build();
 
-      assertEquals("tree", scenery.name());
-      assertTrue(scenery.aliases().isEmpty());
-      assertEquals(1, scenery.responses().size());
+      assertEquals("tree", scenery.getName());
+      assertTrue(scenery.getAliases().isEmpty());
+      assertEquals(1, scenery.getResponses().size());
     }
 
     @Test
@@ -51,10 +51,10 @@ class SceneryObjectTest {
           .withInteraction(InteractionType.CLIMB, "You climb.")
           .build();
 
-      assertEquals(3, scenery.aliases().size());
-      assertTrue(scenery.aliases().contains("oak"));
-      assertTrue(scenery.aliases().contains("big tree"));
-      assertTrue(scenery.aliases().contains("tall tree"));
+      assertEquals(3, scenery.getAliases().size());
+      assertTrue(scenery.getAliases().contains("oak"));
+      assertTrue(scenery.getAliases().contains("big tree"));
+      assertTrue(scenery.getAliases().contains("tall tree"));
     }
 
     @Test
@@ -65,9 +65,9 @@ class SceneryObjectTest {
           .withInteraction(InteractionType.PUNCH, "You punch the tree. Ouch!")
           .build();
 
-      assertEquals(2, scenery.responses().size());
-      assertEquals("You climb the tree.", scenery.responses().get(InteractionType.CLIMB));
-      assertEquals("You punch the tree. Ouch!", scenery.responses().get(InteractionType.PUNCH));
+      assertEquals(2, scenery.getResponses().size());
+      assertEquals("You climb the tree.", scenery.getResponses().get(InteractionType.CLIMB));
+      assertEquals("You punch the tree. Ouch!", scenery.getResponses().get(InteractionType.PUNCH));
     }
   }
 
@@ -185,8 +185,8 @@ class SceneryObjectTest {
           .withCustomInteraction("taste", "It tastes bitter.")
           .build();
 
-      assertEquals(2, scenery.customResponses().size());
-      assertTrue(scenery.responses().isEmpty());
+      assertEquals(2, scenery.getCustomResponses().size());
+      assertTrue(scenery.getResponses().isEmpty());
     }
   }
 

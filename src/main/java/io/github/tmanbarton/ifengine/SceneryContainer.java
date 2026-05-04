@@ -140,11 +140,11 @@ public class SceneryContainer implements Container {
     final int cap = getCapacity();
 
     if (count == 0) {
-      return String.format("The %s is empty.", sceneryObject.name());
+      return String.format("The %s is empty.", sceneryObject.getName());
     } else if (count == cap) {
-      return String.format("The %s is full with %d items.", sceneryObject.name(), cap);
+      return String.format("The %s is full with %d items.", sceneryObject.getName(), cap);
     } else {
-      return String.format("The %s has %d of %d items on it.", sceneryObject.name(), count, cap);
+      return String.format("The %s has %d of %d items on it.", sceneryObject.getName(), count, cap);
     }
   }
 
