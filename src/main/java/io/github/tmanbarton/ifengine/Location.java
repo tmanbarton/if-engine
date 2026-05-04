@@ -15,8 +15,8 @@ import java.util.Optional;
  */
 public class Location {
   private final String name;
-  private final String longDescription;
-  private final String shortDescription;
+  private String longDescription;
+  private String shortDescription;
   private final Map<Direction, Location> connections;
   private final List<Item> items;
   private final List<SceneryObject> sceneryObjects;
@@ -202,6 +202,14 @@ public class Location {
    */
   public void setItemContainer(@Nonnull final Item item, @Nonnull final SceneryContainer container) {
     itemContainment.put(item, container);
+  }
+
+  public void setLongDescription(@Nonnull final String longDescription) {
+    this.longDescription = longDescription;
+  }
+
+  public void setShortDescription(@Nonnull final String shortDescription) {
+    this.shortDescription = shortDescription;
   }
 
   /**

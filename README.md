@@ -901,6 +901,8 @@ Represents a location in the game world.
 - `boolean isVisited()`: Returns whether this location has been visited or not
 - `void setVisited(boolean visited)`: sets the `visited` field to track if the player has visited this location or not.
 - `void setItemContainer(Item item, SceneryContainer container)`: Records that an item is contained in a scenery container.
+- `setLongDescription(String longDescription)`: Sets the long description of the location
+- `setShortDescription(String shortDescription)`: Sets the short description of the location
 - `boolean isItemInContainer(Item item)`: Checks if an item is in a scenery container.
 - `SceneryContainer getContainerForItem(Item item)`: Gets the scenery container that contains an item, or null if not contained.
 - `void removeItemFromContainer(Item item)`: Removes item from container tracking (when item is taken).
