@@ -1142,7 +1142,14 @@ Builder for creating hint configurations. Used via `GameMap.Builder.withHints()`
 - `HintConfiguration build()`: Builds the hint configuration. Throws `IllegalStateException` if no determiner was set.
 
 ### GameMapInterface
+Interface for game maps that provide locations and items for the game world. Passed to `tryUnlock` and `tryOpen` methods so openable objects can access game state during unlock/open logic.
 
+- `Location getLocation(String locationKey)`: Gets a location by its unique key/name. Returns the location or null if not found.
+- `Item getItem(String itemKey)`: Gets an item by its unique key/name. Returns the item or null if not found.
+- `Collection<Location> getAllLocations()`: Gets all locations in this game map.
+- `Collection<Item> getAllItems()`: Gets all items in this game map.
+- `Location getStartingLocation()`: Gets the starting location for new players.
+- `void resetMap()`: Resets the game map to its initial state. Restores item locations, clears visited flags, and restores any other initial state.
 
 ### ContainerType
 
