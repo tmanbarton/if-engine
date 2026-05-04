@@ -1055,7 +1055,24 @@ Abstract Methods for Subclass Implementation
 - `abstract OpenResult tryOpen(Player player, String providedAnswer, GameMapInterface gameMap)`: Implementation for the action that happens when the user says to open the object.
 
 ### OpenableItemContainer
+Abstract base class for openable items that can also contain other items. Combines `OpenableItem` (unlock/open state) with `Container` (hold items). Items can only be inserted when the container is open. Subclasses must implement the five abstract `Openable` methods (`getTargetNames`, `matchesUnlockTarget`, `matchesOpenTarget`, `tryUnlock`, `tryOpen`).
 
+Inherited from OpenableItem (see `OpenableItem` API docs for details):
+- State management: `isUnlocked()`, `setUnlocked(boolean)`, `isOpen()`, `setOpen(boolean)`
+- Configuration: `requiresUnlocking()`
+
+Container Methods:
+- `boolean canAccept(Item item)`: Checks whether the given item can be inserted. Returns false if the container is not open, is full, or the item is not in the allowed items list (when restrictions are set). Returns true if the container is open, not full, and the item is allowed (or no restrictions are set).
+- `boolean insertItem(Item item)`: Inserts the given item into this container. Returns true if inserted, false if `canAccept` fails.
+- `boolean removeItem(Item item)`: Removes the given item from this container. Returns true if successfully removed, false otherwise.
+- `boolean containsItem(String itemName)`: Checks if this container contains an item with the given name (case-insensitive).
+- `Set<String> getInsertedItemNames()`: Returns all item names currently in this container.
+- `int getCapacity()`: Returns the maximum capacity of this container. 0 means unlimited.
+- `int getCurrentCount()`: Returns the number of items currently in this container.
+- `boolean isFull()`: Checks if this container is full.
+- `String getContainerStateDescription()`: Returns a formatted string describing the container's contents — "The [name] is empty." or "The [name] contains: item1, item2".
+- `List<String> getPreferredPrepositions()`: Returns the list of preferred prepositions for put commands.
+- `ContainerType getContainerType()`: Returns `ContainerType.INVENTORY`.
 
 ### OpenableLocation
 
