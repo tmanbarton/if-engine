@@ -858,24 +858,24 @@ public static void main(String[] args) {
 ### Player
 Represents the player
 
-- `getCurrentLocation()`: Returns the `Location` object that the player is currently at.
-- `setCurrentLocation(Location)`: Sets the players current location to the provided `Location`.
-- `getInventory()`: Returns the player's inventory as a List<Item>.
-- `addItem(Item)`: Adds the provided `Item` to the player's inventory.
-- `removeItem(Item)`: Attempts to remove the provided `Item` from the player's inventory. Return true if it was removed, false otherwise.
-- `getInventoryItemByName(String)`: Finds an item in inventory by name or alias (case-insensitive). Returns the first matching `Item` or null if not found.
-- `hasItem(String)`: Checks if the player has an item with the given name or alias. Case-insensitive search through inventory. Returns true if an item with a matching name or alias is in the inventory.
-- `getGameState()`: Returns the GameState object.
-- `setGameState(GameState)`: Sets the player's game state.
-- `reset(Location)`: Resets player to initial state. Clears the inventory, sets the current location to the provided Location (assumed to be the starting location), and sets the state to PLAYING.
-- `markItemAsContained(Item, Container)`: Marks the provided `Item` as being contained within the provided `Container`.
-- `isItemContained(Item)`: Checks if the provided `Item` is currently contained within a container. Returns true if so, false if not.
-- `getContainerForItem(Item)`: Gets the container that holds the provided `Item`. 
-- `removeContainment(Item)`: Removes containment tracking for the given `Item`.
-- `getContainedItems(Container)`: Gets all items that are contained within the given `Container`.
-- `getFormattedInventoryItems()`: Generates a formatted list of inventory items with the items' inventory descriptions. Shows contained items with " - in [container]" suffix.
-- `getSessionId()`: Gets the session ID for this player. Returns the session ID or null if it hasn't been set.
-- `setSessionId(String)`: Sets the session ID for this player. (Called at the start of command processing to track which session is active.)
+- `Location getCurrentLocation()`: Returns the location object that the player is currently at.
+- `void setCurrentLocation(Location location)`: Sets the players current location to the provided location.
+- `List<Item> getInventory()`: Returns the player's inventory.
+- `void addItem(Item item)`: Adds the provided item to the player's inventory.
+- `boolean removeItem(Item item)`: Attempts to remove the provided item from the player's inventory. Return true if it was removed, false otherwise.
+- `Item getInventoryItemByName(String itemName)`: Finds an item in inventory by name or alias (case-insensitive). Returns the first matching item or null if not found.
+- `boolean hasItem(String itemName)`: Checks if the player has an item with the given name or alias. Case-insensitive search through inventory. Returns true if an item with a matching name or alias is in the inventory.
+- `GameState getGameState()`: Returns the GameState object.
+- `void setGameState(GameState gameState)`: Sets the player's game state.
+- `void reset(Location startingLocation)`: Resets player to initial state. Clears the inventory, sets the current location to the provided Location (assumed to be the starting location), and sets the state to PLAYING.
+- `void markItemAsContained(Item item, Container container)`: Marks the provided item as being contained within the provided container.
+- `boolean isItemContained(Item item)`: Checks if the provided item is currently contained within a container. Returns true if so, false if not.
+- `Container getContainerForItem(Item item)`: Gets the container that holds the provided item. 
+- `void removeContainment(Item item)`: Removes containment tracking for the given item.
+- `List<Item> getContainedItems(Container container)`: Gets all items that are contained within the given container.
+- `String getFormattedInventoryItems()`: Generates a formatted list of inventory items with the items' inventory descriptions. Shows contained items with " - in [container]" suffix.
+- `String getSessionId()`: Gets the session ID for this player. Returns the session ID or null if it hasn't been set.
+- `void setSessionId(String sessionId)`: Sets the session ID for this player. (Called at the start of command processing to track which session is active.)
 
 ### Location
 Represents a location in the game.
@@ -913,7 +913,6 @@ Represents a location in the game.
 - `Set<Item> getHiddenItems()`: Gets all hidden items at this location.
 - `void cliearHiddenItems()`: Removes all hidden items and their revealed descriptions. Used during game reset to restore initial state.
 - `String getRevealedLocationDescription(Item item)`: Gets the revealed location description for an item, if one exists. This description is used instead of the item's default location description when the item was revealed from a hidden state and has not yet been taken.
-
 
 ### SceneryObject
 
