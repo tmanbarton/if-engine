@@ -1075,7 +1075,43 @@ Container Methods:
 - `ContainerType getContainerType()`: Returns `ContainerType.INVENTORY`.
 
 ### OpenableLocation
+Abstract base class for locations that can be unlocked and opened. Implements the `Openable` interface for unified unlock/open handling. Extends `Location` to inherit all location properties. Provides key-based unlocking by default with auto-unlock behavior (if a player has the key and tries to `open`, it unlocks and opens in one action).
 
+Descriptions change based on state — the `getLongDescription()` and `getShortDescription()` methods return different text depending on whether the location is locked, unlocked, or open.
+
+Openable Interface - State Management
+- `boolean isUnlocked()`: Checks whether the location is unlocked.
+- `void setUnlocked(boolean unlocked)`: Sets the unlocked state.
+- `boolean isOpen()`: Checks whether the location is open.
+- `void setOpen(boolean open)`: Sets the open state.
+
+Openable Interface - Configuration
+- `boolean requiresUnlocking()`: Returns true by default. Subclasses can override if needed.
+
+Openable Interface - Default Implementations
+- `UnlockResult tryUnlock(Player player, String providedAnswer, GameMapInterface gameMap)`: Logic for when the user tries to unlock the object. Defaults to simple key-based unlocking. (Checks if the player has the required key (from `getRequiredKeyName()`). If `providedAnswer` is provided, validates it refers to the required key. On success, sets unlocked to true and calls `onUnlock(gameMap)`).
+- `OpenResult tryOpen(Player player, String providedAnswer, GameMapInterface gameMap)`: Logic for when the user tries to open the object. Handles opening with auto-unlock. Defaults to simple key-based opening. (If locked and player has the key, automatically unlocks and opens (calls `onUnlockAndOpen(gameMap)`). If already unlocked, just opens (calls `onOpen(gameMap)`). If locked without key, returns failure.)
+
+Template Methods (override `Location` behavior)
+- `String getLongDescription()`: Returns `getOpenLongDescription()` if open, `getUnlockedLongDescription()` if unlocked, or the base long description if locked.
+- `String getShortDescription()`: Returns `getOpenShortDescription()` if open, `getUnlockedShortDescription()` if unlocked, or the base short description if locked.
+
+Abstract Methods for Subclass Implementation
+- `abstract Set<String> getTargetNames()`: Get all target names for command inference (name and aliases).
+- `abstract boolean matchesUnlockTarget(String name)`: Check if the given string matches the object to unlock.
+- `abstract boolean matchesOpenTarget(String name)`: Check if the given string matches the object to open.
+- `abstract String getRequiredKeyName()`: Returns the name of the key item required to unlock this location if using key-based locking.
+- `abstract String onUnlock(GameMapInterface gameMap)`: Called on successful unlock. Returns the message to display.
+- `abstract String onOpen(GameMapInterface gameMap)`: Called on successful open (when already unlocked). Returns the message to display.
+- `abstract String onUnlockAndOpen(GameMapInterface gameMap)`: Called when unlocked and opened in one action (player has key and tries to open). Returns the message to display.
+- `abstract String getUnlockedLongDescription()`: Long description when unlocked but not open.
+- `abstract String getUnlockedShortDescription()`: Short description when unlocked but not open.
+- `abstract String getOpenLongDescription()`: Long description when open.
+- `abstract String getOpenShortDescription()`: Short description when open.
+- `abstract String getAlreadyUnlockedMessage()`: Message when player tries to unlock but it's already unlocked.
+- `abstract String getUnlockNoKeyMessage()`: Message when player tries to unlock without the key.
+- `abstract String getAlreadyOpenMessage()`: Message when player tries to open but it's already open.
+- `abstract String getOpenLockedNoKeyMessage()`: Message when player tries to open but it's locked and they don't have the key.
 
 ### OpenableSceneryObject
 
