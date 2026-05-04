@@ -1158,7 +1158,11 @@ Enum representing the type of container and its behavior.
 - `SCENERY`: Items inserted into this container are placed at the current location (not kept in inventory).
 
 ### Direction
+Enum defining all valid movement directions. Used with `GameMap.Builder.connect()` and `GameMap.Builder.connectBidirectional()` to wire up location connections.
 
+Values: `NORTH`, `SOUTH`, `EAST`, `WEST`, `NORTHEAST`, `NORTHWEST`, `SOUTHEAST`, `SOUTHWEST`, `UP`, `DOWN`, `IN`, `OUT`
+
+Players can use abbreviations: `n`, `s`, `e`, `w`, `ne`, `nw`, `se`, `sw`, `u`, `d`.
 
 ### InteractionType
 
