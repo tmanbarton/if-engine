@@ -161,8 +161,8 @@ class ContainerIntegrationTest {
     }
 
     @Test
-    @DisplayName("item on location container, put in inventory container - container in inventory")
-    void testPut_itemOnLocationContainer_toInventoryContainer_containerInInventory() {
+    @DisplayName("item on scenery container, put in inventory container - container in inventory")
+    void testPut_itemOnSceneryContainer_toInventoryContainer_containerInInventory() {
       // Given
       final TestGameMap map = TestGameMapBuilder.singleLocation().build();
       final Location location = map.getStartingLocation();
@@ -205,8 +205,8 @@ class ContainerIntegrationTest {
     }
 
     @Test
-    @DisplayName("item on location container, put in inventory container - container at location")
-    void testPut_itemOnLocationContainer_toInventoryContainer_containerAtLocation() {
+    @DisplayName("item on scenery container, put in inventory container - container at location")
+    void testPut_itemOnSceneryContainer_toInventoryContainer_containerAtLocation() {
       // Given
       final TestGameMap map = TestGameMapBuilder.singleLocation().build();
       final Location location = map.getStartingLocation();
@@ -247,11 +247,11 @@ class ContainerIntegrationTest {
   }
 
   @Nested
-  class PutOnLocationContainer {
+  class PutOnSceneryContainer {
 
     @Test
     @DisplayName("item at location")
-    void testPut_itemAtLocation_onLocationContainer() {
+    void testPut_itemAtLocation_onSceneryContainer() {
       // Given
       final TestGameMap map = TestGameMapBuilder.singleLocation().build();
       final Location location = map.getStartingLocation();
@@ -283,7 +283,7 @@ class ContainerIntegrationTest {
 
     @Test
     @DisplayName("item in inventory")
-    void testPut_itemInInventory_onLocationContainer() {
+    void testPut_itemInInventory_onSceneryContainer() {
       // Given
       final TestGameMap map = TestGameMapBuilder.singleLocation().build();
       final Location location = map.getStartingLocation();
@@ -319,7 +319,7 @@ class ContainerIntegrationTest {
 
     @Test
     @DisplayName("item in inventory container - container in inventory")
-    void testPut_itemInInventoryContainer_onLocationContainer_containerInInventory() {
+    void testPut_itemInInventoryContainer_onSceneryContainer_containerInInventory() {
       // Given
       final TestGameMap map = TestGameMapBuilder.singleLocation().build();
       final Location location = map.getStartingLocation();
@@ -360,7 +360,7 @@ class ContainerIntegrationTest {
 
     @Test
     @DisplayName("item in inventory container - container at location")
-    void testPut_itemInInventoryContainer_onLocationContainer_containerAtLocation() {
+    void testPut_itemInInventoryContainer_onSceneryContainer_containerAtLocation() {
       // Given
       final TestGameMap map = TestGameMapBuilder.singleLocation().build();
       final Location location = map.getStartingLocation();
@@ -454,8 +454,8 @@ class ContainerIntegrationTest {
     }
 
     @Test
-    @DisplayName("put inventory container with no items on location container")
-    void testPut_inventoryContainerNoItems_onLocationContainer() {
+    @DisplayName("put inventory container with no items on scenery container")
+    void testPut_inventoryContainerNoItems_onSceneryContainer() {
       // Given
       final TestGameMap map = TestGameMapBuilder.singleLocation().build();
       final Location location = map.getStartingLocation();
@@ -588,8 +588,8 @@ class ContainerIntegrationTest {
     }
 
     @Test
-    @DisplayName("put inventory container with items on location container")
-    void testPut_inventoryContainerWithItems_onLocationContainer() {
+    @DisplayName("put inventory container with items on scenery container")
+    void testPut_inventoryContainerWithItems_onSceneryContainer() {
       // Given
       final TestGameMap map = TestGameMapBuilder.singleLocation().build();
       final Location location = map.getStartingLocation();

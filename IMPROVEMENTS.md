@@ -1,6 +1,6 @@
 # IFEngine API - Complexity Assessment
 
-This document tracks what the IFEngine API supports for complex interactive fiction games and identifies improvements that can be made to this API.
+This document tracks what the IFEngine library supports for complex interactive fiction games and identifies improvements that can be made to this library.
 
 ---
 
@@ -9,13 +9,13 @@ This document tracks what the IFEngine API supports for complex interactive fict
 - **Multiple locations with complex connections** - GameContent.setupConnections() handles any topology
 - **Items with aliases** - Item constructor accepts alias sets
 - **SceneryObjects with interaction responses** - Builder pattern with InteractionType responses
-- **LocationContainers** - Scenery that can contain items (barrels, shelves, etc.)
+- **SceneryContainers** - Scenery that can contain items (barrels, shelves, etc.)
 - **OpenableLocation** - Abstract base class for locked doors, sheds, etc. (games subclass with key-based unlocking)
 - **OpenableItem** - Abstract base class for lockable items (chests, lockboxes, cryptexes) with flexible unlock logic
 - **Code/word-based unlocking** - Items can require codes ("1, 2, 3, 4") or words ("plugh") via `tryUnlock()`/`tryOpen()`
 - **Prompt flow for codes** - `WAITING_FOR_UNLOCK_CODE`/`WAITING_FOR_OPEN_CODE` states handle interactive code entry
 - **Custom unlock logic** - `Openable` interface allows full control; games override `tryUnlock()`/`tryOpen()` with any logic
-- **Custom response text** - ResponseProvider interface for full narrator customization
+- **Custom response text** - ResponseProvider interface for full game response customization
 - **Session management** - Multi-player support with ConcurrentHashMap
 - **Restart/quit flow** - Confirmation dialogs, state reset
 - **Readable/Edible items** - Constants in ReadHandler/EatHandler; games can extend handlers to customize

@@ -10,7 +10,7 @@ public enum ContainerType {
   INVENTORY,
 
   /**
-   * Location containers place items at the current location.
+   * Scenery containers place items at the current location.
    */
   LOCATION
 }

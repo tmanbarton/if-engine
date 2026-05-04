@@ -12,10 +12,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Unit tests for LocationContainer class.
+ * Unit tests for SceneryContainer class.
  */
-@DisplayName("LocationContainer Tests")
-class LocationContainerTest {
+@DisplayName("SceneryContainer Tests")
+class SceneryContainerTest {
 
   @Nested
   class SceneryObjectConstructor {
@@ -28,7 +28,7 @@ class LocationContainerTest {
           .asContainer()
           .build();
 
-      final LocationContainer container = new LocationContainer(table);
+      final SceneryContainer container = new SceneryContainer(table);
 
       assertEquals(table, container.getSceneryObject());
     }
@@ -42,7 +42,7 @@ class LocationContainerTest {
           .withPrepositions("in", "into")
           .build();
 
-      final LocationContainer container = new LocationContainer(drawer);
+      final SceneryContainer container = new SceneryContainer(drawer);
 
       final List<String> prepositions = container.getPreferredPrepositions();
       assertEquals(2, prepositions.size());
@@ -58,7 +58,7 @@ class LocationContainerTest {
           .asContainer()
           .build();
 
-      final LocationContainer container = new LocationContainer(table);
+      final SceneryContainer container = new SceneryContainer(table);
 
       final List<String> prepositions = container.getPreferredPrepositions();
       assertEquals(2, prepositions.size());
@@ -75,7 +75,7 @@ class LocationContainerTest {
           .withAllowedItems("book", "key")
           .build();
 
-      final LocationContainer container = new LocationContainer(table);
+      final SceneryContainer container = new SceneryContainer(table);
 
       final Item book = new Item("book", "a book", "A book.", "A dusty book.");
       final Item coin = new Item("coin", "a coin", "A coin.", "A gold coin.");
@@ -92,7 +92,7 @@ class LocationContainerTest {
           .asContainer()
           .build();
 
-      final LocationContainer container = new LocationContainer(table);
+      final SceneryContainer container = new SceneryContainer(table);
 
       final Item book = new Item("book", "a book", "A book.", "A dusty book.");
       final Item coin = new Item("coin", "a coin", "A coin.", "A gold coin.");
@@ -112,7 +112,7 @@ class LocationContainerTest {
           .withInteraction(InteractionType.LOOK, "A wooden table.")
           .build();
 
-      final LocationContainer container = new LocationContainer(table, Set.of("book"));
+      final SceneryContainer container = new SceneryContainer(table, Set.of("book"));
 
       final Item book = new Item("book", "a book", "A book.", "A dusty book.");
       final Item coin = new Item("coin", "a coin", "A coin.", "A gold coin.");

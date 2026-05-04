@@ -4,7 +4,7 @@ import io.github.tmanbarton.ifengine.Container;
 import io.github.tmanbarton.ifengine.ContainerType;
 import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.Location;
-import io.github.tmanbarton.ifengine.LocationContainer;
+import io.github.tmanbarton.ifengine.SceneryContainer;
 import io.github.tmanbarton.ifengine.Openable;
 import io.github.tmanbarton.ifengine.game.Player;
 import io.github.tmanbarton.ifengine.response.ResponseProvider;
@@ -119,7 +119,7 @@ public final class ContainerOperations {
     if (containerType == ContainerType.INVENTORY) {
       handleInventoryContainerInsertion(item, container, player);
     } else {
-      handleLocationContainerInsertion(item, (LocationContainer) container, player);
+      handleSceneryContainerInsertion(item, (SceneryContainer) container, player);
     }
 
     return responses.getPutSuccess(itemName, preposition, containerName);
@@ -164,9 +164,9 @@ public final class ContainerOperations {
 
     // Check scenery containers at location
     final Location location = player.getCurrentLocation();
-    for (final LocationContainer locationContainer : location.getLocationContainers()) {
-      if (locationContainer.getSceneryObject().matches(containerName)) {
-        return locationContainer;
+    for (final SceneryContainer sceneryContainer : location.getSceneryContainers()) {
+      if (sceneryContainer.getSceneryObject().matches(containerName)) {
+        return sceneryContainer;
       }
     }
 
@@ -243,9 +243,9 @@ public final class ContainerOperations {
     }
 
     if (player.getCurrentLocation().isItemInContainer(item)) {
-      final LocationContainer oldLocationContainer = player.getCurrentLocation().getContainerForItem(item);
-      if (oldLocationContainer != null) {
-        oldLocationContainer.removeItem(item);
+      final SceneryContainer oldSceneryContainer = player.getCurrentLocation().getContainerForItem(item);
+      if (oldSceneryContainer != null) {
+        oldSceneryContainer.removeItem(item);
       }
       player.getCurrentLocation().removeItemFromContainer(item);
     }
@@ -276,11 +276,11 @@ public final class ContainerOperations {
   }
 
   /**
-   * Handles insertion into a location container (table, shelf, etc.).
+   * Handles insertion into a scenery container (table, shelf, etc.).
    */
-  public static void handleLocationContainerInsertion(
+  public static void handleSceneryContainerInsertion(
       @Nonnull final Item item,
-      @Nonnull final LocationContainer locationContainer,
+      @Nonnull final SceneryContainer sceneryContainer,
       @Nonnull final Player player
   ) {
     final boolean itemInInventory = player.getInventory().contains(item);
@@ -290,7 +290,7 @@ public final class ContainerOperations {
       player.getCurrentLocation().addItem(item);
     }
 
-    player.getCurrentLocation().setItemContainer(item, locationContainer);
+    player.getCurrentLocation().setItemContainer(item, sceneryContainer);
 
     // If item is a container with items, move contained items too
     if (item instanceof Container itemContainer) {

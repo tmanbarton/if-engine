@@ -39,13 +39,13 @@ public final class ContainerHelper {
   }
 
   /**
-   * Checks if a container is a location container.
-   * Location containers place items at the location when items are inserted.
+   * Checks if a container is a scenery container.
+   * Scenery containers place items at the location when items are inserted.
    *
    * @param container the container to check
-   * @return true if container is a location container
+   * @return true if container is a scenery container
    */
-  public static boolean isLocationContainer(@Nonnull final Container container) {
+  public static boolean isSceneryContainer(@Nonnull final Container container) {
     return getContainerType(container) == ContainerType.LOCATION;
   }
 }

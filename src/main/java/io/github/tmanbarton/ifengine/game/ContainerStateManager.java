@@ -2,7 +2,7 @@ package io.github.tmanbarton.ifengine.game;
 
 import io.github.tmanbarton.ifengine.Container;
 import io.github.tmanbarton.ifengine.Item;
-import io.github.tmanbarton.ifengine.LocationContainer;
+import io.github.tmanbarton.ifengine.SceneryContainer;
 import io.github.tmanbarton.ifengine.util.ContainerHelper;
 
 import javax.annotation.Nonnull;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 /**
  * Centralized manager for container state tracking.
- * Manages both inventory container containment (bags, jars) and location container
+ * Manages both inventory container containment (bags, jars) and scenery container
  * containment (tables, desks, shelves).
  *
  * <p>This manager provides a unified API for container operations while maintaining
@@ -34,27 +34,27 @@ public class ContainerStateManager {
 
   /**
    * Marks an item as contained within a container.
-   * Handles both inventory containers and location containers based on container type.
+   * Handles both inventory containers and scenery containers based on container type.
    *
    * @param item the item being placed in the container
    * @param container the container holding the item
-   * @param player the player context (needed for location container access)
+   * @param player the player context (needed for scenery container access)
    */
   public void markItemAsContained(@Nonnull final Item item, @Nonnull final Container container,
                                   @Nonnull final Player player) {
     if (ContainerHelper.isInventoryContainer(container)) {
       inventoryContainment.put(item, container);
-    } else if (ContainerHelper.isLocationContainer(container)) {
-      player.getCurrentLocation().setItemContainer(item, (LocationContainer) container);
+    } else if (ContainerHelper.isSceneryContainer(container)) {
+      player.getCurrentLocation().setItemContainer(item, (SceneryContainer) container);
     }
   }
 
   /**
-   * Removes containment tracking for an item from both inventory and location containers.
+   * Removes containment tracking for an item from both inventory and scenery containers.
    * Checks both types of containment and removes from whichever applies.
    *
    * @param item the item to remove from containment tracking
-   * @param player the player context (needed for location container access)
+   * @param player the player context (needed for scenery container access)
    */
   public void removeContainment(@Nonnull final Item item, @Nonnull final Player player) {
     // Remove from inventory containment
@@ -65,10 +65,10 @@ public class ContainerStateManager {
   }
 
   /**
-   * Gets the container holding the specified item, searching both inventory and location containers.
+   * Gets the container holding the specified item, searching both inventory and scenery containers.
    *
    * @param item the item to look up
-   * @param player the player context (needed for location container access)
+   * @param player the player context (needed for scenery container access)
    * @return the container holding the item, or null if not contained
    */
   @Nullable
@@ -87,7 +87,7 @@ public class ContainerStateManager {
    * Checks if an item is contained in any container (inventory or location).
    *
    * @param item the item to check
-   * @param player the player context (needed for location container access)
+   * @param player the player context (needed for scenery container access)
    * @return true if the item is in any container, false otherwise
    */
   public boolean isItemContained(@Nonnull final Item item, @Nonnull final Player player) {
@@ -99,7 +99,7 @@ public class ContainerStateManager {
    * Works for both inventory containers and scenery containers.
    *
    * @param container the container to query
-   * @param player the player context (needed for location container access)
+   * @param player the player context (needed for scenery container access)
    * @return list of items in the container
    */
   @Nonnull
@@ -114,7 +114,7 @@ public class ContainerStateManager {
       // Search location items for those in this scenery container
       return player.getCurrentLocation().getItems().stream()
           .filter(item -> {
-            final LocationContainer itemContainer = player.getCurrentLocation().getContainerForItem(item);
+            final SceneryContainer itemContainer = player.getCurrentLocation().getContainerForItem(item);
             return container.equals(itemContainer);
           })
           .collect(Collectors.toList());

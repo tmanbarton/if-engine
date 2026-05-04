@@ -95,11 +95,11 @@ public class TakeHandler implements BaseCommandHandler {
         return responseProvider.getTakeAlreadyHave();
       }
 
-      // If item was in a location container, remove it from that container
+      // If item was in a scenery container, remove it from that container
       if (player.getCurrentLocation().isItemInContainer(item)) {
-        final Container locationContainer = player.getCurrentLocation().getContainerForItem(item);
-        if (locationContainer != null) {
-          locationContainer.removeItem(item);
+        final Container sceneryContainer = player.getCurrentLocation().getContainerForItem(item);
+        if (sceneryContainer != null) {
+          sceneryContainer.removeItem(item);
         }
         player.getCurrentLocation().removeItemFromContainer(item);
       }

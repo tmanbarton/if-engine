@@ -67,7 +67,7 @@ class PutHandlerTest {
 
     @Test
     @DisplayName("Test handle - put item on location scenery container")
-    void testHandle_putItemOnLocationLocationContainer() {
+    void testHandle_putItemOnLocationSceneryContainer() {
       final Item coin = TestItemFactory.createSimpleItem("coin");
       player.addItem(coin);
 
@@ -144,7 +144,7 @@ class PutHandlerTest {
       final Item coin = TestItemFactory.createSimpleItem("coin");
       player.addItem(coin);
 
-      // LocationContainer accepts "on/onto" by default
+      // SceneryContainer accepts "on/onto" by default
       location.addSceneryObject(createSceneryContainer("table", "coin"));
 
       final ParsedCommand command = createPutCommand("coin", "on", "table");
@@ -184,11 +184,11 @@ class PutHandlerTest {
 
     @Test
     @DisplayName("Test handle - wrong preposition for scenery container")
-    void testHandle_wrongPrepositionForLocationContainer() {
+    void testHandle_wrongPrepositionForSceneryContainer() {
       final Item coin = TestItemFactory.createSimpleItem("coin");
       player.addItem(coin);
 
-      // LocationContainer accepts "on/onto", not "in"
+      // SceneryContainer accepts "on/onto", not "in"
       location.addSceneryObject(createSceneryContainer("table", "coin"));
 
       final ParsedCommand command = createPutCommand("coin", "in", "table");
@@ -477,7 +477,7 @@ class PutHandlerTest {
 
     @Test
     @DisplayName("Test handle - item from inventory to scenery container stays at location")
-    void testHandle_itemFromInventoryToLocationContainer() {
+    void testHandle_itemFromInventoryToSceneryContainer() {
       final Item coin = TestItemFactory.createSimpleItem("coin");
       player.addItem(coin);
 
@@ -495,7 +495,7 @@ class PutHandlerTest {
 
     @Test
     @DisplayName("Test handle - item from location to scenery container stays at location")
-    void testHandle_itemFromLocationToLocationContainer() {
+    void testHandle_itemFromLocationToSceneryContainer() {
       final Item coin = TestItemFactory.createSimpleItem("coin");
       location.addItem(coin);
 

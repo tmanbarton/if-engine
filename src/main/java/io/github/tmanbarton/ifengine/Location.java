@@ -20,8 +20,8 @@ public class Location {
   private final Map<Direction, Location> connections;
   private final List<Item> items;
   private final List<SceneryObject> sceneryObjects;
-  private final List<LocationContainer> locationContainers;
-  private final Map<Item, LocationContainer> itemContainment;
+  private final List<SceneryContainer> sceneryContainers;
+  private final Map<Item, SceneryContainer> itemContainment;
   private final Set<Item> hiddenItems;
   private final Map<Item, String> revealedLocationDescriptions;
   private boolean visited;
@@ -33,7 +33,7 @@ public class Location {
     this.connections = new HashMap<>();
     this.items = new ArrayList<>();
     this.sceneryObjects = new ArrayList<>();
-    this.locationContainers = new ArrayList<>();
+    this.sceneryContainers = new ArrayList<>();
     this.itemContainment = new HashMap<>();
     this.hiddenItems = new LinkedHashSet<>();
     this.revealedLocationDescriptions = new HashMap<>();
@@ -47,7 +47,7 @@ public class Location {
     this.connections = new HashMap<>();
     this.items = new ArrayList<>();
     this.sceneryObjects = new ArrayList<>(sceneryObjects);
-    this.locationContainers = new ArrayList<>();
+    this.sceneryContainers = new ArrayList<>();
     this.itemContainment = new HashMap<>();
     this.hiddenItems = new LinkedHashSet<>();
     this.revealedLocationDescriptions = new HashMap<>();
@@ -114,17 +114,17 @@ public class Location {
    * Adds a scenery object to this location.
    * <p>
    * If the scenery object is configured as a container (via {@code asContainer()} on its builder),
-   * a {@link LocationContainer} is automatically created and registered.
+   * a {@link SceneryContainer} is automatically created and registered.
    *
    * @param sceneryObject the scenery object to add
    */
   public void addSceneryObject(@Nonnull final SceneryObject sceneryObject) {
     sceneryObjects.add(sceneryObject);
 
-    // Auto-create LocationContainer if scenery is configured as a container
+    // Auto-create SceneryContainer if scenery is configured as a container
     if (sceneryObject.isContainer()) {
-      final LocationContainer container = new LocationContainer(sceneryObject);
-      locationContainers.add(container);
+      final SceneryContainer container = new SceneryContainer(sceneryObject);
+      sceneryContainers.add(container);
     }
   }
 
@@ -143,8 +143,8 @@ public class Location {
    * @return defensive copy of scenery containers list
    */
   @Nonnull
-  public List<LocationContainer> getLocationContainers() {
-    return new ArrayList<>(locationContainers);
+  public List<SceneryContainer> getSceneryContainers() {
+    return new ArrayList<>(sceneryContainers);
   }
 
   @Nonnull
@@ -200,7 +200,7 @@ public class Location {
    * @param item the item to track
    * @param container the scenery container holding the item
    */
-  public void setItemContainer(@Nonnull final Item item, @Nonnull final LocationContainer container) {
+  public void setItemContainer(@Nonnull final Item item, @Nonnull final SceneryContainer container) {
     itemContainment.put(item, container);
   }
 
@@ -221,7 +221,7 @@ public class Location {
    * @return the scenery container holding the item, or null if not in a container
    */
   @Nullable
-  public LocationContainer getContainerForItem(@Nonnull final Item item) {
+  public SceneryContainer getContainerForItem(@Nonnull final Item item) {
     return itemContainment.get(item);
   }
 

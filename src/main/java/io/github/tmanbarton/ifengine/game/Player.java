@@ -22,7 +22,6 @@ public class Player {
   private final List<Item> inventory;
   private GameState gameState;
   private final ContainerStateManager containerStateManager;
-  private boolean isExperiencedPlayer;
   private String sessionId;
   private final Map<String, Integer> hintCounts;
   private String lastHintPhase;
@@ -33,7 +32,6 @@ public class Player {
     this.inventory = new ArrayList<>();
     this.gameState = GameState.WAITING_FOR_START_ANSWER;
     this.containerStateManager = new ContainerStateManager();
-    this.isExperiencedPlayer = false;
     this.hintCounts = new HashMap<>();
   }
 
@@ -80,7 +78,7 @@ public class Player {
    * Finds an item in inventory by name or alias (case-insensitive).
    * @param itemName the name or alias of the item to find
    * @return the first matching item, or null if not found
-   */
+   *///todo return all matches and, if multiple, do something to indicate to user that they need to specify/add disambiguation.
   @Nullable
   public Item getInventoryItemByName(@Nonnull final String itemName) {
     return inventory.stream()
@@ -123,7 +121,6 @@ public class Player {
     this.inventory.clear();
     this.containerStateManager.clearAllInventoryContainment();
     this.gameState = GameState.PLAYING;
-    this.isExperiencedPlayer = false;
     this.pendingOpenable = null;
     this.lastHintPhase = null;
     resetHintCounts();
@@ -181,7 +178,7 @@ public class Player {
   }
 
   /**
-   * Generates a formatted list of inventory items.
+   * Generates a formatted list of inventory items with the items' inventory descriptions.
    * Shows contained items with " - in [container]" suffix.
    * Does not include header text - use ResponseProvider for that.
    * @return formatted string of inventory items, or empty string if no items
@@ -204,22 +201,6 @@ public class Player {
           return description;
         })
         .collect(Collectors.joining("\n"));
-  }
-
-  /**
-   * Gets whether the player is experienced with text adventures.
-   * @return true if experienced, false if new player
-   */
-  public boolean isExperiencedPlayer() {
-    return isExperiencedPlayer;
-  }
-
-  /**
-   * Sets whether the player is experienced with text adventures.
-   * @param isExperiencedPlayer true if experienced, false if new
-   */
-  public void setExperiencedPlayer(final boolean isExperiencedPlayer) {
-    this.isExperiencedPlayer = isExperiencedPlayer;
   }
 
   /**

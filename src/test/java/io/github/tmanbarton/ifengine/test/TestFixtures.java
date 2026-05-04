@@ -264,12 +264,12 @@ public final class TestFixtures {
    * One location with a scenery container for put command testing.
    * Container: box (accepts test-coin, test-widget, test-token)
    * Items: test-coin, test-widget, test-token
-   * Use for: put command with location containers
+   * Use for: put command with scenery containers
    *
    * @return a configured TestGameEngine
    */
   @Nonnull
-  public static TestGameEngine locationContainerScenario() {
+  public static TestGameEngine sceneryContainerScenario() {
     final TestGameMap map = TestGameMapBuilder.singleLocation()
         .withItems("test-coin", "test-widget", "test-token")
         .build();

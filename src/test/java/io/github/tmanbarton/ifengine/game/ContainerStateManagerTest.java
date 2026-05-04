@@ -4,7 +4,7 @@ import io.github.tmanbarton.ifengine.Container;
 import io.github.tmanbarton.ifengine.InteractionType;
 import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.Location;
-import io.github.tmanbarton.ifengine.LocationContainer;
+import io.github.tmanbarton.ifengine.SceneryContainer;
 import io.github.tmanbarton.ifengine.SceneryObject;
 import io.github.tmanbarton.ifengine.test.TestItemFactory;
 import io.github.tmanbarton.ifengine.test.TestLocationFactory;
@@ -23,10 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for ContainerStateManager.
- * Tests the dual-ownership pattern for inventory vs location containers.
+ * Tests the dual-ownership pattern for inventory vs scenery containers.
  *
  * Inventory containers (bags, jars): items stay in player's possession, tracked by manager
- * Location containers (tables, shelves): items placed at location, delegated to Location
+ * Scenery containers (tables, shelves): items placed at location, delegated to Location
  */
 @DisplayName("ContainerStateManager Tests")
 class ContainerStateManagerTest {
@@ -144,18 +144,18 @@ class ContainerStateManagerTest {
   }
 
   @Nested
-  class LocationContainerOperations {
+  class SceneryContainerOperations {
 
     @Test
-    @DisplayName("Test markItemAsContained - location container delegates to Location")
-    void testMarkItemAsContained_locationContainer() {
+    @DisplayName("Test markItemAsContained - scenery container delegates to Location")
+    void testMarkItemAsContained_sceneryContainer() {
       final Item key = TestItemFactory.createTestKey();
       final SceneryObject tableScenery = SceneryObject.builder("table")
           .withInteraction(InteractionType.LOOK, "A table.")
           .asContainer()
           .build();
       location.addSceneryObject(tableScenery);
-      final LocationContainer table = location.getLocationContainers().get(0);
+      final SceneryContainer table = location.getSceneryContainers().get(0);
       location.addItem(key);
 
       manager.markItemAsContained(key, table, player);
@@ -167,15 +167,15 @@ class ContainerStateManagerTest {
     }
 
     @Test
-    @DisplayName("Test isItemContained - checks location containers")
-    void testIsItemContained_locationContainer() {
+    @DisplayName("Test isItemContained - checks scenery containers")
+    void testIsItemContained_sceneryContainer() {
       final Item key = TestItemFactory.createTestKey();
       final SceneryObject tableScenery = SceneryObject.builder("table")
           .withInteraction(InteractionType.LOOK, "A table.")
           .asContainer()
           .build();
       location.addSceneryObject(tableScenery);
-      final LocationContainer table = location.getLocationContainers().get(0);
+      final SceneryContainer table = location.getSceneryContainers().get(0);
       location.addItem(key);
       manager.markItemAsContained(key, table, player);
 
@@ -183,15 +183,15 @@ class ContainerStateManagerTest {
     }
 
     @Test
-    @DisplayName("Test getContainerForItem - finds location container")
-    void testGetContainerForItem_locationContainer() {
+    @DisplayName("Test getContainerForItem - finds scenery container")
+    void testGetContainerForItem_sceneryContainer() {
       final Item key = TestItemFactory.createTestKey();
       final SceneryObject tableScenery = SceneryObject.builder("table")
           .withInteraction(InteractionType.LOOK, "A table.")
           .asContainer()
           .build();
       location.addSceneryObject(tableScenery);
-      final LocationContainer table = location.getLocationContainers().get(0);
+      final SceneryContainer table = location.getSceneryContainers().get(0);
       location.addItem(key);
       manager.markItemAsContained(key, table, player);
 
@@ -201,8 +201,8 @@ class ContainerStateManagerTest {
     }
 
     @Test
-    @DisplayName("Test getContainedItems - returns items in location container")
-    void testGetContainedItems_locationContainer() {
+    @DisplayName("Test getContainedItems - returns items in scenery container")
+    void testGetContainedItems_sceneryContainer() {
       final Item key = TestItemFactory.createTestKey();
       final Item gem = TestItemFactory.createTestGem();
       final SceneryObject tableScenery = SceneryObject.builder("table")
@@ -210,7 +210,7 @@ class ContainerStateManagerTest {
           .asContainer()
           .build();
       location.addSceneryObject(tableScenery);
-      final LocationContainer table = location.getLocationContainers().get(0);
+      final SceneryContainer table = location.getSceneryContainers().get(0);
       location.addItem(key);
       location.addItem(gem);
       manager.markItemAsContained(key, table, player);
@@ -225,14 +225,14 @@ class ContainerStateManagerTest {
 
     @Test
     @DisplayName("Test removeContainment - removes from location containment")
-    void testRemoveContainment_locationContainer() {
+    void testRemoveContainment_sceneryContainer() {
       final Item key = TestItemFactory.createTestKey();
       final SceneryObject tableScenery = SceneryObject.builder("table")
           .withInteraction(InteractionType.LOOK, "A table.")
           .asContainer()
           .build();
       location.addSceneryObject(tableScenery);
-      final LocationContainer table = location.getLocationContainers().get(0);
+      final SceneryContainer table = location.getSceneryContainers().get(0);
       location.addItem(key);
       manager.markItemAsContained(key, table, player);
 
@@ -257,7 +257,7 @@ class ContainerStateManagerTest {
           .asContainer()
           .build();
       location.addSceneryObject(tableScenery);
-      final LocationContainer table = location.getLocationContainers().get(0);
+      final SceneryContainer table = location.getSceneryContainers().get(0);
       location.addItem(gemOnTable);
 
       manager.markItemAsContained(keyInBag, bag, player);
@@ -281,7 +281,7 @@ class ContainerStateManagerTest {
     }
 
     @Test
-    @DisplayName("Test clearAllInventoryContainment - does not affect location containers")
+    @DisplayName("Test clearAllInventoryContainment - does not affect scenery containers")
     void testClearAllInventoryContainment_doesNotAffectLocation() {
       final Item keyInBag = TestItemFactory.createTestKey();
       final Item gemOnTable = TestItemFactory.createTestGem();
@@ -291,7 +291,7 @@ class ContainerStateManagerTest {
           .asContainer()
           .build();
       location.addSceneryObject(tableScenery);
-      final LocationContainer table = location.getLocationContainers().get(0);
+      final SceneryContainer table = location.getSceneryContainers().get(0);
       location.addItem(gemOnTable);
       manager.markItemAsContained(keyInBag, bag, player);
       manager.markItemAsContained(gemOnTable, table, player);
@@ -299,7 +299,7 @@ class ContainerStateManagerTest {
       manager.clearAllInventoryContainment();
 
       assertFalse(manager.isItemContained(keyInBag, player));
-      // Location container should still track the item
+      // Scenery container should still track the item
       assertTrue(manager.isItemContained(gemOnTable, player));
     }
   }

@@ -35,20 +35,20 @@ public final class TestGameMapBuilder {
   private final Set<String> locationNames;
   private final Set<String> itemNames;
   private final List<ConnectionSpec> connections;
-  private final List<LocationContainerSpec> locationContainers;
+  private final List<SceneryContainerSpec> sceneryContainers;
   private final List<HiddenItemSpec> hiddenItems;
   private final String startingLocationName;
 
   private TestGameMapBuilder(@Nonnull final Set<String> locationNames,
                              @Nonnull final Set<String> itemNames,
                              @Nonnull final List<ConnectionSpec> connections,
-                             @Nonnull final List<LocationContainerSpec> locationContainers,
+                             @Nonnull final List<SceneryContainerSpec> sceneryContainers,
                              @Nonnull final List<HiddenItemSpec> hiddenItems,
                              @Nonnull final String startingLocationName) {
     this.locationNames = Set.copyOf(locationNames);
     this.itemNames = Set.copyOf(itemNames);
     this.connections = List.copyOf(connections);
-    this.locationContainers = List.copyOf(locationContainers);
+    this.sceneryContainers = List.copyOf(sceneryContainers);
     this.hiddenItems = List.copyOf(hiddenItems);
     this.startingLocationName = startingLocationName;
   }
@@ -135,7 +135,7 @@ public final class TestGameMapBuilder {
   public TestGameMapBuilder withLocations(@Nonnull final String... names) {
     final Set<String> newLocations = new HashSet<>(this.locationNames);
     newLocations.addAll(Set.of(names));
-    return new TestGameMapBuilder(newLocations, itemNames, connections, locationContainers, hiddenItems, startingLocationName);
+    return new TestGameMapBuilder(newLocations, itemNames, connections, sceneryContainers, hiddenItems, startingLocationName);
   }
 
   /**
@@ -161,7 +161,7 @@ public final class TestGameMapBuilder {
   public TestGameMapBuilder withItems(@Nonnull final String... names) {
     final Set<String> newItems = new HashSet<>(this.itemNames);
     newItems.addAll(Set.of(names));
-    return new TestGameMapBuilder(locationNames, newItems, connections, locationContainers, hiddenItems, startingLocationName);
+    return new TestGameMapBuilder(locationNames, newItems, connections, sceneryContainers, hiddenItems, startingLocationName);
   }
 
   /**
@@ -190,7 +190,7 @@ public final class TestGameMapBuilder {
                                            @Nonnull final String toLocation) {
     final List<ConnectionSpec> newConnections = new ArrayList<>(this.connections);
     newConnections.add(new ConnectionSpec(fromLocation, direction, toLocation));
-    return new TestGameMapBuilder(locationNames, itemNames, newConnections, locationContainers, hiddenItems, startingLocationName);
+    return new TestGameMapBuilder(locationNames, itemNames, newConnections, sceneryContainers, hiddenItems, startingLocationName);
   }
 
   /**
@@ -201,10 +201,10 @@ public final class TestGameMapBuilder {
    * @return a new builder with the scenery container
    */
   @Nonnull
-  public TestGameMapBuilder withLocationContainer(@Nonnull final String containerName,
+  public TestGameMapBuilder withSceneryContainer(@Nonnull final String containerName,
                                                  @Nonnull final String... allowedItemNames) {
-    final List<LocationContainerSpec> newContainers = new ArrayList<>(this.locationContainers);
-    newContainers.add(new LocationContainerSpec(containerName, Set.of(allowedItemNames)));
+    final List<SceneryContainerSpec> newContainers = new ArrayList<>(this.sceneryContainers);
+    newContainers.add(new SceneryContainerSpec(containerName, Set.of(allowedItemNames)));
     return new TestGameMapBuilder(locationNames, itemNames, connections, newContainers, hiddenItems, startingLocationName);
   }
 
@@ -221,7 +221,7 @@ public final class TestGameMapBuilder {
                                            @Nonnull final String revealedLocationDescription) {
     final List<HiddenItemSpec> newHiddenItems = new ArrayList<>(this.hiddenItems);
     newHiddenItems.add(new HiddenItemSpec(itemName, revealedLocationDescription));
-    return new TestGameMapBuilder(locationNames, itemNames, connections, locationContainers, newHiddenItems, startingLocationName);
+    return new TestGameMapBuilder(locationNames, itemNames, connections, sceneryContainers, newHiddenItems, startingLocationName);
   }
 
   /**
@@ -232,7 +232,7 @@ public final class TestGameMapBuilder {
    */
   @Nonnull
   public TestGameMapBuilder withStartingLocation(@Nonnull final String locationName) {
-    return new TestGameMapBuilder(locationNames, itemNames, connections, locationContainers, hiddenItems, locationName);
+    return new TestGameMapBuilder(locationNames, itemNames, connections, sceneryContainers, hiddenItems, locationName);
   }
 
   /**
@@ -276,7 +276,7 @@ public final class TestGameMapBuilder {
     }
 
     // Add scenery containers to starting location
-    for (final LocationContainerSpec spec : locationContainers) {
+    for (final SceneryContainerSpec spec : sceneryContainers) {
       final SceneryObject sceneryObject = SceneryObject.builder(spec.containerName)
           .asContainer()
           .withAllowedItems(spec.allowedItems.toArray(new String[0]))
@@ -319,7 +319,7 @@ public final class TestGameMapBuilder {
   /**
    * Internal record for scenery container specifications.
    */
-  private record LocationContainerSpec(String containerName, Set<String> allowedItems) {}
+  private record SceneryContainerSpec(String containerName, Set<String> allowedItems) {}
 
   /**
    * Internal record for hidden item specifications.

@@ -5,7 +5,7 @@ import io.github.tmanbarton.ifengine.ContainerType;
 import io.github.tmanbarton.ifengine.InteractionType;
 import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.ItemContainer;
-import io.github.tmanbarton.ifengine.LocationContainer;
+import io.github.tmanbarton.ifengine.SceneryContainer;
 import io.github.tmanbarton.ifengine.SceneryObject;
 
 import javax.annotation.Nonnull;
@@ -171,12 +171,12 @@ public final class TestItemFactory {
    * @return a new scenery container
    */
   @Nonnull
-  public static LocationContainer createLocationContainer(@Nonnull final String containerName,
+  public static SceneryContainer createSceneryContainer(@Nonnull final String containerName,
                                                          @Nonnull final String... allowedItemNames) {
     final SceneryObject sceneryObject = SceneryObject.builder(containerName)
         .withInteraction(InteractionType.LOOK, "You see a " + containerName + ".")
         .build();
-    return new LocationContainer(sceneryObject, Set.of(allowedItemNames));
+    return new SceneryContainer(sceneryObject, Set.of(allowedItemNames));
   }
 
   /**

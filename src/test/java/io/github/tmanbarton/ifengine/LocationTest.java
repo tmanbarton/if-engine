@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -189,10 +188,10 @@ class LocationTest {
   }
 
   @Nested
-  class LocationContainerManagement {
+  class SceneryContainerManagement {
 
     @Test
-    @DisplayName("Test addSceneryObject - auto-registers LocationContainer for container scenery")
+    @DisplayName("Test addSceneryObject - auto-registers SceneryContainer for container scenery")
     void testAddSceneryObject_registersContainerForContainerScenery() {
       final SceneryObject table = SceneryObject.builder("table")
           .withInteraction(InteractionType.LOOK, "A table.")
@@ -201,8 +200,8 @@ class LocationTest {
 
       location.addSceneryObject(table);
 
-      assertEquals(1, location.getLocationContainers().size());
-      assertEquals(table, location.getLocationContainers().get(0).getSceneryObject());
+      assertEquals(1, location.getSceneryContainers().size());
+      assertEquals(table, location.getSceneryContainers().get(0).getSceneryObject());
       assertTrue(location.findSceneryObject("table").isPresent());
     }
   }
@@ -211,8 +210,8 @@ class LocationTest {
   class SceneryContainerAutoRegistration {
 
     @Test
-    @DisplayName("Test addSceneryObject - auto-creates LocationContainer for container scenery")
-    void testAddSceneryObject_autoCreatesLocationContainer() {
+    @DisplayName("Test addSceneryObject - auto-creates SceneryContainer for container scenery")
+    void testAddSceneryObject_autoCreatesSceneryContainer() {
       final SceneryObject table = SceneryObject.builder("table")
           .withInteraction(InteractionType.LOOK, "A wooden table.")
           .asContainer()
@@ -220,8 +219,8 @@ class LocationTest {
 
       location.addSceneryObject(table);
 
-      assertEquals(1, location.getLocationContainers().size());
-      assertEquals(table, location.getLocationContainers().get(0).getSceneryObject());
+      assertEquals(1, location.getSceneryContainers().size());
+      assertEquals(table, location.getSceneryContainers().get(0).getSceneryObject());
     }
 
     @Test
@@ -233,7 +232,7 @@ class LocationTest {
 
       location.addSceneryObject(tree);
 
-      assertTrue(location.getLocationContainers().isEmpty());
+      assertTrue(location.getSceneryContainers().isEmpty());
       assertTrue(location.findSceneryObject("tree").isPresent());
     }
   }
@@ -406,7 +405,7 @@ class LocationTest {
           .build();
       location.addItem(key);
       location.addSceneryObject(tableScenery);
-      final LocationContainer table = location.getLocationContainers().get(0);
+      final SceneryContainer table = location.getSceneryContainers().get(0);
 
       location.setItemContainer(key, table);
 
@@ -424,7 +423,7 @@ class LocationTest {
           .build();
       location.addItem(key);
       location.addSceneryObject(tableScenery);
-      final LocationContainer table = location.getLocationContainers().get(0);
+      final SceneryContainer table = location.getSceneryContainers().get(0);
       location.setItemContainer(key, table);
 
       location.removeItemFromContainer(key);

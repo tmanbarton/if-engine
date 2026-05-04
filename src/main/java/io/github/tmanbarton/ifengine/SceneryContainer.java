@@ -8,14 +8,14 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A location container implemented as a scenery object adapter.
+ * A scenery container implemented as a scenery object adapter.
  * When items are inserted into a scenery container, they are placed at the location
  * (not kept in inventory).
  * Examples: table, desk, shelf, counter
  *
  * Scenery containers have unlimited capacity (getCapacity() returns 0).
  */
-public class LocationContainer implements Container {
+public class SceneryContainer implements Container {
 
   private final SceneryObject sceneryObject;
   private final Set<String> allowedItemNames;
@@ -29,7 +29,7 @@ public class LocationContainer implements Container {
    *
    * @param sceneryObject the scenery object configured as a container
    */
-  public LocationContainer(@Nonnull final SceneryObject sceneryObject) {
+  public SceneryContainer(@Nonnull final SceneryObject sceneryObject) {
     this.sceneryObject = sceneryObject;
     this.allowedItemNames = Set.copyOf(sceneryObject.getAllowedItemNames());
     this.insertedItemNames = new HashSet<>();
@@ -44,7 +44,7 @@ public class LocationContainer implements Container {
    * @param sceneryObject the scenery object this container represents
    * @param allowedItemNames names of items that can be placed on/in this container
    */
-  public LocationContainer(@Nonnull final SceneryObject sceneryObject, @Nonnull final Set<String> allowedItemNames) {
+  public SceneryContainer(@Nonnull final SceneryObject sceneryObject, @Nonnull final Set<String> allowedItemNames) {
     this.sceneryObject = sceneryObject;
     this.allowedItemNames = Set.copyOf(allowedItemNames);
     this.insertedItemNames = new HashSet<>();
