@@ -418,8 +418,7 @@ if (ctx.isItemInContainer("lantern")) {
 Both item names and container names support aliases.
 
 ### Delegating to built-in commands
-
-Return `null` from your handler to delegate to the built-in command. This allows you to handle specific cases while using default behavior for everything else:
+ Return `null` from your handler to delegate to the built-in command. This allows you to handle specific cases while using default behavior for everything else:
 
 ```java
 .withCommand("eat", (player, cmd, ctx) -> {
@@ -853,3 +852,97 @@ public static void main(String[] args) {
     System.out.println(engine.processCommand(sessionId, "inventory"));
 }
 ```
+
+## API Reference
+
+### Player
+Represents the player
+
+- `getCurrentLocation()`: Returns the `Location` object that the player is currently at.
+- `setCurrentLocation(Location)`: Sets the players current location to the provided `Location`.
+- `getInventory()`: Returns the player's inventory as a List<Item>.
+- `addItem(Item)`: Adds the provided `Item` to the player's inventory.
+- `removeItem(Item)`: Attempts to remove the provided `Item` from the player's inventory. Return true if it was removed, false otherwise.
+- `getInventoryItemByName(String)`: Finds an item in inventory by name or alias (case-insensitive). Returns the first matching `Item` or null if not found.
+- `hasItem(String)`: Checks if the player has an item with the given name or alias. Case-insensitive search through inventory. Returns true if an item with a matching name or alias is in the inventory.
+- `getGameState()`: Returns the GameState object.
+- `setGameState(GameState)`: Sets the player's game state.
+- `reset(Location)`: Resets player to initial state. Clears the inventory, sets the current location to the provided Location (assumed to be the starting location), and sets the state to PLAYING.
+- `markItemAsContained(Item, Container)`: Marks the provided `Item` as being contained within the provided `Container`.
+- `isItemContained(Item)`: Checks if the provided `Item` is currently contained within a container. Returns true if so, false if not.
+- `getContainerForItem(Item)`: Gets the container that holds the provided `Item`. 
+- `removeContainment(Item)`: Removes containment tracking for the given `Item`.
+- `getContainedItems(Container)`: Gets all items that are contained within the given `Container`.
+- `getFormattedInventoryItems()`: Generates a formatted list of inventory items with the items' inventory descriptions. Shows contained items with " - in [container]" suffix.
+- `getSessionId()`: Gets the session ID for this player. Returns the session ID or null if it hasn't been set.
+- `setSessionId(String)`: Sets the session ID for this player. (Called at the start of command processing to track which session is active.)
+
+### Location
+Represents a location in the game.
+
+- `void addConnection(Direction direction, Location location)`: Connects this location to another location with the specified direction
+- `void replaceConnection(Direction direction, Location location)`: Replaces the current location that's connected to this location in the given direction with the provided location. If no location is connected in that direction, a new connection is added.
+- `Location getConnection(Direction direction)`: Returns the `Connection` connected to this Location in the provided direction or null if nothing is connected.
+- `Set<Direction> getAvailableDirections()`: Returns all directions that connect to this location
+- `void addItem(Item item)`: Adds an item to this location. (Frequently used when dropping an item from the player's inventory to the location.)
+- `boolean removeItem(Item item)`: Removes an item from this location. Returns true if successful, false otherwise. (Frequently used when the user picks up an item from the location.)
+- `List<Item> getItems()`: Returns all `Items` at this `Location`
+- `Item getItemByName(String itemName)`: Finds an item at this location by name (case-insensitive).
+- `boolean hasItem(String itemName)`: Checks if this location has an item with the given name.
+- `void addSceneryObject(SceneryObject sceneryObject)`: Adds the given scenery object to this location. If the scenery object is configured as a container (via `asContainer()` on its builder), a `SceneryContainer` is automatically created and registered.
+- `public void removeSceneryObject(SceneryObject sceneryObject)`: Removes a scenery object from this location.
+- `List<SceneryObject> getSceneryObjects()`: Returns all SceneryObjects at this location.
+- `List<SceneryContainer> getSceneryContainers()`: Gets all scenery containers at this location.
+- `Optional<SceneryObject> findSceneryObject(String objectName)`: Finds and returns an Optional SceneryObject by name or an empty Optional if it can't be found. 
+- `List<SceneryObject> findSceneryObjectsByInteraction(InteractionType interactionType)`: Finds scenery objects that support a given interaction type.
+- `String getLongDescription()`: Returns this location's long description
+- `String getShortDescription()`: Returns this location's short description
+- `String getName()`: Returns this location's name
+- `boolean isVisited()`: Returns whether this location has been visited or not
+- `void setVisited(boolean visited)`: sets the `visited` field to track if the player has visited this location or not.
+- `void setItemContainer(Item item, SceneryContainer container)`: Records that an item is contained in a scenery container.
+- `boolean isItemInContainer(Item item)`: Checks if an item is in a scenery container.
+- `SceneryContainer getContainerForItem(Item item)`: Gets the scenery container that contains an item, or null if not contained.
+- `void removeItemFromContainer(Item item)`: Removes item from container tracking (when item is taken).
+- `addHiddenItem(Item item, String revealedLocationDescription)`: Adds a hidden item to this location. Hidden items are not visible to the player until revealed. The revealed location description is what the player sees when they look at it after the item is revealed until they player takes it.
+- `boolean revealHiddenItem(Item item)`: Reveals a hidden item, making it visible and takeable. The item now shows the revealed location description when the player looks at it until the item is taken.
+- `boolean revealHiddenItemByName(String itemName)`: Reveals a hidden item by name (case-insensitive, supports aliases).
+- `boolean isItemHidden(Item item)`: Checks if an item is hidden at this location.
+- `boolean isItemHiddenByName(String itemName)`: Checks if an item is hidden at this location by name (case-insensitive, supports aliases).
+- `Optional<Item> getHiddenItemByName(String itemName)`: Finds a hidden item by name (case-insensitive, supports aliases).
+- `Set<Item> getHiddenItems()`: Gets all hidden items at this location.
+- `void cliearHiddenItems()`: Removes all hidden items and their revealed descriptions. Used during game reset to restore initial state.
+- `String getRevealedLocationDescription(Item item)`: Gets the revealed location description for an item, if one exists. This description is used instead of the item's default location description when the item was revealed from a hidden state and has not yet been taken.
+
+
+### SceneryObject
+
+
+### ParsedCommand
+
+
+### CommandContext
+
+
+### ItemContainer
+
+
+### SceneryContainer
+
+
+### OpenableItem
+
+
+### OpenableItemContainer
+
+
+### OpenableLocation
+
+
+### OpenableSceneryObject
+
+
+### HintConfigurationBuilder
+
+
+### GameMapInterface

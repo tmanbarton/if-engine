@@ -237,8 +237,8 @@ public class Location {
   /**
    * Adds a hidden item to this location.
    * Hidden items are not visible to the player until revealed.
-   * The revealed location description is shown after the item is revealed
-   * but before the player takes it.
+   * The revealed location description is what the player sees when they look at it after the
+   * item is revealed until they player takes it.
    *
    * @param item the item to hide at this location
    * @param revealedLocationDescription the description shown after the item is revealed
@@ -251,7 +251,7 @@ public class Location {
   /**
    * Reveals a hidden item, making it visible and takeable.
    * The item is moved from the hidden set to the visible items list.
-   * Its revealed location description is preserved until the item is taken.
+   * The item now shows the revealed location description when the player looks at it until the item is taken.
    *
    * @param item the item to reveal
    * @return true if the item was hidden and is now revealed, false if not hidden
