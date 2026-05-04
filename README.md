@@ -1165,5 +1165,9 @@ Values: `NORTH`, `SOUTH`, `EAST`, `WEST`, `NORTHEAST`, `NORTHWEST`, `SOUTHEAST`,
 Players can use abbreviations: `n`, `s`, `e`, `w`, `ne`, `nw`, `se`, `sw`, `u`, `d`.
 
 ### InteractionType
+Enum representing the types of interactions that can be performed on scenery objects. Used with `SceneryObject.Builder.withInteraction()` to define how scenery responds to built-in commands.
 
+Values: `CLIMB`, `DRINK`, `EAT`, `KICK`, `LOOK`, `PUNCH`, `READ`, `SWIM`, `TAKE`
+
+For interactions beyond these built-in types, use `SceneryObject.Builder.withCustomInteraction(String verb, String response)` with a custom command.
 
