@@ -1114,7 +1114,25 @@ Abstract Methods for Subclass Implementation
 - `abstract String getOpenLockedNoKeyMessage()`: Message when player tries to open but it's locked and they don't have the key.
 
 ### OpenableSceneryObject
+Abstract base class for scenery objects at a location that can be opened and optionally unlocked but cannot be picked up. Implements the `Openable` interface for unified unlock/open handling. Extends `SceneryObject` to inherit all scenery properties. Use for wall safes, cabinets, gates, or any non-takeable object that con be opened.
 
+If `requiresUnlocking` is false, the object starts unlocked and the player can `open` it directly.
+
+Openable Interface - State Management
+- `boolean isUnlocked()`: Checks whether the object is unlocked.
+- `void setUnlocked(boolean unlocked)`: Sets the unlocked state.
+- `boolean isOpen()`: Checks whether the object is open.
+- `void setOpen(boolean open)`: Sets the open state.
+
+Openable Interface - Configuration
+- `boolean requiresUnlocking()`: Returns whether this object requires unlocking before it can be opened.
+
+Abstract Methods for Subclass Implementation
+- `abstract Set<String> getTargetNames()`: Get all target names for command inference (name and aliases).
+- `abstract boolean matchesUnlockTarget(String name)`: Check if the given string matches the object to unlock.
+- `abstract boolean matchesOpenTarget(String name)`: Check if the given string matches the object to open.
+- `abstract UnlockResult tryUnlock(Player player, String providedAnswer, GameMapInterface gameMap)`: Implementation for the unlock action.
+- `abstract OpenResult tryOpen(Player player, String providedAnswer, GameMapInterface gameMap)`: Implementation for the open action.
 
 ### HintConfigurationBuilder
 
