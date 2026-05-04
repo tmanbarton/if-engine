@@ -1,7 +1,5 @@
 package io.github.tmanbarton.ifengine;
 
-import io.github.tmanbarton.ifengine.constants.PrepositionConstants;
-
 import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.List;
@@ -16,7 +14,7 @@ import java.util.Set;
  *
  * <p>Subclasses must implement the five abstract {@link Openable} methods:
  * <ul>
- *   <li>{@link #getInferredTargetNames()}</li>
+ *   <li>{@link #getTargetNames()}</li>
  *   <li>{@link #matchesUnlockTarget(String)}</li>
  *   <li>{@link #matchesOpenTarget(String)}</li>
  *   <li>{@link #tryUnlock(io.github.tmanbarton.ifengine.game.Player, String, io.github.tmanbarton.ifengine.game.GameMapInterface)}</li>

@@ -67,7 +67,7 @@ public class TestOpenableSceneryObject extends OpenableSceneryObject {
 
   @Override
   @Nonnull
-  public Set<String> getInferredTargetNames() {
+  public Set<String> getTargetNames() {
     return inferredTargetNames;
   }
 

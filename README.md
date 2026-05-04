@@ -596,7 +596,7 @@ public class LockableChest extends OpenableItemContainer {
     return new OpenResult(true, "You open the " + getName() + ".");
   }
 
-  // ... matchesUnlockTarget, matchesOpenTarget, getInferredTargetNames
+  // ... matchesUnlockTarget, matchesOpenTarget, getTargetNames
 }
 ```
 
@@ -698,7 +698,7 @@ Three abstract base classes provide `Openable` support for different object type
 | `OpenableLocation` | `Location` | The location itself (locked room, vault) |
 | `OpenableSceneryObject` | `SceneryObject` | Non-takeable scenery (wall safe, cabinet) |
 
-Each manages unlock/open state and delegates the abstract methods (`tryUnlock`, `tryOpen`, `matchesUnlockTarget`, `matchesOpenTarget`, `getInferredTargetNames`) to your subclass.
+Each manages unlock/open state and delegates the abstract methods (`tryUnlock`, `tryOpen`, `matchesUnlockTarget`, `matchesOpenTarget`, `getTargetNames`) to your subclass.
 
 When the player types `unlock` or `open` without specifying an object, the engine checks in priority order:
 1. `OpenableItem` in player inventory
@@ -727,7 +727,7 @@ public class WallSafe extends OpenableSceneryObject {
   }
 
   @Override
-  public Set<String> getInferredTargetNames() {
+  public Set<String> getTargetNames() {
     return Set.of("safe", "wall safe");
   }
 
@@ -1038,7 +1038,21 @@ Creates a scenery container that wraps a scenery object.
 - `List<String> getPreferredPrepositions()`: Returns a list of the preferred prepositions.
 
 ### OpenableItem
+Abstract base class for items that can be unlocked and opened. Implements the `Openable` interface for unified unlock/open handling. Extends `Item to inherit all item properties.
 
+Openable Interface - State Management
+- `boolean isUnlocked()`: Checks whether the openable object is unlocked or not.
+- `void setUnlocked(boolean unlocked)`: Sets the unlocked flag on this openable object.
+- `boolean isOpen()`: Checks whether the openable object is open or not.
+- `void setOpen(boolean open)`: Sets the open flag on this openable object.
+Openable Interface - Configuration
+- `boolean requiresUnlocking()`: Checks whether this openable object requires unlocking.
+Abstract Methods for Subclass Implementation
+- `abstract Set<String> getTargetNames()`: Get all defined taget names for this openable object for command inference. This is the name and any defined aliases.
+- `abstract boolean matchesUnlockTarget(String name)`: Check for if the given String matches the object to unlock.
+- `abstract boolean matchesOpenTarget(String name)`: Check for if the given String matches the object to open.
+- `abstract UnlockResult tryUnlock(Player player, String providedAnswer, GameMapInterface gameMap)`: Implementation for the action that happens when the user says to unlock the object.
+- `abstract OpenResult tryOpen(Player player, String providedAnswer, GameMapInterface gameMap)`: Implementation for the action that happens when the user says to open the object.
 
 ### OpenableItemContainer
 

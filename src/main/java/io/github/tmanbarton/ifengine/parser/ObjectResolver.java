@@ -236,7 +236,7 @@ public final class ObjectResolver {
    */
   @Nonnull
   private Item createLocationProxy(@Nonnull final OpenableLocation location) {
-    final Set<String> inferredNames = location.getInferredTargetNames();
+    final Set<String> inferredNames = location.getTargetNames();
     final String name = inferredNames.iterator().next();
     return new Item(name, name, name, name, inferredNames);
   }

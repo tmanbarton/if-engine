@@ -164,7 +164,7 @@ public class TestOpenableLocation extends OpenableLocation {
 
   @Override
   @Nonnull
-  public Set<String> getInferredTargetNames() {
+  public Set<String> getTargetNames() {
     return inferredTargetNames;
   }
 

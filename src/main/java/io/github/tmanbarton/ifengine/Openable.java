@@ -84,7 +84,7 @@ public interface Openable {
    * @return set of valid inferred target names (lowercase)
    */
   @Nonnull
-  Set<String> getInferredTargetNames();
+  Set<String> getTargetNames();
 
   // ===== Target Matching =====
 

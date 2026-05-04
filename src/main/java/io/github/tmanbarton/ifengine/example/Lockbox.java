@@ -72,7 +72,7 @@ public class Lockbox extends OpenableItem {
 
   @Override
   @Nonnull
-  public Set<String> getInferredTargetNames() {
+  public Set<String> getTargetNames() {
     return Set.of(getName());
   }
 

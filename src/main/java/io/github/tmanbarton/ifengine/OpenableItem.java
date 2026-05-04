@@ -14,7 +14,7 @@ import java.util.Set;
  *
  * <p>Subclasses must implement:
  * <ul>
- *   <li>{@link #getInferredTargetNames()} - names used for command inference</li>
+ *   <li>{@link #getTargetNames()} - names used for command inference</li>
  *   <li>{@link #matchesUnlockTarget(String)} - target name matching for unlock</li>
  *   <li>{@link #matchesOpenTarget(String)} - target name matching for open</li>
  *   <li>{@link #tryUnlock(Player, String, GameMapInterface)} - unlock logic</li>
@@ -82,7 +82,7 @@ public abstract class OpenableItem extends Item implements Openable {
 
   @Override
   @Nonnull
-  public abstract Set<String> getInferredTargetNames();
+  public abstract Set<String> getTargetNames();
 
   @Override
   public abstract boolean matchesUnlockTarget(@Nonnull String name);

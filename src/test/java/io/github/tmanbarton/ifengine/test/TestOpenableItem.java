@@ -61,7 +61,7 @@ public class TestOpenableItem extends OpenableItem {
 
   @Override
   @Nonnull
-  public Set<String> getInferredTargetNames() {
+  public Set<String> getTargetNames() {
     return inferredTargetNames;
   }
 

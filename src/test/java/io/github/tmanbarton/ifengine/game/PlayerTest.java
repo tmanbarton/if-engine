@@ -293,7 +293,7 @@ class PlayerTest {
 
         @Override
         @Nonnull
-        public Set<String> getInferredTargetNames() {
+        public Set<String> getTargetNames() {
           return Set.of("test");
         }
 

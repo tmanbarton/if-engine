@@ -65,7 +65,7 @@ public abstract class OpenableLocation extends Location implements Openable {
 
   @Override
   @Nonnull
-  public abstract Set<String> getInferredTargetNames();
+  public abstract Set<String> getTargetNames();
 
   // ===== Openable Interface - Unlock/Open Attempts =====
 
