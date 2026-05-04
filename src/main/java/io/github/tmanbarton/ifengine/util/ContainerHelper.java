@@ -46,6 +46,6 @@ public final class ContainerHelper {
    * @return true if container is a scenery container
    */
   public static boolean isSceneryContainer(@Nonnull final Container container) {
-    return getContainerType(container) == ContainerType.LOCATION;
+    return getContainerType(container) == ContainerType.SCENERY;
   }
 }

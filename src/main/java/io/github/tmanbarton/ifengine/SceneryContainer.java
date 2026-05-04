@@ -64,7 +64,7 @@ public class SceneryContainer implements Container {
   @Override
   @Nonnull
   public ContainerType getContainerType() {
-    return ContainerType.LOCATION;
+    return ContainerType.SCENERY;
   }
 
   @Override

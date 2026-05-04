@@ -12,5 +12,5 @@ public enum ContainerType {
   /**
    * Scenery containers place items at the current location.
    */
-  LOCATION
+  SCENERY
 }

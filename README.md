@@ -856,7 +856,7 @@ public static void main(String[] args) {
 ## API Reference
 
 ### Player
-Represents the player
+Represents the player in the game.
 
 - `Location getCurrentLocation()`: Returns the location object that the player is currently at.
 - `void setCurrentLocation(Location location)`: Sets the players current location to the provided location.
@@ -878,7 +878,7 @@ Represents the player
 - `void setSessionId(String sessionId)`: Sets the session ID for this player. (Called at the start of command processing to track which session is active.)
 
 ### Location
-Represents a location in the game.
+Represents a location in the game world.
 
 - `void addConnection(Direction direction, Location location)`: Connects this location to another location with the specified direction
 - `void replaceConnection(Direction direction, Location location)`: Replaces the current location that's connected to this location in the given direction with the provided location. If no location is connected in that direction, a new connection is added.
@@ -915,8 +915,9 @@ Represents a location in the game.
 - `String getRevealedLocationDescription(Item item)`: Gets the revealed location description for an item, if one exists. This description is used instead of the item's default location description when the item was revealed from a hidden state and has not yet been taken.
 
 ### SceneryObject
+Represents a scenery object in the game world that players can interact with but cannot take/isn't part of the game and can't affect the world. Scenery objects have names, aliases, and specific responses to different interaction types.
 
-#### Accessor methods:
+Supports both standard `InteractionType` responses and custom string-based interactions for use with custom commands registered via `GameMap.Builder.withCommand()`.
 - `String getName()`: Scenery object name
 - `Set<String> getAliases()`: Scenery object aliases
 - `Map<InteractionType, String> getResponses()`: Returns all defined responses to interaction types for this scenery object
@@ -933,21 +934,19 @@ Represents a location in the game.
 - `void addAlias(String alias)`: Adds an alias for this scenery object.
 - `Builder withAliases(String... aliasArray)`: Adds one or multiple aliases for this scenery object.
 - `Builder withInteraction(InteractionType interaction, String response)`: Adds an interaction response for this scenery object. This is a hard-coded response for when the user tries to interact with the scenery object.
-- `Builder withCustomInteraction(String verb, String response)`: Adds a custom interaction response for this scenery object. Custom interactions allow scenery to respond to verbs beyond the standard `InteractionType` enum. Use with custom commands registered via code `GameMap.Builder.withCommand()`.
-
-Example:
+- `Builder withCustomInteraction(String verb, String response)`: Adds a custom interaction response for this scenery object. Custom interactions allow scenery to respond to verbs beyond the standard `InteractionType` enum. Use with custom commands registered via code `GameMap.Builder.withCommand()`. Example:
   ``` java
   SceneryObject.builder("flower")
     .withCustomInteraction("smell", "It smells lovely!")
     .build();
   ```
-
 - `Builder asContainer()`: Marks this scenery object as a container that can hold items. Containers can have items placed on/in them using the "put" command. By default, containers use "on" and "onto" prepositions. Other prepositions like "under" can be added with `withPrepositions(String... preps)`
 - `Builder withAllowedItems(String... itemNames)`: Sets which items can be placed in this container by name (alias not included). If not called or called with no arguments, any item can be placed.
 - `Builder withPrepositions(String... preps)`: Sets the valid prepositions for this container. Default prepositions: "on" and "in".
 - `SceneryOject build()`: Builds the SceneryObject instance with the configured properties and runs some validations. If no interactions are defined, throw `IllegalStateException`
 
 ### ParsedCommand
+Represents a parsed command from user input with normalized components.
 - `String getVerb()`: Return the normalized verb (e.g., "take", "look", "go").
 - `List<String> getDirectObjects()`: Return the direct objects (main targets of the command).
 - `String getFirstDirectObject()`: Return the first direct object, or empty string if none.
@@ -964,13 +963,79 @@ Example:
 - `boolean hasSequenceCommands()`: Return true if this is a sequence command with multiple parts.
 
 ### CommandContext
+Context provided to custom command handlers. Provides access to game utilities that custom handlers may need, including:
+- ResponseProvider for consistent game messaging
+- ObjectResolver for finding items by name
+- Current location information
+- Convenience methods for common operations
+---
+Methods
+- `ResponseProvider getResponseProvider()`: Returns the response provider for consistent game messaging.
+- `ObjectResolver getObjectResolver()`: Returns the object resolver for finding items by name.
+- `Location getCurrentLocation()`: Returns the player's current location.
+- `Optional<Item> resolveItem(String name, Player player)`: Resolves an item by name from the player's inventory or current location. This is a convenience method that handles the common case of looking up an item that may be in inventory or at the current location.
+- `String putItemInContainer(String itemName, String containerName, String preposition)`: Puts an item into a container, returning a response message. Handles all aspects of container insertion:
+  - Finding the item in inventory or at the current location
+  - Finding the container (inventory container or scenery container)
+  - Validating the preposition matches the container's accepted prepositions
+  - Checking if the container accepts the item
+  - Removing the item from inventory if needed
+  - Inserting the item into the container
+  - Tracking containment state
+  - Example usage in a custom command handler:
 
+```java
+.withCommand("lean", (player, cmd, ctx) -> {
+    return ctx.putItemInContainer("ladder", "wall", "on");
+})
+```
+- `boolean isItemInContainer(String itemName)`: Checks if an item is in any container at the current location.
 
 ### ItemContainer
+A takeable item that can also contain other items. Items inserted into an inventory container follow the container between inventory and location (ContainerType.INVENTORY behavior).
 
+- `static Builder builder(@Nonnull final String name)`: Creates a new builder for an ItemContainer.
+- `boolean canAccept(@Nonnull final Item item)`: Checks whether the given item is allowed in this item container. 
+- `boolean insertItem(@Nonnull final Item item)`: Inserts the given item into the item container. Returns true if inserted, false if not or if the container doesn't allow the given item.
+- `boolean removeItem(@Nonnull final Item item)`: Removes the given item from this item container. Returns true if successfully removed, false otherwise.
+- `boolean containsItem(@Nonnull final String itemName)`: Checks if this item container contains the given item.
+- `Set<String> getInsertedItemNames()`: Returns all items in this container.
+- `int getCapacity()`: Returns the capacity of this item container.
+- `int getCurrentCount()`: Returns the number of items in this item container.
+- `boolean isFull()`: Checks for if this container is full.
+- `String getContainerStateDescription()`: Returns a string describing the state of this item container - if it's empty or what items it contains.
+- `List<String> getPreferredPrepositions()`: Returns a list of the preferred prepositions.
+- `ContainerType getContainerType()`: ContainerType.ITEM.
+
+### ItemContainer.Builder
+Builder for creating `ItemContainer` instances.
+(See `Item` and `ItemContainer` API docs for method details.)
+
+- `Builder withInventoryDescription(String inventoryDescription)`
+- `Builder withLocationDescription(String locationDescription)`
+- `Builder withDetailedDescription(String detailedDescription)`
+- `Builder withAliases(Set<String> aliases)`
+- `Builder withCapacity(int capacity)`
+- `Builder withAllowedItems(Set<String> allowedItemNames)`
+- `Builder withPrepositions(List<String> prepositions)`
+- `ItemContainer build()`: Builds the ItemContainer, using auto-generated descriptions for any not explicitly set.
 
 ### SceneryContainer
+A scenery container implemented as a scenery object adapter. When items are inserted into a scenery container, they are placed at the location (not kept in inventory). Examples: table, desk, shelf, counter Scenery containers have unlimited capacity by default (getCapacity() returns 0).
+Creates a scenery container that wraps a scenery object.
 
+- `SceneryObject getSceneryObject()`: Gets the wrapped scenery object.
+- `ContainerType getContainerType()`: ContainerType.SCENERY
+- `boolean canAccept(Item item)`: Checks if this container accepts the given item.
+- `boolean insertItem(Item item)`: Inserts an item into this scenery container. Returns true if successfully inserted, false if the item isn't allowed, the container is full, or otherwise didn't insert.
+- `boolean removeItem(Item item)`: Removes the given item from this container. Returns true if successfully removed, false otherwise.
+- `boolean containsItem(String itemName)`: Checks if this scenery container contains the given item.
+- `Set<String> getInsertedItemNames()`: Returns all items currently in this scenery container.
+- `int getCapacity()`: Gets the maximum capacity of this container. Returns 0, representing unlimited capacity.
+- `int getCurrentCount()`: Get the current number of items in this scenery container.
+- `boolean isFull()`: Checks if this container is full. Since scenery containers have unlimited capacity, this method always returns false.
+- `String getContainerStateDescription()`: Returns a string describing the state of this scenery container - if it's empty or what items it contains.
+- `List<String> getPreferredPrepositions()`: Returns a list of the preferred prepositions.
 
 ### OpenableItem
 

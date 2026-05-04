@@ -89,12 +89,10 @@ public interface Container {
   List<String> getPreferredPrepositions();
 
   /**
-   * Gets the type of this container (INVENTORY or LOCATION).
+   * Gets the type of this container (INVENTORY or SCENERY).
    *
    * @return the container type
    */
   @Nonnull
-  default ContainerType getContainerType() {
-    return ContainerType.INVENTORY;
-  }
+  ContainerType getContainerType();
 }
