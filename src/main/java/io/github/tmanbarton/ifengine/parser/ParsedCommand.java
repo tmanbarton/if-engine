@@ -152,17 +152,4 @@ public final class ParsedCommand {
   public boolean hasSequenceCommands() {
     return !sequenceCommands.isEmpty();
   }
-
-  @Override
-  public String toString() {
-    return "ParsedCommand{" +
-        "verb='" + verb + '\'' +
-        ", directObjects=" + directObjects +
-        ", indirectObjects=" + indirectObjects +
-        ", preposition='" + preposition + '\'' +
-        ", type=" + type +
-        ", impliedObject=" + impliedObject +
-        ", originalInput='" + originalInput + '\'' +
-        '}';
-  }
 }

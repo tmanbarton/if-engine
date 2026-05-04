@@ -948,7 +948,20 @@ Example:
 - `SceneryOject build()`: Builds the SceneryObject instance with the configured properties and runs some validations. If no interactions are defined, throw `IllegalStateException`
 
 ### ParsedCommand
-
+- `String getVerb()`: Return the normalized verb (e.g., "take", "look", "go").
+- `List<String> getDirectObjects()`: Return the direct objects (main targets of the command).
+- `String getFirstDirectObject()`: Return the first direct object, or empty string if none.
+- `List<String> getIndirectObjects()`: Return the indirect objects (objects after prepositions).
+- `String getFirstIndirectObject()`: Return the first indirect object, or empty string if none.
+- `String getPreposition()`: Return the preposition connecting direct and indirect objects, or null if none.
+- `CommandType getType()`: Return the type of command structure.
+- `boolean isImpliedObject()`: Return true if the object was inferred from context rather than explicitly stated.
+- `String getOriginalInput()`: Return the original user input before processing.
+- `boolean hasDirectObjects()`: Return true if this command has any direct objects.
+- `boolean hasIndirectObjects()`: Return true if this command has any indirect objects.
+- `boolean hasPreposition()`: Return true if this command has a preposition.
+- `List<String> getSequenceCommands()`: Return the list of additional commands in a sequence (for SEQUENCE type commands).
+- `boolean hasSequenceCommands()`: Return true if this is a sequence command with multiple parts.
 
 ### CommandContext
 
