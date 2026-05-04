@@ -1152,7 +1152,10 @@ Interface for game maps that provide locations and items for the game world. Pas
 - `void resetMap()`: Resets the game map to its initial state. Restores item locations, clears visited flags, and restores any other initial state.
 
 ### ContainerType
+Enum representing the type of container and its behavior.
 
+- `INVENTORY`: Items inserted into this container stay in the player's inventory and follow the container when taken or dropped.
+- `SCENERY`: Items inserted into this container are placed at the current location (not kept in inventory).
 
 ### Direction
 
