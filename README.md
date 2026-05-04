@@ -1135,7 +1135,11 @@ Abstract Methods for Subclass Implementation
 - `abstract OpenResult tryOpen(Player player, String providedAnswer, GameMapInterface gameMap)`: Implementation for the open action.
 
 ### HintConfigurationBuilder
+Builder for creating hint configurations. Used via `GameMap.Builder.withHints()` to define progressive hint phases and a determiner that selects the current phase based on game state.
 
+- `HintConfigurationBuilder addPhase(String phaseKey, String hint1, String hint2, String hint3)`: Adds a hint phase with three progressive hints — a subtle nudge (level 1), a more direct hint (level 2), and an explicit answer (level 3). The `phaseKey` is a unique identifier used by the determiner to select this phase.
+- `HintConfigurationBuilder determiner(HintPhaseDeterminer determiner)`: Sets the phase determiner that identifies the current puzzle phase. The determiner receives `Player` and `GameMap` and returns the phase key string for the current hint phase.
+- `HintConfiguration build()`: Builds the hint configuration. Throws `IllegalStateException` if no determiner was set.
 
 ### GameMapInterface
 
