@@ -32,5 +32,15 @@ public enum GameState {
   /**
    * Waiting for player to enter a code/word to open an openable object.
    */
-  WAITING_FOR_OPEN_CODE
+  WAITING_FOR_OPEN_CODE,
+
+  /**
+   * Game is won
+   */
+  WON,
+
+  /**
+   * Alternative to {@link GameState#WON} for if the game doesn't necessarily have a "win" condition. It's more like a story that has an ending.
+   */
+  FINISHED
 }

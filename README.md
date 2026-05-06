@@ -1181,3 +1181,5 @@ Enum representing the current state of the game for a player session.
 - `WAITING_FOR_RESTART_CONFIRMATION`: Waiting for player to confirm restart command.
 - `WAITING_FOR_UNLOCK_CODE`: Waiting for player to enter a code/word to unlock an openable object.
 - `WAITING_FOR_OPEN_CODE`: Waiting for player to enter a code/word to open an openable object.
+- `WON`: Game is won
+- `FINISHED`: Alternative to `WON` for if the game doesn't necessarily have a "win" condition. It's more like a story that has an ending.
