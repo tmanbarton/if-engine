@@ -858,111 +858,111 @@ public static void main(String[] args) {
 ### Player
 Represents the player in the game.
 
-- `Location getCurrentLocation()`: Returns the location object that the player is currently at.
-- `void setCurrentLocation(Location location)`: Sets the players current location to the provided location.
-- `List<Item> getInventory()`: Returns the player's inventory.
-- `void addItem(Item item)`: Adds the provided item to the player's inventory.
-- `boolean removeItem(Item item)`: Attempts to remove the provided item from the player's inventory. Return true if it was removed, false otherwise.
-- `Item getInventoryItemByName(String itemName)`: Finds an item in inventory by name or alias (case-insensitive). Returns the first matching item or null if not found.
-- `boolean hasItem(String itemName)`: Checks if the player has an item with the given name or alias. Case-insensitive search through inventory. Returns true if an item with a matching name or alias is in the inventory.
-- `GameState getGameState()`: Returns the GameState object.
-- `void setGameState(GameState gameState)`: Sets the player's game state.
-- `void reset(Location startingLocation)`: Resets player to initial state. Clears the inventory, sets the current location to the provided Location (assumed to be the starting location), and sets the state to PLAYING.
-- `void markItemAsContained(Item item, Container container)`: Marks the provided item as being contained within the provided container.
-- `boolean isItemContained(Item item)`: Checks if the provided item is currently contained within a container. Returns true if so, false if not.
-- `Container getContainerForItem(Item item)`: Gets the container that holds the provided item. 
-- `void removeContainment(Item item)`: Removes containment tracking for the given item.
-- `List<Item> getContainedItems(Container container)`: Gets all items that are contained within the given container.
-- `String getFormattedInventoryItems()`: Generates a formatted list of inventory items with the items' inventory descriptions. Shows contained items with " - in [container]" suffix.
-- `String getSessionId()`: Gets the session ID for this player. Returns the session ID or null if it hasn't been set.
-- `void setSessionId(String sessionId)`: Sets the session ID for this player. (Called at the start of command processing to track which session is active.)
+- #### `Location getCurrentLocation()`: Returns the location object that the player is currently at.
+- #### `void setCurrentLocation(Location location)`: Sets the players current location to the provided location.
+- #### `List<Item> getInventory()`: Returns the player's inventory.
+- #### `void addItem(Item item)`: Adds the provided item to the player's inventory.
+- #### `boolean removeItem(Item item)`: Attempts to remove the provided item from the player's inventory. Return true if it was removed, false otherwise.
+- #### `Item getInventoryItemByName(String itemName)`: Finds an item in inventory by name or alias (case-insensitive). Returns the first matching item or null if not found.
+- #### `boolean hasItem(String itemName)`: Checks if the player has an item with the given name or alias. Case-insensitive search through inventory. Returns true if an item with a matching name or alias is in the inventory.
+- #### `GameState getGameState()`: Returns the GameState object.
+- #### `void setGameState(GameState gameState)`: Sets the player's game state.
+- #### `void reset(Location startingLocation)`: Resets player to initial state. Clears the inventory, sets the current location to the provided Location (assumed to be the starting location), and sets the state to PLAYING.
+- #### `void markItemAsContained(Item item, Container container)`: Marks the provided item as being contained within the provided container.
+- #### `boolean isItemContained(Item item)`: Checks if the provided item is currently contained within a container. Returns true if so, false if not.
+- #### `Container getContainerForItem(Item item)`: Gets the container that holds the provided item. 
+- #### `void removeContainment(Item item)`: Removes containment tracking for the given item.
+- #### `List<Item> getContainedItems(Container container)`: Gets all items that are contained within the given container.
+- #### `String getFormattedInventoryItems()`: Generates a formatted list of inventory items with the items' inventory descriptions. Shows contained items with " - in [container]" suffix.
+- #### `String getSessionId()`: Gets the session ID for this player. Returns the session ID or null if it hasn't been set.
+- #### `void setSessionId(String sessionId)`: Sets the session ID for this player. (Called at the start of command processing to track which session is active.)
 
 ### Location
 Represents a location in the game world.
 
-- `void addConnection(Direction direction, Location location)`: Connects this location to another location with the specified direction
-- `void replaceConnection(Direction direction, Location location)`: Replaces the current location that's connected to this location in the given direction with the provided location. If no location is connected in that direction, a new connection is added.
-- `Location getConnection(Direction direction)`: Returns the `Connection` connected to this Location in the provided direction or null if nothing is connected.
-- `Set<Direction> getAvailableDirections()`: Returns all directions that connect to this location
-- `void addItem(Item item)`: Adds an item to this location. (Frequently used when dropping an item from the player's inventory to the location.)
-- `boolean removeItem(Item item)`: Removes an item from this location. Returns true if successful, false otherwise. (Frequently used when the user picks up an item from the location.)
-- `List<Item> getItems()`: Returns all `Items` at this `Location`
-- `Item getItemByName(String itemName)`: Finds an item at this location by name (case-insensitive).
-- `boolean hasItem(String itemName)`: Checks if this location has an item with the given name.
-- `void addSceneryObject(SceneryObject sceneryObject)`: Adds the given scenery object to this location. If the scenery object is configured as a container (via `asContainer()` on its builder), a `SceneryContainer` is automatically created and registered.
-- `public void removeSceneryObject(SceneryObject sceneryObject)`: Removes a scenery object from this location.
-- `List<SceneryObject> getSceneryObjects()`: Returns all SceneryObjects at this location.
-- `List<SceneryContainer> getSceneryContainers()`: Gets all scenery containers at this location.
-- `Optional<SceneryObject> findSceneryObject(String objectName)`: Finds and returns an Optional SceneryObject by name or an empty Optional if it can't be found. 
-- `List<SceneryObject> findSceneryObjectsByInteraction(InteractionType interactionType)`: Finds scenery objects that support a given interaction type.
-- `String getLongDescription()`: Returns this location's long description
-- `String getShortDescription()`: Returns this location's short description
-- `String getName()`: Returns this location's name
-- `boolean isVisited()`: Returns whether this location has been visited or not
-- `void setVisited(boolean visited)`: sets the `visited` field to track if the player has visited this location or not.
-- `void setItemContainer(Item item, SceneryContainer container)`: Records that an item is contained in a scenery container.
-- `setLongDescription(String longDescription)`: Sets the long description of the location
-- `setShortDescription(String shortDescription)`: Sets the short description of the location
-- `boolean isItemInContainer(Item item)`: Checks if an item is in a scenery container.
-- `SceneryContainer getContainerForItem(Item item)`: Gets the scenery container that contains an item, or null if not contained.
-- `void removeItemFromContainer(Item item)`: Removes item from container tracking (when item is taken).
-- `addHiddenItem(Item item, String revealedLocationDescription)`: Adds a hidden item to this location. Hidden items are not visible to the player until revealed. The revealed location description is what the player sees when they look at it after the item is revealed until they player takes it.
-- `boolean revealHiddenItem(Item item)`: Reveals a hidden item, making it visible and takeable. The item now shows the revealed location description when the player looks at it until the item is taken.
-- `boolean revealHiddenItemByName(String itemName)`: Reveals a hidden item by name (case-insensitive, supports aliases).
-- `boolean isItemHidden(Item item)`: Checks if an item is hidden at this location.
-- `boolean isItemHiddenByName(String itemName)`: Checks if an item is hidden at this location by name (case-insensitive, supports aliases).
-- `Optional<Item> getHiddenItemByName(String itemName)`: Finds a hidden item by name (case-insensitive, supports aliases).
-- `Set<Item> getHiddenItems()`: Gets all hidden items at this location.
-- `void cliearHiddenItems()`: Removes all hidden items and their revealed descriptions. Used during game reset to restore initial state.
-- `String getRevealedLocationDescription(Item item)`: Gets the revealed location description for an item, if one exists. This description is used instead of the item's default location description when the item was revealed from a hidden state and has not yet been taken.
+- #### `void addConnection(Direction direction, Location location)`: Connects this location to another location with the specified direction
+- #### `void replaceConnection(Direction direction, Location location)`: Replaces the current location that's connected to this location in the given direction with the provided location. If no location is connected in that direction, a new connection is added.
+- #### `Location getConnection(Direction direction)`: Returns the `Connection` connected to this Location in the provided direction or null if nothing is connected.
+- #### `Set<Direction> getAvailableDirections()`: Returns all directions that connect to this location
+- #### `void addItem(Item item)`: Adds an item to this location. (Frequently used when dropping an item from the player's inventory to the location.)
+- #### `boolean removeItem(Item item)`: Removes an item from this location. Returns true if successful, false otherwise. (Frequently used when the user picks up an item from the location.)
+- #### `List<Item> getItems()`: Returns all `Items` at this `Location`
+- #### `Item getItemByName(String itemName)`: Finds an item at this location by name (case-insensitive).
+- #### `boolean hasItem(String itemName)`: Checks if this location has an item with the given name.
+- #### `void addSceneryObject(SceneryObject sceneryObject)`: Adds the given scenery object to this location. If the scenery object is configured as a container (via `asContainer()` on its builder), a `SceneryContainer` is automatically created and registered.
+- #### `public void removeSceneryObject(SceneryObject sceneryObject)`: Removes a scenery object from this location.
+- #### `List<SceneryObject> getSceneryObjects()`: Returns all SceneryObjects at this location.
+- #### `List<SceneryContainer> getSceneryContainers()`: Gets all scenery containers at this location.
+- #### `Optional<SceneryObject> findSceneryObject(String objectName)`: Finds and returns an Optional SceneryObject by name or an empty Optional if it can't be found. 
+- #### `List<SceneryObject> findSceneryObjectsByInteraction(InteractionType interactionType)`: Finds scenery objects that support a given interaction type.
+- #### `String getLongDescription()`: Returns this location's long description
+- #### `String getShortDescription()`: Returns this location's short description
+- #### `String getName()`: Returns this location's name
+- #### `boolean isVisited()`: Returns whether this location has been visited or not
+- #### `void setVisited(boolean visited)`: sets the `visited` field to track if the player has visited this location or not.
+- #### `void setItemContainer(Item item, SceneryContainer container)`: Records that an item is contained in a scenery container.
+- #### `setLongDescription(String longDescription)`: Sets the long description of the location
+- #### `setShortDescription(String shortDescription)`: Sets the short description of the location
+- #### `boolean isItemInContainer(Item item)`: Checks if an item is in a scenery container.
+- #### `SceneryContainer getContainerForItem(Item item)`: Gets the scenery container that contains an item, or null if not contained.
+- #### `void removeItemFromContainer(Item item)`: Removes item from container tracking (when item is taken).
+- #### `addHiddenItem(Item item, String revealedLocationDescription)`: Adds a hidden item to this location. Hidden items are not visible to the player until revealed. The revealed location description is what the player sees when they look at it after the item is revealed until they player takes it.
+- #### `boolean revealHiddenItem(Item item)`: Reveals a hidden item, making it visible and takeable. The item now shows the revealed location description when the player looks at it until the item is taken.
+- #### `boolean revealHiddenItemByName(String itemName)`: Reveals a hidden item by name (case-insensitive, supports aliases).
+- #### `boolean isItemHidden(Item item)`: Checks if an item is hidden at this location.
+- #### `boolean isItemHiddenByName(String itemName)`: Checks if an item is hidden at this location by name (case-insensitive, supports aliases).
+- #### `Optional<Item> getHiddenItemByName(String itemName)`: Finds a hidden item by name (case-insensitive, supports aliases).
+- #### `Set<Item> getHiddenItems()`: Gets all hidden items at this location.
+- #### `void cliearHiddenItems()`: Removes all hidden items and their revealed descriptions. Used during game reset to restore initial state.
+- #### `String getRevealedLocationDescription(Item item)`: Gets the revealed location description for an item, if one exists. This description is used instead of the item's default location description when the item was revealed from a hidden state and has not yet been taken.
 
 ### SceneryObject
 Represents a scenery object in the game world that players can interact with but cannot take/isn't part of the game and can't affect the world. Scenery objects have names, aliases, and specific responses to different interaction types.
 
 Supports both standard `InteractionType` responses and custom string-based interactions for use with custom commands registered via `GameMap.Builder.withCommand()`.
-- `String getName()`: Scenery object name
-- `Set<String> getAliases()`: Scenery object aliases
-- `Map<InteractionType, String> getResponses()`: Returns all defined responses to interaction types for this scenery object
-- `Map<String, String> getCustomResponses()`: Returns all defined responses to custom verbs
-- `boolean isContainer()`: Flag for if this scenery object is a container or not
-- `Set<String> getAllowedItemNames()`: Gets the allowed item names for this container. Empty set means any item is allowed.
-- `List<String> getPrepositions()`: Gets the valid prepositions for this container (i.e. are things put **in** the container, **on** it, etc.). Returns empty list for non-containers.
-- `boolean matches(String objectName)`: Checks if this scenery object matches the given object name or any of its aliases. The comparison is case-insensitive and handles null input safely.
-- `Optional<String> getResponse(InteractionType interaction)`: Gets the response for a specific interaction type.
-- `Optional<String> getCustomResponse(String verb)`: Gets the response for a custom interaction verb. Custom interactions are defined via `withCustomInteraction()` and can be used with custom commands registered via `GameMap.Builder.withCommand()`.
-- `static Builder builder(String name)`: Creates a new builder for constructing SceneryObject instances.
+- #### `String getName()`: Scenery object name
+- #### `Set<String> getAliases()`: Scenery object aliases
+- #### `Map<InteractionType, String> getResponses()`: Returns all defined responses to interaction types for this scenery object
+- #### `Map<String, String> getCustomResponses()`: Returns all defined responses to custom verbs
+- #### `boolean isContainer()`: Flag for if this scenery object is a container or not
+- #### `Set<String> getAllowedItemNames()`: Gets the allowed item names for this container. Empty set means any item is allowed.
+- #### `List<String> getPrepositions()`: Gets the valid prepositions for this container (i.e. are things put **in** the container, **on** it, etc.). Returns empty list for non-containers.
+- #### `boolean matches(String objectName)`: Checks if this scenery object matches the given object name or any of its aliases. The comparison is case-insensitive and handles null input safely.
+- #### `Optional<String> getResponse(InteractionType interaction)`: Gets the response for a specific interaction type.
+- #### `Optional<String> getCustomResponse(String verb)`: Gets the response for a custom interaction verb. Custom interactions are defined via `withCustomInteraction()` and can be used with custom commands registered via `GameMap.Builder.withCommand()`.
+- #### `static Builder builder(String name)`: Creates a new builder for constructing SceneryObject instances.
 
 ### SceneryObject.Builder
-- `void addAlias(String alias)`: Adds an alias for this scenery object.
-- `Builder withAliases(String... aliasArray)`: Adds one or multiple aliases for this scenery object.
-- `Builder withInteraction(InteractionType interaction, String response)`: Adds an interaction response for this scenery object. This is a hard-coded response for when the user tries to interact with the scenery object.
-- `Builder withCustomInteraction(String verb, String response)`: Adds a custom interaction response for this scenery object. Custom interactions allow scenery to respond to verbs beyond the standard `InteractionType` enum. Use with custom commands registered via code `GameMap.Builder.withCommand()`. Example:
+- #### `void addAlias(String alias)`: Adds an alias for this scenery object.
+- #### `Builder withAliases(String... aliasArray)`: Adds one or multiple aliases for this scenery object.
+- #### `Builder withInteraction(InteractionType interaction, String response)`: Adds an interaction response for this scenery object. This is a hard-coded response for when the user tries to interact with the scenery object.
+- #### `Builder withCustomInteraction(String verb, String response)`: Adds a custom interaction response for this scenery object. Custom interactions allow scenery to respond to verbs beyond the standard `InteractionType` enum. Use with custom commands registered via code `GameMap.Builder.withCommand()`. Example:
   ``` java
   SceneryObject.builder("flower")
     .withCustomInteraction("smell", "It smells lovely!")
     .build();
   ```
-- `Builder asContainer()`: Marks this scenery object as a container that can hold items. Containers can have items placed on/in them using the "put" command. By default, containers use "on" and "onto" prepositions. Other prepositions like "under" can be added with `withPrepositions(String... preps)`
-- `Builder withAllowedItems(String... itemNames)`: Sets which items can be placed in this container by name (alias not included). If not called or called with no arguments, any item can be placed.
-- `Builder withPrepositions(String... preps)`: Sets the valid prepositions for this container. Default prepositions: "on" and "in".
-- `SceneryOject build()`: Builds the SceneryObject instance with the configured properties and runs some validations. If no interactions are defined, throw `IllegalStateException`
+- #### `Builder asContainer()`: Marks this scenery object as a container that can hold items. Containers can have items placed on/in them using the "put" command. By default, containers use "on" and "onto" prepositions. Other prepositions like "under" can be added with `withPrepositions(String... preps)`
+- #### `Builder withAllowedItems(String... itemNames)`: Sets which items can be placed in this container by name (alias not included). If not called or called with no arguments, any item can be placed.
+- #### `Builder withPrepositions(String... preps)`: Sets the valid prepositions for this container. Default prepositions: "on" and "in".
+- #### `SceneryOject build()`: Builds the SceneryObject instance with the configured properties and runs some validations. If no interactions are defined, throw `IllegalStateException`
 
 ### ParsedCommand
 Represents a parsed command from user input with normalized components.
-- `String getVerb()`: Return the normalized verb (e.g., "take", "look", "go").
-- `List<String> getDirectObjects()`: Return the direct objects (main targets of the command).
-- `String getFirstDirectObject()`: Return the first direct object, or empty string if none.
-- `List<String> getIndirectObjects()`: Return the indirect objects (objects after prepositions).
-- `String getFirstIndirectObject()`: Return the first indirect object, or empty string if none.
-- `String getPreposition()`: Return the preposition connecting direct and indirect objects, or null if none.
-- `CommandType getType()`: Return the type of command structure.
-- `boolean isImpliedObject()`: Return true if the object was inferred from context rather than explicitly stated.
-- `String getOriginalInput()`: Return the original user input before processing.
-- `boolean hasDirectObjects()`: Return true if this command has any direct objects.
-- `boolean hasIndirectObjects()`: Return true if this command has any indirect objects.
-- `boolean hasPreposition()`: Return true if this command has a preposition.
-- `List<String> getSequenceCommands()`: Return the list of additional commands in a sequence (for SEQUENCE type commands).
-- `boolean hasSequenceCommands()`: Return true if this is a sequence command with multiple parts.
+- #### `String getVerb()`: Return the normalized verb (e.g., "take", "look", "go").
+- #### `List<String> getDirectObjects()`: Return the direct objects (main targets of the command).
+- #### `String getFirstDirectObject()`: Return the first direct object, or empty string if none.
+- #### `List<String> getIndirectObjects()`: Return the indirect objects (objects after prepositions).
+- #### `String getFirstIndirectObject()`: Return the first indirect object, or empty string if none.
+- #### `String getPreposition()`: Return the preposition connecting direct and indirect objects, or null if none.
+- #### `CommandType getType()`: Return the type of command structure.
+- #### `boolean isImpliedObject()`: Return true if the object was inferred from context rather than explicitly stated.
+- #### `String getOriginalInput()`: Return the original user input before processing.
+- #### `boolean hasDirectObjects()`: Return true if this command has any direct objects.
+- #### `boolean hasIndirectObjects()`: Return true if this command has any indirect objects.
+- #### `boolean hasPreposition()`: Return true if this command has a preposition.
+- #### `List<String> getSequenceCommands()`: Return the list of additional commands in a sequence (for SEQUENCE type commands).
+- #### `boolean hasSequenceCommands()`: Return true if this is a sequence command with multiple parts.
 
 ### CommandContext
 Context provided to custom command handlers. Provides access to game utilities that custom handlers may need, including:
@@ -972,11 +972,11 @@ Context provided to custom command handlers. Provides access to game utilities t
 - Convenience methods for common operations
 ---
 Methods
-- `ResponseProvider getResponseProvider()`: Returns the response provider for consistent game messaging.
-- `ObjectResolver getObjectResolver()`: Returns the object resolver for finding items by name.
-- `Location getCurrentLocation()`: Returns the player's current location.
-- `Optional<Item> resolveItem(String name, Player player)`: Resolves an item by name from the player's inventory or current location. This is a convenience method that handles the common case of looking up an item that may be in inventory or at the current location.
-- `String putItemInContainer(String itemName, String containerName, String preposition)`: Puts an item into a container, returning a response message. Handles all aspects of container insertion:
+- #### `ResponseProvider getResponseProvider()`: Returns the response provider for consistent game messaging.
+- #### `ObjectResolver getObjectResolver()`: Returns the object resolver for finding items by name.
+- #### `Location getCurrentLocation()`: Returns the player's current location.
+- #### `Optional<Item> resolveItem(String name, Player player)`: Resolves an item by name from the player's inventory or current location. This is a convenience method that handles the common case of looking up an item that may be in inventory or at the current location.
+- #### `String putItemInContainer(String itemName, String containerName, String preposition)`: Puts an item into a container, returning a response message. Handles all aspects of container insertion:
   - Finding the item in inventory or at the current location
   - Finding the container (inventory container or scenery container)
   - Validating the preposition matches the container's accepted prepositions
@@ -991,70 +991,70 @@ Methods
     return ctx.putItemInContainer("ladder", "wall", "on");
 })
 ```
-- `boolean isItemInContainer(String itemName)`: Checks if an item is in any container at the current location.
+- #### `boolean isItemInContainer(String itemName)`: Checks if an item is in any container at the current location.
 
 ### ItemContainer
 A takeable item that can also contain other items. Items inserted into an inventory container follow the container between inventory and location (ContainerType.INVENTORY behavior).
 
-- `static Builder builder(@Nonnull final String name)`: Creates a new builder for an ItemContainer.
-- `boolean canAccept(@Nonnull final Item item)`: Checks whether the given item is allowed in this item container. 
-- `boolean insertItem(@Nonnull final Item item)`: Inserts the given item into the item container. Returns true if inserted, false if not or if the container doesn't allow the given item.
-- `boolean removeItem(@Nonnull final Item item)`: Removes the given item from this item container. Returns true if successfully removed, false otherwise.
-- `boolean containsItem(@Nonnull final String itemName)`: Checks if this item container contains the given item.
-- `Set<String> getInsertedItemNames()`: Returns all items in this container.
-- `int getCapacity()`: Returns the capacity of this item container.
-- `int getCurrentCount()`: Returns the number of items in this item container.
-- `boolean isFull()`: Checks for if this container is full.
-- `String getContainerStateDescription()`: Returns a string describing the state of this item container - if it's empty or what items it contains.
-- `List<String> getPreferredPrepositions()`: Returns a list of the preferred prepositions.
-- `ContainerType getContainerType()`: ContainerType.ITEM.
+- #### `static Builder builder(@Nonnull final String name)`: Creates a new builder for an ItemContainer.
+- #### `boolean canAccept(@Nonnull final Item item)`: Checks whether the given item is allowed in this item container. 
+- #### `boolean insertItem(@Nonnull final Item item)`: Inserts the given item into the item container. Returns true if inserted, false if not or if the container doesn't allow the given item.
+- #### `boolean removeItem(@Nonnull final Item item)`: Removes the given item from this item container. Returns true if successfully removed, false otherwise.
+- #### `boolean containsItem(@Nonnull final String itemName)`: Checks if this item container contains the given item.
+- #### `Set<String> getInsertedItemNames()`: Returns all items in this container.
+- #### `int getCapacity()`: Returns the capacity of this item container.
+- #### `int getCurrentCount()`: Returns the number of items in this item container.
+- #### `boolean isFull()`: Checks for if this container is full.
+- #### `String getContainerStateDescription()`: Returns a string describing the state of this item container - if it's empty or what items it contains.
+- #### `List<String> getPreferredPrepositions()`: Returns a list of the preferred prepositions.
+- #### `ContainerType getContainerType()`: ContainerType.ITEM.
 
 ### ItemContainer.Builder
 Builder for creating `ItemContainer` instances.
 (See `Item` and `ItemContainer` API docs for method details.)
 
-- `Builder withInventoryDescription(String inventoryDescription)`
-- `Builder withLocationDescription(String locationDescription)`
-- `Builder withDetailedDescription(String detailedDescription)`
-- `Builder withAliases(Set<String> aliases)`
-- `Builder withCapacity(int capacity)`
-- `Builder withAllowedItems(Set<String> allowedItemNames)`
-- `Builder withPrepositions(List<String> prepositions)`
-- `ItemContainer build()`: Builds the ItemContainer, using auto-generated descriptions for any not explicitly set.
+- #### `Builder withInventoryDescription(String inventoryDescription)`
+- #### `Builder withLocationDescription(String locationDescription)`
+- #### `Builder withDetailedDescription(String detailedDescription)`
+- #### `Builder withAliases(Set<String> aliases)`
+- #### `Builder withCapacity(int capacity)`
+- #### `Builder withAllowedItems(Set<String> allowedItemNames)`
+- #### `Builder withPrepositions(List<String> prepositions)`
+- #### `ItemContainer build()`: Builds the ItemContainer, using auto-generated descriptions for any not explicitly set.
 
 ### SceneryContainer
 A scenery container implemented as a scenery object adapter. When items are inserted into a scenery container, they are placed at the location (not kept in inventory). Examples: table, desk, shelf, counter Scenery containers have unlimited capacity by default (getCapacity() returns 0).
 Creates a scenery container that wraps a scenery object.
 
-- `SceneryObject getSceneryObject()`: Gets the wrapped scenery object.
-- `ContainerType getContainerType()`: ContainerType.SCENERY
-- `boolean canAccept(Item item)`: Checks if this container accepts the given item.
-- `boolean insertItem(Item item)`: Inserts an item into this scenery container. Returns true if successfully inserted, false if the item isn't allowed, the container is full, or otherwise didn't insert.
-- `boolean removeItem(Item item)`: Removes the given item from this container. Returns true if successfully removed, false otherwise.
-- `boolean containsItem(String itemName)`: Checks if this scenery container contains the given item.
-- `Set<String> getInsertedItemNames()`: Returns all items currently in this scenery container.
-- `int getCapacity()`: Gets the maximum capacity of this container. Returns 0, representing unlimited capacity.
-- `int getCurrentCount()`: Get the current number of items in this scenery container.
-- `boolean isFull()`: Checks if this container is full. Since scenery containers have unlimited capacity, this method always returns false.
-- `String getContainerStateDescription()`: Returns a string describing the state of this scenery container - if it's empty or what items it contains.
-- `List<String> getPreferredPrepositions()`: Returns a list of the preferred prepositions.
+- #### `SceneryObject getSceneryObject()`: Gets the wrapped scenery object.
+- #### `ContainerType getContainerType()`: ContainerType.SCENERY
+- #### `boolean canAccept(Item item)`: Checks if this container accepts the given item.
+- #### `boolean insertItem(Item item)`: Inserts an item into this scenery container. Returns true if successfully inserted, false if the item isn't allowed, the container is full, or otherwise didn't insert.
+- #### `boolean removeItem(Item item)`: Removes the given item from this container. Returns true if successfully removed, false otherwise.
+- #### `boolean containsItem(String itemName)`: Checks if this scenery container contains the given item.
+- #### `Set<String> getInsertedItemNames()`: Returns all items currently in this scenery container.
+- #### `int getCapacity()`: Gets the maximum capacity of this container. Returns 0, representing unlimited capacity.
+- #### `int getCurrentCount()`: Get the current number of items in this scenery container.
+- #### `boolean isFull()`: Checks if this container is full. Since scenery containers have unlimited capacity, this method always returns false.
+- #### `String getContainerStateDescription()`: Returns a string describing the state of this scenery container - if it's empty or what items it contains.
+- #### `List<String> getPreferredPrepositions()`: Returns a list of the preferred prepositions.
 
 ### OpenableItem
 Abstract base class for items that can be unlocked and opened. Implements the `Openable` interface for unified unlock/open handling. Extends `Item to inherit all item properties.
 
 Openable Interface - State Management
-- `boolean isUnlocked()`: Checks whether the openable object is unlocked or not.
-- `void setUnlocked(boolean unlocked)`: Sets the unlocked flag on this openable object.
-- `boolean isOpen()`: Checks whether the openable object is open or not.
-- `void setOpen(boolean open)`: Sets the open flag on this openable object.
+- #### `boolean isUnlocked()`: Checks whether the openable object is unlocked or not.
+- #### `void setUnlocked(boolean unlocked)`: Sets the unlocked flag on this openable object.
+- #### `boolean isOpen()`: Checks whether the openable object is open or not.
+- #### `void setOpen(boolean open)`: Sets the open flag on this openable object.
 Openable Interface - Configuration
-- `boolean requiresUnlocking()`: Checks whether this openable object requires unlocking.
+- #### `boolean requiresUnlocking()`: Checks whether this openable object requires unlocking.
 Abstract Methods for Subclass Implementation
-- `abstract Set<String> getTargetNames()`: Get all defined taget names for this openable object for command inference. This is the name and any defined aliases.
-- `abstract boolean matchesUnlockTarget(String name)`: Check for if the given String matches the object to unlock.
-- `abstract boolean matchesOpenTarget(String name)`: Check for if the given String matches the object to open.
-- `abstract UnlockResult tryUnlock(Player player, String providedAnswer, GameMapInterface gameMap)`: Implementation for the action that happens when the user says to unlock the object.
-- `abstract OpenResult tryOpen(Player player, String providedAnswer, GameMapInterface gameMap)`: Implementation for the action that happens when the user says to open the object.
+- #### `abstract Set<String> getTargetNames()`: Get all defined taget names for this openable object for command inference. This is the name and any defined aliases.
+- #### `abstract boolean matchesUnlockTarget(String name)`: Check for if the given String matches the object to unlock.
+- #### `abstract boolean matchesOpenTarget(String name)`: Check for if the given String matches the object to open.
+- #### `abstract UnlockResult tryUnlock(Player player, String providedAnswer, GameMapInterface gameMap)`: Implementation for the action that happens when the user says to unlock the object.
+- #### `abstract OpenResult tryOpen(Player player, String providedAnswer, GameMapInterface gameMap)`: Implementation for the action that happens when the user says to open the object.
 
 ### OpenableItemContainer
 Abstract base class for openable items that can also contain other items. Combines `OpenableItem` (unlock/open state) with `Container` (hold items). Items can only be inserted when the container is open. Subclasses must implement the five abstract `Openable` methods (`getTargetNames`, `matchesUnlockTarget`, `matchesOpenTarget`, `tryUnlock`, `tryOpen`).
@@ -1064,17 +1064,17 @@ Inherited from OpenableItem (see `OpenableItem` API docs for details):
 - Configuration: `requiresUnlocking()`
 
 Container Methods:
-- `boolean canAccept(Item item)`: Checks whether the given item can be inserted. Returns false if the container is not open, is full, or the item is not in the allowed items list (when restrictions are set). Returns true if the container is open, not full, and the item is allowed (or no restrictions are set).
-- `boolean insertItem(Item item)`: Inserts the given item into this container. Returns true if inserted, false if `canAccept` fails.
-- `boolean removeItem(Item item)`: Removes the given item from this container. Returns true if successfully removed, false otherwise.
-- `boolean containsItem(String itemName)`: Checks if this container contains an item with the given name (case-insensitive).
-- `Set<String> getInsertedItemNames()`: Returns all item names currently in this container.
-- `int getCapacity()`: Returns the maximum capacity of this container. 0 means unlimited.
-- `int getCurrentCount()`: Returns the number of items currently in this container.
-- `boolean isFull()`: Checks if this container is full.
-- `String getContainerStateDescription()`: Returns a formatted string describing the container's contents — "The [name] is empty." or "The [name] contains: item1, item2".
-- `List<String> getPreferredPrepositions()`: Returns the list of preferred prepositions for put commands.
-- `ContainerType getContainerType()`: Returns `ContainerType.INVENTORY`.
+- #### `boolean canAccept(Item item)`: Checks whether the given item can be inserted. Returns false if the container is not open, is full, or the item is not in the allowed items list (when restrictions are set). Returns true if the container is open, not full, and the item is allowed (or no restrictions are set).
+- #### `boolean insertItem(Item item)`: Inserts the given item into this container. Returns true if inserted, false if `canAccept` fails.
+- #### `boolean removeItem(Item item)`: Removes the given item from this container. Returns true if successfully removed, false otherwise.
+- #### `boolean containsItem(String itemName)`: Checks if this container contains an item with the given name (case-insensitive).
+- #### `Set<String> getInsertedItemNames()`: Returns all item names currently in this container.
+- #### `int getCapacity()`: Returns the maximum capacity of this container. 0 means unlimited.
+- #### `int getCurrentCount()`: Returns the number of items currently in this container.
+- #### `boolean isFull()`: Checks if this container is full.
+- #### `String getContainerStateDescription()`: Returns a formatted string describing the container's contents — "The [name] is empty." or "The [name] contains: item1, item2".
+- #### `List<String> getPreferredPrepositions()`: Returns the list of preferred prepositions for put commands.
+- #### `ContainerType getContainerType()`: Returns `ContainerType.INVENTORY`.
 
 ### OpenableLocation
 Abstract base class for locations that can be unlocked and opened. Implements the `Openable` interface for unified unlock/open handling. Extends `Location` to inherit all location properties. Provides key-based unlocking by default with auto-unlock behavior (if a player has the key and tries to `open`, it unlocks and opens in one action).
@@ -1082,38 +1082,38 @@ Abstract base class for locations that can be unlocked and opened. Implements th
 Descriptions change based on state — the `getLongDescription()` and `getShortDescription()` methods return different text depending on whether the location is locked, unlocked, or open.
 
 Openable Interface - State Management
-- `boolean isUnlocked()`: Checks whether the location is unlocked.
-- `void setUnlocked(boolean unlocked)`: Sets the unlocked state.
-- `boolean isOpen()`: Checks whether the location is open.
-- `void setOpen(boolean open)`: Sets the open state.
+- #### `boolean isUnlocked()`: Checks whether the location is unlocked.
+- #### `void setUnlocked(boolean unlocked)`: Sets the unlocked state.
+- #### `boolean isOpen()`: Checks whether the location is open.
+- #### `void setOpen(boolean open)`: Sets the open state.
 
 Openable Interface - Configuration
-- `boolean requiresUnlocking()`: Returns true by default. Subclasses can override if needed.
+- #### `boolean requiresUnlocking()`: Returns true by default. Subclasses can override if needed.
 
 Openable Interface - Default Implementations
-- `UnlockResult tryUnlock(Player player, String providedAnswer, GameMapInterface gameMap)`: Logic for when the user tries to unlock the object. Defaults to simple key-based unlocking. (Checks if the player has the required key (from `getRequiredKeyName()`). If `providedAnswer` is provided, validates it refers to the required key. On success, sets unlocked to true and calls `onUnlock(gameMap)`).
-- `OpenResult tryOpen(Player player, String providedAnswer, GameMapInterface gameMap)`: Logic for when the user tries to open the object. Handles opening with auto-unlock. Defaults to simple key-based opening. (If locked and player has the key, automatically unlocks and opens (calls `onUnlockAndOpen(gameMap)`). If already unlocked, just opens (calls `onOpen(gameMap)`). If locked without key, returns failure.)
+- #### `UnlockResult tryUnlock(Player player, String providedAnswer, GameMapInterface gameMap)`: Logic for when the user tries to unlock the object. Defaults to simple key-based unlocking. (Checks if the player has the required key (from `getRequiredKeyName()`). If `providedAnswer` is provided, validates it refers to the required key. On success, sets unlocked to true and calls `onUnlock(gameMap)`).
+- #### `OpenResult tryOpen(Player player, String providedAnswer, GameMapInterface gameMap)`: Logic for when the user tries to open the object. Handles opening with auto-unlock. Defaults to simple key-based opening. (If locked and player has the key, automatically unlocks and opens (calls `onUnlockAndOpen(gameMap)`). If already unlocked, just opens (calls `onOpen(gameMap)`). If locked without key, returns failure.)
 
 Template Methods (override `Location` behavior)
-- `String getLongDescription()`: Returns `getOpenLongDescription()` if open, `getUnlockedLongDescription()` if unlocked, or the base long description if locked.
-- `String getShortDescription()`: Returns `getOpenShortDescription()` if open, `getUnlockedShortDescription()` if unlocked, or the base short description if locked.
+- #### `String getLongDescription()`: Returns `getOpenLongDescription()` if open, `getUnlockedLongDescription()` if unlocked, or the base long description if locked.
+- #### `String getShortDescription()`: Returns `getOpenShortDescription()` if open, `getUnlockedShortDescription()` if unlocked, or the base short description if locked.
 
 Abstract Methods for Subclass Implementation
-- `abstract Set<String> getTargetNames()`: Get all target names for command inference (name and aliases).
-- `abstract boolean matchesUnlockTarget(String name)`: Check if the given string matches the object to unlock.
-- `abstract boolean matchesOpenTarget(String name)`: Check if the given string matches the object to open.
-- `abstract String getRequiredKeyName()`: Returns the name of the key item required to unlock this location if using key-based locking.
-- `abstract String onUnlock(GameMapInterface gameMap)`: Called on successful unlock. Returns the message to display.
-- `abstract String onOpen(GameMapInterface gameMap)`: Called on successful open (when already unlocked). Returns the message to display.
-- `abstract String onUnlockAndOpen(GameMapInterface gameMap)`: Called when unlocked and opened in one action (player has key and tries to open). Returns the message to display.
-- `abstract String getUnlockedLongDescription()`: Long description when unlocked but not open.
-- `abstract String getUnlockedShortDescription()`: Short description when unlocked but not open.
-- `abstract String getOpenLongDescription()`: Long description when open.
-- `abstract String getOpenShortDescription()`: Short description when open.
-- `abstract String getAlreadyUnlockedMessage()`: Message when player tries to unlock but it's already unlocked.
-- `abstract String getUnlockNoKeyMessage()`: Message when player tries to unlock without the key.
-- `abstract String getAlreadyOpenMessage()`: Message when player tries to open but it's already open.
-- `abstract String getOpenLockedNoKeyMessage()`: Message when player tries to open but it's locked and they don't have the key.
+- #### `abstract Set<String> getTargetNames()`: Get all target names for command inference (name and aliases).
+- #### `abstract boolean matchesUnlockTarget(String name)`: Check if the given string matches the object to unlock.
+- #### `abstract boolean matchesOpenTarget(String name)`: Check if the given string matches the object to open.
+- #### `abstract String getRequiredKeyName()`: Returns the name of the key item required to unlock this location if using key-based locking.
+- #### `abstract String onUnlock(GameMapInterface gameMap)`: Called on successful unlock. Returns the message to display.
+- #### `abstract String onOpen(GameMapInterface gameMap)`: Called on successful open (when already unlocked). Returns the message to display.
+- #### `abstract String onUnlockAndOpen(GameMapInterface gameMap)`: Called when unlocked and opened in one action (player has key and tries to open). Returns the message to display.
+- #### `abstract String getUnlockedLongDescription()`: Long description when unlocked but not open.
+- #### `abstract String getUnlockedShortDescription()`: Short description when unlocked but not open.
+- #### `abstract String getOpenLongDescription()`: Long description when open.
+- #### `abstract String getOpenShortDescription()`: Short description when open.
+- #### `abstract String getAlreadyUnlockedMessage()`: Message when player tries to unlock but it's already unlocked.
+- #### `abstract String getUnlockNoKeyMessage()`: Message when player tries to unlock without the key.
+- #### `abstract String getAlreadyOpenMessage()`: Message when player tries to open but it's already open.
+- #### `abstract String getOpenLockedNoKeyMessage()`: Message when player tries to open but it's locked and they don't have the key.
 
 ### OpenableSceneryObject
 Abstract base class for scenery objects at a location that can be opened and optionally unlocked but cannot be picked up. Implements the `Openable` interface for unified unlock/open handling. Extends `SceneryObject` to inherit all scenery properties. Use for wall safes, cabinets, gates, or any non-takeable object that con be opened.
@@ -1121,43 +1121,43 @@ Abstract base class for scenery objects at a location that can be opened and opt
 If `requiresUnlocking` is false, the object starts unlocked and the player can `open` it directly.
 
 Openable Interface - State Management
-- `boolean isUnlocked()`: Checks whether the object is unlocked.
-- `void setUnlocked(boolean unlocked)`: Sets the unlocked state.
-- `boolean isOpen()`: Checks whether the object is open.
-- `void setOpen(boolean open)`: Sets the open state.
+- #### `boolean isUnlocked()`: Checks whether the object is unlocked.
+- #### `void setUnlocked(boolean unlocked)`: Sets the unlocked state.
+- #### `boolean isOpen()`: Checks whether the object is open.
+- #### `void setOpen(boolean open)`: Sets the open state.
 
 Openable Interface - Configuration
-- `boolean requiresUnlocking()`: Returns whether this object requires unlocking before it can be opened.
+- #### `boolean requiresUnlocking()`: Returns whether this object requires unlocking before it can be opened.
 
 Abstract Methods for Subclass Implementation
-- `abstract Set<String> getTargetNames()`: Get all target names for command inference (name and aliases).
-- `abstract boolean matchesUnlockTarget(String name)`: Check if the given string matches the object to unlock.
-- `abstract boolean matchesOpenTarget(String name)`: Check if the given string matches the object to open.
-- `abstract UnlockResult tryUnlock(Player player, String providedAnswer, GameMapInterface gameMap)`: Implementation for the unlock action.
-- `abstract OpenResult tryOpen(Player player, String providedAnswer, GameMapInterface gameMap)`: Implementation for the open action.
+- #### `abstract Set<String> getTargetNames()`: Get all target names for command inference (name and aliases).
+- #### `abstract boolean matchesUnlockTarget(String name)`: Check if the given string matches the object to unlock.
+- #### `abstract boolean matchesOpenTarget(String name)`: Check if the given string matches the object to open.
+- #### `abstract UnlockResult tryUnlock(Player player, String providedAnswer, GameMapInterface gameMap)`: Implementation for the unlock action.
+- #### `abstract OpenResult tryOpen(Player player, String providedAnswer, GameMapInterface gameMap)`: Implementation for the open action.
 
 ### HintConfigurationBuilder
 Builder for creating hint configurations. Used via `GameMap.Builder.withHints()` to define progressive hint phases and a determiner that selects the current phase based on game state.
 
-- `HintConfigurationBuilder addPhase(String phaseKey, String hint1, String hint2, String hint3)`: Adds a hint phase with three progressive hints — a subtle nudge (level 1), a more direct hint (level 2), and an explicit answer (level 3). The `phaseKey` is a unique identifier used by the determiner to select this phase.
-- `HintConfigurationBuilder determiner(HintPhaseDeterminer determiner)`: Sets the phase determiner that identifies the current puzzle phase. The determiner receives `Player` and `GameMap` and returns the phase key string for the current hint phase.
-- `HintConfiguration build()`: Builds the hint configuration. Throws `IllegalStateException` if no determiner was set.
+- #### `HintConfigurationBuilder addPhase(String phaseKey, String hint1, String hint2, String hint3)`: Adds a hint phase with three progressive hints — a subtle nudge (level 1), a more direct hint (level 2), and an explicit answer (level 3). The `phaseKey` is a unique identifier used by the determiner to select this phase.
+- #### `HintConfigurationBuilder determiner(HintPhaseDeterminer determiner)`: Sets the phase determiner that identifies the current puzzle phase. The determiner receives `Player` and `GameMap` and returns the phase key string for the current hint phase.
+- #### `HintConfiguration build()`: Builds the hint configuration. Throws `IllegalStateException` if no determiner was set.
 
 ### GameMapInterface
 Interface for game maps that provide locations and items for the game world. Passed to `tryUnlock` and `tryOpen` methods so openable objects can access game state during unlock/open logic.
 
-- `Location getLocation(String locationKey)`: Gets a location by its unique key/name. Returns the location or null if not found.
-- `Item getItem(String itemKey)`: Gets an item by its unique key/name. Returns the item or null if not found.
-- `Collection<Location> getAllLocations()`: Gets all locations in this game map.
-- `Collection<Item> getAllItems()`: Gets all items in this game map.
-- `Location getStartingLocation()`: Gets the starting location for new players.
-- `void resetMap()`: Resets the game map to its initial state. Restores item locations, clears visited flags, and restores any other initial state.
+- #### `Location getLocation(String locationKey)`: Gets a location by its unique key/name. Returns the location or null if not found.
+- #### `Item getItem(String itemKey)`: Gets an item by its unique key/name. Returns the item or null if not found.
+- #### `Collection<Location> getAllLocations()`: Gets all locations in this game map.
+- #### `Collection<Item> getAllItems()`: Gets all items in this game map.
+- #### `Location getStartingLocation()`: Gets the starting location for new players.
+- #### `void resetMap()`: Resets the game map to its initial state. Restores item locations, clears visited flags, and restores any other initial state.
 
 ### ContainerType
 Enum representing the type of container and its behavior.
 
-- `INVENTORY`: Items inserted into this container stay in the player's inventory and follow the container when taken or dropped.
-- `SCENERY`: Items inserted into this container are placed at the current location (not kept in inventory).
+- #### `INVENTORY`: Items inserted into this container stay in the player's inventory and follow the container when taken or dropped.
+- #### `SCENERY`: Items inserted into this container are placed at the current location (not kept in inventory).
 
 ### Direction
 Enum defining all valid movement directions. Used with `GameMap.Builder.connect()` and `GameMap.Builder.connectBidirectional()` to wire up location connections.
@@ -1173,3 +1173,11 @@ Values: `CLIMB`, `DRINK`, `EAT`, `KICK`, `LOOK`, `PUNCH`, `READ`, `SWIM`, `TAKE`
 
 For interactions beyond these built-in types, use `SceneryObject.Builder.withCustomInteraction(String verb, String response)` with a custom command.
 
+### GameState
+Enum representing the current state of the game for a player session. 
+- `PLAYING`: Normal gameplay - player is actively playing.
+- `WAITING_FOR_START_ANSWER`: Waiting for player to answer the initial "have you played before?" question.
+- `WAITING_FOR_QUIT_CONFIRMATION`: Waiting for player to confirm quit command.
+- `WAITING_FOR_RESTART_CONFIRMATION`: Waiting for player to confirm restart command.
+- `WAITING_FOR_UNLOCK_CODE`: Waiting for player to enter a code/word to unlock an openable object.
+- `WAITING_FOR_OPEN_CODE`: Waiting for player to enter a code/word to open an openable object.
