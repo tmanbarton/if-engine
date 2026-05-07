@@ -858,6 +858,8 @@ public static void main(String[] args) {
 ### Player
 Represents the player in the game.
 
+`import io.github.tmanbarton.ifengine.game.Player;`
+
 - #### `Location getCurrentLocation()`: Returns the location object that the player is currently at.
 - #### `void setCurrentLocation(Location location)`: Sets the players current location to the provided location.
 - #### `List<Item> getInventory()`: Returns the player's inventory.
@@ -879,6 +881,8 @@ Represents the player in the game.
 
 ### Location
 Represents a location in the game world.
+
+`import io.github.tmanbarton.ifengine.Location;`
 
 - #### `void addConnection(Direction direction, Location location)`: Connects this location to another location with the specified direction
 - #### `void replaceConnection(Direction direction, Location location)`: Replaces the current location that's connected to this location in the given direction with the provided location. If no location is connected in that direction, a new connection is added.
@@ -919,6 +923,8 @@ Represents a location in the game world.
 ### SceneryObject
 Represents a scenery object in the game world that players can interact with but cannot take/isn't part of the game and can't affect the world. Scenery objects have names, aliases, and specific responses to different interaction types.
 
+`import io.github.tmanbarton.ifengine.SceneryObject;`
+
 Supports both standard `InteractionType` responses and custom string-based interactions for use with custom commands registered via `GameMap.Builder.withCommand()`.
 - #### `String getName()`: Scenery object name
 - #### `Set<String> getAliases()`: Scenery object aliases
@@ -949,6 +955,9 @@ Supports both standard `InteractionType` responses and custom string-based inter
 
 ### ParsedCommand
 Represents a parsed command from user input with normalized components.
+
+`import io.github.tmanbarton.ifengine.parser.ParsedCommand;`
+
 - #### `String getVerb()`: Return the normalized verb (e.g., "take", "look", "go").
 - #### `List<String> getDirectObjects()`: Return the direct objects (main targets of the command).
 - #### `String getFirstDirectObject()`: Return the first direct object, or empty string if none.
@@ -970,6 +979,9 @@ Context provided to custom command handlers. Provides access to game utilities t
 - ObjectResolver for finding items by name
 - Current location information
 - Convenience methods for common operations
+
+`import io.github.tmanbarton.ifengine.command.CommandContext;`
+
 ---
 Methods
 - #### `ResponseProvider getResponseProvider()`: Returns the response provider for consistent game messaging.
@@ -995,6 +1007,8 @@ Methods
 
 ### ItemContainer
 A takeable item that can also contain other items. Items inserted into an inventory container follow the container between inventory and location (ContainerType.INVENTORY behavior).
+
+`import io.github.tmanbarton.ifengine.ItemContainer;`
 
 - #### `static Builder builder(@Nonnull final String name)`: Creates a new builder for an ItemContainer.
 - #### `boolean canAccept(@Nonnull final Item item)`: Checks whether the given item is allowed in this item container. 
@@ -1026,6 +1040,8 @@ Builder for creating `ItemContainer` instances.
 A scenery container implemented as a scenery object adapter. When items are inserted into a scenery container, they are placed at the location (not kept in inventory). Examples: table, desk, shelf, counter Scenery containers have unlimited capacity by default (getCapacity() returns 0).
 Creates a scenery container that wraps a scenery object.
 
+`import io.github.tmanbarton.ifengine.SceneryContainer;`
+
 - #### `SceneryObject getSceneryObject()`: Gets the wrapped scenery object.
 - #### `ContainerType getContainerType()`: ContainerType.SCENERY
 - #### `boolean canAccept(Item item)`: Checks if this container accepts the given item.
@@ -1040,7 +1056,9 @@ Creates a scenery container that wraps a scenery object.
 - #### `List<String> getPreferredPrepositions()`: Returns a list of the preferred prepositions.
 
 ### OpenableItem
-Abstract base class for items that can be unlocked and opened. Implements the `Openable` interface for unified unlock/open handling. Extends `Item to inherit all item properties.
+Abstract base class for items that can be unlocked and opened. Implements the `Openable` interface for unified unlock/open handling. Extends Item to inherit all item properties.
+
+`import io.github.tmanbarton.ifengine.OpenableItem;`
 
 Openable Interface - State Management
 - #### `boolean isUnlocked()`: Checks whether the openable object is unlocked or not.
@@ -1058,6 +1076,8 @@ Abstract Methods for Subclass Implementation
 
 ### OpenableItemContainer
 Abstract base class for openable items that can also contain other items. Combines `OpenableItem` (unlock/open state) with `Container` (hold items). Items can only be inserted when the container is open. Subclasses must implement the five abstract `Openable` methods (`getTargetNames`, `matchesUnlockTarget`, `matchesOpenTarget`, `tryUnlock`, `tryOpen`).
+
+`import io.github.tmanbarton.ifengine.OpenableItemContainer;`
 
 Inherited from OpenableItem (see `OpenableItem` API docs for details):
 - State management: `isUnlocked()`, `setUnlocked(boolean)`, `isOpen()`, `setOpen(boolean)`
@@ -1080,6 +1100,8 @@ Container Methods:
 Abstract base class for locations that can be unlocked and opened. Implements the `Openable` interface for unified unlock/open handling. Extends `Location` to inherit all location properties. Provides key-based unlocking by default with auto-unlock behavior (if a player has the key and tries to `open`, it unlocks and opens in one action).
 
 Descriptions change based on state — the `getLongDescription()` and `getShortDescription()` methods return different text depending on whether the location is locked, unlocked, or open.
+
+`import io.github.tmanbarton.ifengine.OpenableLocation;`
 
 Openable Interface - State Management
 - #### `boolean isUnlocked()`: Checks whether the location is unlocked.
@@ -1120,6 +1142,8 @@ Abstract base class for scenery objects at a location that can be opened and opt
 
 If `requiresUnlocking` is false, the object starts unlocked and the player can `open` it directly.
 
+`import io.github.tmanbarton.ifengine.OpenableSceneryObject;`
+
 Openable Interface - State Management
 - #### `boolean isUnlocked()`: Checks whether the object is unlocked.
 - #### `void setUnlocked(boolean unlocked)`: Sets the unlocked state.
@@ -1139,12 +1163,16 @@ Abstract Methods for Subclass Implementation
 ### HintConfigurationBuilder
 Builder for creating hint configurations. Used via `GameMap.Builder.withHints()` to define progressive hint phases and a determiner that selects the current phase based on game state.
 
+`import io.github.tmanbarton.ifengine.game.HintConfigurationBuilder;`
+
 - #### `HintConfigurationBuilder addPhase(String phaseKey, String hint1, String hint2, String hint3)`: Adds a hint phase with three progressive hints — a subtle nudge (level 1), a more direct hint (level 2), and an explicit answer (level 3). The `phaseKey` is a unique identifier used by the determiner to select this phase.
 - #### `HintConfigurationBuilder determiner(HintPhaseDeterminer determiner)`: Sets the phase determiner that identifies the current puzzle phase. The determiner receives `Player` and `GameMap` and returns the phase key string for the current hint phase.
 - #### `HintConfiguration build()`: Builds the hint configuration. Throws `IllegalStateException` if no determiner was set.
 
 ### GameMapInterface
 Interface for game maps that provide locations and items for the game world. Passed to `tryUnlock` and `tryOpen` methods so openable objects can access game state during unlock/open logic.
+
+`import io.github.tmanbarton.ifengine.game.GameMapInterface;`
 
 - #### `Location getLocation(String locationKey)`: Gets a location by its unique key/name. Returns the location or null if not found.
 - #### `Item getItem(String itemKey)`: Gets an item by its unique key/name. Returns the item or null if not found.
@@ -1156,11 +1184,15 @@ Interface for game maps that provide locations and items for the game world. Pas
 ### ContainerType
 Enum representing the type of container and its behavior.
 
+`import io.github.tmanbarton.ifengine.ContainerType;`
+
 - #### `INVENTORY`: Items inserted into this container stay in the player's inventory and follow the container when taken or dropped.
 - #### `SCENERY`: Items inserted into this container are placed at the current location (not kept in inventory).
 
 ### Direction
 Enum defining all valid movement directions. Used with `GameMap.Builder.connect()` and `GameMap.Builder.connectBidirectional()` to wire up location connections.
+
+`import io.github.tmanbarton.ifengine.Direction;`
 
 Values: `NORTH`, `SOUTH`, `EAST`, `WEST`, `NORTHEAST`, `NORTHWEST`, `SOUTHEAST`, `SOUTHWEST`, `UP`, `DOWN`, `IN`, `OUT`
 
@@ -1169,12 +1201,17 @@ Players can use abbreviations: `n`, `s`, `e`, `w`, `ne`, `nw`, `se`, `sw`, `u`, 
 ### InteractionType
 Enum representing the types of interactions that can be performed on scenery objects. Used with `SceneryObject.Builder.withInteraction()` to define how scenery responds to built-in commands.
 
+`import io.github.tmanbarton.ifengine.InteractionType;`
+
 Values: `CLIMB`, `DRINK`, `EAT`, `KICK`, `LOOK`, `PUNCH`, `READ`, `SWIM`, `TAKE`
 
 For interactions beyond these built-in types, use `SceneryObject.Builder.withCustomInteraction(String verb, String response)` with a custom command.
 
 ### GameState
-Enum representing the current state of the game for a player session. 
+Enum representing the current state of the game for a player session.
+
+`import io.github.tmanbarton.ifengine.game.GameState;`
+
 - `PLAYING`: Normal gameplay - player is actively playing.
 - `WAITING_FOR_START_ANSWER`: Waiting for player to answer the initial "have you played before?" question.
 - `WAITING_FOR_QUIT_CONFIRMATION`: Waiting for player to confirm quit command.

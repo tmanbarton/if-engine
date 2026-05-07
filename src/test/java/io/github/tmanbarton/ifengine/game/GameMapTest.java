@@ -200,7 +200,7 @@ class GameMapTest {
     }
 
     @Test
-    @DisplayName("connectOneWay - creates unidirectional connection")
+    @DisplayName("connect - creates unidirectional connection")
     void testConnect_createsUnidirectionalConnection() {
       final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
       final Location forest = new Location("forest", "A dark forest.", "In the forest.");
