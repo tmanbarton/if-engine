@@ -7,10 +7,20 @@ public enum InteractionType {
   CLIMB,
   DRINK,
   EAT,
+  JUMP,
   KICK,
+  LICK,
   LOOK,
+//  LOOK_IN,
+//  LOOK_UNDER,
+  PLAY,
+  POKE,
   PUNCH,
+  PUSH,
   READ,
+  RIDE,
+  SMELL,
   SWIM,
-  TAKE
+  TAKE,
+  YELL
 }

@@ -1203,7 +1203,7 @@ Enum representing the types of interactions that can be performed on scenery obj
 
 `import io.github.tmanbarton.ifengine.InteractionType;`
 
-Values: `CLIMB`, `DRINK`, `EAT`, `KICK`, `LOOK`, `PUNCH`, `READ`, `SWIM`, `TAKE`
+Values: `CLIMB`,`DRINK`,`EAT`,`JUMP`,`KICK`,`LICK`,`LOOK`,`PLAY`,`POKE`,`PUNCH`,`PUSH`,`READ`,`RIDE`,`SMELL`,`SWIM`,`TAKE`,`YELL`
 
 For interactions beyond these built-in types, use `SceneryObject.Builder.withCustomInteraction(String verb, String response)` with a custom command.
 
