@@ -2,6 +2,7 @@ package io.github.tmanbarton.ifengine.command.handlers;
 
 import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.Location;
+import io.github.tmanbarton.ifengine.game.GameMapInterface;
 import io.github.tmanbarton.ifengine.game.Player;
 import io.github.tmanbarton.ifengine.game.SceneryInteractionHandler;
 import io.github.tmanbarton.ifengine.parser.CommandType;
@@ -10,6 +11,7 @@ import io.github.tmanbarton.ifengine.parser.ObjectResolver;
 import io.github.tmanbarton.ifengine.parser.ParsedCommand;
 import io.github.tmanbarton.ifengine.response.DefaultResponses;
 import io.github.tmanbarton.ifengine.response.ResponseProvider;
+import io.github.tmanbarton.ifengine.test.TestGameMap;
 import io.github.tmanbarton.ifengine.test.TestItemFactory;
 import io.github.tmanbarton.ifengine.test.TestLocationFactory;
 
@@ -35,6 +37,7 @@ class TakeHandlerTest {
   private Player player;
   private Location location;
   private ResponseProvider responses;
+  private GameMapInterface gameMap;
 
   @BeforeEach
   void setUp() {
@@ -45,6 +48,7 @@ class TakeHandlerTest {
     handler = new TakeHandler(objectResolver, sceneryHandler, contextManager, responses);
     location = TestLocationFactory.createDefaultLocation();
     player = new Player(location);
+    gameMap = TestGameMap.createEmpty();
   }
 
   @Nested
@@ -57,7 +61,7 @@ class TakeHandlerTest {
       location.addItem(key);
       final ParsedCommand command = createTakeCommand("key");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getTakeSuccess(), result);
       assertTrue(player.hasItem("key"));
@@ -71,7 +75,7 @@ class TakeHandlerTest {
       player.addItem(key);
       final ParsedCommand command = createTakeCommand("key");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getTakeAlreadyHave(), result);
     }
@@ -81,7 +85,7 @@ class TakeHandlerTest {
     void testHandle_takeItemNotPresent() {
       final ParsedCommand command = createTakeCommand("nonexistent");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getItemNotPresent("nonexistent"), result);
     }
@@ -93,7 +97,7 @@ class TakeHandlerTest {
       location.addItem(key);
       final ParsedCommand command = createTakeCommand();
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getTakeSuccess(), result);
       assertTrue(player.hasItem("key"));
@@ -108,7 +112,7 @@ class TakeHandlerTest {
       location.addItem(rope);
       final ParsedCommand command = createTakeCommand();
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getTakeNeedToSpecify(), result);
     }
@@ -118,7 +122,7 @@ class TakeHandlerTest {
     void testHandle_takeNoObjectNoItems() {
       final ParsedCommand command = createTakeCommand();
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getTakeNoItemsAvailable(), result);
     }
@@ -136,7 +140,7 @@ class TakeHandlerTest {
       location.addItem(rope);
       final ParsedCommand command = createTakeCommand("all");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getTakeAllSuccess(), result);
       assertTrue(player.hasItem("key"));
@@ -149,7 +153,7 @@ class TakeHandlerTest {
     void testHandle_takeAllFromEmptyLocation() {
       final ParsedCommand command = createTakeCommand("all");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getTakeNoItemsAvailable(), result);
     }
@@ -161,7 +165,7 @@ class TakeHandlerTest {
       location.addItem(key);
       final ParsedCommand command = createTakeCommand("everything");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getTakeSuccess(), result);
       assertTrue(player.hasItem("key"));
@@ -174,7 +178,7 @@ class TakeHandlerTest {
       location.addItem(key);
       final ParsedCommand command = createTakeCommand("all");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       // Single item returns getTakeSuccess, not getTakeAllSuccess
       assertEquals(responses.getTakeSuccess(), result);
@@ -191,7 +195,7 @@ class TakeHandlerTest {
       location.addItem(key);
       final ParsedCommand command = createTakeCommand();
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getTakeSuccess(), result);
       assertTrue(player.hasItem("key"));
@@ -206,7 +210,7 @@ class TakeHandlerTest {
       location.addItem(rope);
       final ParsedCommand command = createTakeCommand();
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getTakeNeedToSpecify(), result);
       // Neither item should be taken
@@ -268,7 +272,7 @@ class TakeHandlerTest {
       location.addItem(key);
       final ParsedCommand command = createTakeCommand("KEY");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getTakeSuccess(), result);
       assertTrue(player.hasItem("key"));
@@ -281,7 +285,7 @@ class TakeHandlerTest {
       location.addItem(key);
       final ParsedCommand command = createTakeCommand("KeY");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getTakeSuccess(), result);
     }
@@ -297,7 +301,7 @@ class TakeHandlerTest {
       location.addItem(key);
       final ParsedCommand command = createTakeCommand("key");
 
-      handler.handle(player, command);
+      handler.handle(player, gameMap, command);
 
       assertFalse(location.getItems().contains(key));
     }
@@ -309,7 +313,7 @@ class TakeHandlerTest {
       location.addItem(key);
       final ParsedCommand command = createTakeCommand("key");
 
-      handler.handle(player, command);
+      handler.handle(player, gameMap, command);
 
       assertTrue(player.getInventory().contains(key));
     }
@@ -322,8 +326,8 @@ class TakeHandlerTest {
       location.addItem(key);
       location.addItem(rope);
 
-      handler.handle(player, createTakeCommand("key"));
-      handler.handle(player, createTakeCommand("rope"));
+      handler.handle(player, gameMap, createTakeCommand("key"));
+      handler.handle(player, gameMap, createTakeCommand("rope"));
 
       assertEquals(2, player.getInventory().size());
       assertTrue(player.hasItem("key"));

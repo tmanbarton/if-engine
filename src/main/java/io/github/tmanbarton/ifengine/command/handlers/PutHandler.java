@@ -1,6 +1,7 @@
 package io.github.tmanbarton.ifengine.command.handlers;
 
 import io.github.tmanbarton.ifengine.command.BaseCommandHandler;
+import io.github.tmanbarton.ifengine.game.GameMapInterface;
 import io.github.tmanbarton.ifengine.game.Player;
 import io.github.tmanbarton.ifengine.parser.ObjectResolver;
 import io.github.tmanbarton.ifengine.parser.ParsedCommand;
@@ -37,7 +38,7 @@ public class PutHandler implements BaseCommandHandler {
 
   @Override
   @Nonnull
-  public String handle(@Nonnull final Player player, @Nonnull final ParsedCommand command) {
+  public String handle(@Nonnull final Player player, @Nonnull final GameMapInterface gameMapInterface, @Nonnull final ParsedCommand command) {
     // Check if item is specified
     if (command.getDirectObjects().isEmpty()) {
       return responseProvider.getPutWhat();

@@ -52,7 +52,7 @@ public class UnlockHandler implements BaseCommandHandler {
 
   @Override
   @Nonnull
-  public String handle(@Nonnull final Player player, @Nonnull final ParsedCommand command) {
+  public String handle(@Nonnull final Player player, @Nonnull final GameMapInterface gameMapInterface, @Nonnull final ParsedCommand command) {
     return handleUnlock(player, command);
   }
 

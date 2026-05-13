@@ -2,6 +2,7 @@ package io.github.tmanbarton.ifengine.command.handlers;
 
 import io.github.tmanbarton.ifengine.InteractionType;
 import io.github.tmanbarton.ifengine.Item;
+import io.github.tmanbarton.ifengine.game.GameMapInterface;
 import io.github.tmanbarton.ifengine.response.ResponseProvider;
 import io.github.tmanbarton.ifengine.game.AbstractInteractionHandler;
 import io.github.tmanbarton.ifengine.game.Player;
@@ -70,18 +71,18 @@ public class ReadHandler extends AbstractInteractionHandler {
 
   @Override
   @Nonnull
-  public String handle(@Nonnull final Player player, @Nonnull final ParsedCommand command) {
+  public String handle(@Nonnull final Player player, @Nonnull final GameMapInterface gameMapInterface, @Nonnull final ParsedCommand command) {
     // If no dependencies, fall back to scenery-only handling
     if (objectResolver == null || contextManager == null) {
-      return super.handle(player, command);
+      return super.handle(player, gameMapInterface, command);
     }
 
     // Full item + scenery handling
-    return handleRead(player, command);
+    return handleRead(player, gameMapInterface, command);
   }
 
   @Nonnull
-  private String handleRead(@Nonnull final Player player, @Nonnull final ParsedCommand command) {
+  private String handleRead(@Nonnull final Player player, @Nonnull final GameMapInterface gameMapInterface, @Nonnull final ParsedCommand command) {
     ObjectResolver.ResolutionResult result = null;
 
     if (command.getDirectObjects().isEmpty()) {
@@ -91,7 +92,7 @@ public class ReadHandler extends AbstractInteractionHandler {
         return inferredItem.getDetailedDescription();
       }
       // No readable items found - fall back to scenery handler
-      return super.handle(player, command);
+      return super.handle(player, gameMapInterface, command);
     } else {
       // Object specified - resolve it
       final String objectName = command.getFirstDirectObject();
@@ -117,7 +118,7 @@ public class ReadHandler extends AbstractInteractionHandler {
       }
     } else {
       // No item found - fall back to scenery handler
-      return super.handle(player, command);
+      return super.handle(player, gameMapInterface, command);
     }
   }
 

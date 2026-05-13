@@ -4,6 +4,7 @@ import io.github.tmanbarton.ifengine.Container;
 import io.github.tmanbarton.ifengine.InteractionType;
 import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.command.BaseCommandHandler;
+import io.github.tmanbarton.ifengine.game.GameMapInterface;
 import io.github.tmanbarton.ifengine.game.Player;
 import io.github.tmanbarton.ifengine.game.SceneryInteractionHandler;
 import io.github.tmanbarton.ifengine.parser.ContextManager;
@@ -46,7 +47,7 @@ public class TakeHandler implements BaseCommandHandler {
 
   @Override
   @Nonnull
-  public String handle(@Nonnull final Player player, @Nonnull final ParsedCommand command) {
+  public String handle(@Nonnull final Player player, @Nonnull final GameMapInterface gameMapInterface, @Nonnull final ParsedCommand command) {
     return handleTake(player, command);
   }
 

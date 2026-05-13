@@ -22,8 +22,8 @@ import javax.annotation.Nullable;
  * Example usage:
  * <pre>
  * new GameMap.Builder()
- *     .withCommand("xyzzy", (player, cmd, ctx) -> "Nothing happens.")
- *     .withCommand("eat", (player, cmd, ctx) -> {
+ *     .withCommand("xyzzy", (player, gameMap, cmd, ctx) -> "Nothing happens.")
+ *     .withCommand("eat", (player, gameMap, cmd, ctx) -> {
  *         // Handle special case
  *         if (cmd.getFirstDirectObject().equals("magic apple")) {
  *             return "You feel a surge of power!";
@@ -41,12 +41,13 @@ public interface CustomCommandHandler {
    * Handles a custom command.
    *
    * @param player the player issuing the command
+   * @param gameMap the game map for accessing and modifying game state
    * @param command the parsed command with verb, objects, prepositions, etc.
    * @param context provides access to game utilities like ResponseProvider and ObjectResolver
    * @return the response message to show the player, or {@code null} to delegate to the
    *         built-in handler for this verb
    */
   @Nullable
-  String handle(@Nonnull Player player, @Nonnull GameMapInterface gamMap, @Nonnull ParsedCommand command,
+  String handle(@Nonnull Player player, @Nonnull GameMapInterface gameMap, @Nonnull ParsedCommand command,
                 @Nonnull CommandContext context);
 }

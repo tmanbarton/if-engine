@@ -1,6 +1,7 @@
 package io.github.tmanbarton.ifengine.command.handlers;
 
 import io.github.tmanbarton.ifengine.command.BaseCommandHandler;
+import io.github.tmanbarton.ifengine.game.GameMapInterface;
 import io.github.tmanbarton.ifengine.game.Player;
 import io.github.tmanbarton.ifengine.parser.ParsedCommand;
 import io.github.tmanbarton.ifengine.response.ResponseProvider;
@@ -40,7 +41,7 @@ public class SystemCommandHandler implements BaseCommandHandler {
 
   @Override
   @Nonnull
-  public String handle(@Nonnull final Player player, @Nonnull final ParsedCommand command) {
+  public String handle(@Nonnull final Player player, @Nonnull final GameMapInterface gameMapInterface, @Nonnull final ParsedCommand command) {
     final String verb = command.getVerb().toLowerCase().trim();
 
     return switch (verb) {

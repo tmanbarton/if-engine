@@ -1,6 +1,9 @@
 package io.github.tmanbarton.ifengine.command;
 
+import io.github.tmanbarton.ifengine.Direction;
 import io.github.tmanbarton.ifengine.Location;
+import io.github.tmanbarton.ifengine.game.GameMap;
+import io.github.tmanbarton.ifengine.game.GameMapInterface;
 import io.github.tmanbarton.ifengine.game.Player;
 import io.github.tmanbarton.ifengine.parser.CommandType;
 import io.github.tmanbarton.ifengine.parser.ParsedCommand;
@@ -57,7 +60,7 @@ class CustomCommandAdapterTest {
     @DisplayName("returns primary verb when no aliases")
     void testGetSupportedVerbs_primaryVerbOnly() {
       // Given
-      final CustomCommandHandler handler = (p, cmd, ctx) -> "response";
+      final CustomCommandHandler handler = (p, gameMapInterface, cmd, ctx) -> "response";
       final CustomCommandAdapter adapter = new CustomCommandAdapter(
           "dance", List.of(), handler, CustomCommandAdapterTest.this::createContext, null);
 
@@ -73,7 +76,7 @@ class CustomCommandAdapterTest {
     @DisplayName("returns primary verb and all aliases")
     void testGetSupportedVerbs_includesAliases() {
       // Given
-      final CustomCommandHandler handler = (p, cmd, ctx) -> "response";
+      final CustomCommandHandler handler = (p, gameMapInterface, cmd, ctx) -> "response";
       final CustomCommandAdapter adapter = new CustomCommandAdapter(
           "search", List.of("find", "look for"), handler, CustomCommandAdapterTest.this::createContext, null);
 
@@ -95,13 +98,14 @@ class CustomCommandAdapterTest {
     @DisplayName("delegates to custom handler with context")
     void testHandle_delegatesToHandler() {
       // Given
-      final CustomCommandHandler handler = (p, cmd, ctx) -> "custom response";
+      final CustomCommandHandler handler = (p, gameMapInterface, cmd, ctx) -> "custom response";
       final CustomCommandAdapter adapter = new CustomCommandAdapter(
           "test", List.of(), handler, CustomCommandAdapterTest.this::createContext, null);
       final ParsedCommand command = createCommand("test");
+      final GameMap gameMap = buildTestMap();
 
       // When
-      final String result = adapter.handle(player, command);
+      final String result = adapter.handle(player, gameMap, command);
 
       // Then
       assertEquals("custom response", result);
@@ -111,14 +115,15 @@ class CustomCommandAdapterTest {
     @DisplayName("passes player to handler")
     void testHandle_passesPlayer() {
       // Given
-      final CustomCommandHandler handler = (p, cmd, ctx) ->
+      final CustomCommandHandler handler = (p, gameMapInterface, cmd, ctx) ->
           "Location: " + p.getCurrentLocation().getName();
       final CustomCommandAdapter adapter = new CustomCommandAdapter(
           "test", List.of(), handler, CustomCommandAdapterTest.this::createContext, null);
       final ParsedCommand command = createCommand("test");
+      final GameMap gameMap = buildTestMap();
 
       // When
-      final String result = adapter.handle(player, command);
+      final String result = adapter.handle(player, gameMap, command);
 
       // Then
       assertEquals("Location: test", result);
@@ -128,17 +133,28 @@ class CustomCommandAdapterTest {
     @DisplayName("passes parsed command to handler")
     void testHandle_passesParsedCommand() {
       // Given
-      final CustomCommandHandler handler = (p, cmd, ctx) ->
+      final CustomCommandHandler handler = (p, gameMapInterface, cmd, ctx) ->
           "Verb: " + cmd.getVerb();
       final CustomCommandAdapter adapter = new CustomCommandAdapter(
           "poke", List.of(), handler, CustomCommandAdapterTest.this::createContext, null);
       final ParsedCommand command = createCommand("poke");
+      final GameMap gameMap = buildTestMap();
 
       // When
-      final String result = adapter.handle(player, command);
+      final String result = adapter.handle(player, gameMap, command);
 
       // Then
       assertEquals("Verb: poke", result);
     }
+  }
+
+  private GameMap buildTestMap() {
+    return new GameMap.Builder()
+            .addLocation(new Location("location 1", "long description", "short description"))
+            .addLocation(new Location("location 2", "long description", "short description"))
+            .connectBidirectional("location 1", Direction.NORTH, "location 2")
+            .setStartingLocation("location 1")
+            .skipIntroQuestion()
+            .build();
   }
 }

@@ -4,6 +4,7 @@ import io.github.tmanbarton.ifengine.Container;
 import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.Location;
 import io.github.tmanbarton.ifengine.command.BaseCommandHandler;
+import io.github.tmanbarton.ifengine.game.GameMapInterface;
 import io.github.tmanbarton.ifengine.game.Player;
 import io.github.tmanbarton.ifengine.parser.ContextManager;
 import io.github.tmanbarton.ifengine.parser.ObjectResolver;
@@ -41,7 +42,7 @@ public class DropHandler implements BaseCommandHandler {
 
   @Override
   @Nonnull
-  public String handle(@Nonnull final Player player, @Nonnull final ParsedCommand command) {
+  public String handle(@Nonnull final Player player, @Nonnull final GameMapInterface gameMapInterface, @Nonnull final ParsedCommand command) {
     return handleDrop(player, command);
   }
 

@@ -317,7 +317,7 @@ GameMap map = new GameMap.Builder()
         .addLocation(new Location("street", "You're on an unnamed street in an unnamed town.", "You're on the street."))
         .setStartingLocation("street")
         .withCommand("xyzzy", (player, gameMapInterface, cmd, ctx) -> "Nothing happens.")
-        .withCommane("beg", (player, cmd, ctx) -> "You get on your knees with cupped hands extended and give your best puppy eyes. " +
+        .withCommand("beg", (player, gameMapInterface, cmd, ctx) -> "You get on your knees with cupped hands extended and give your best puppy eyes. " +
                 "No one's around for you to look at with those pitiful puppy eyes or put anything in your grubby hands, so you dust yourself off and stand back up.")
         .build();
 ```

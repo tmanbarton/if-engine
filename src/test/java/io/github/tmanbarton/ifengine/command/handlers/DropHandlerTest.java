@@ -2,6 +2,7 @@ package io.github.tmanbarton.ifengine.command.handlers;
 
 import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.Location;
+import io.github.tmanbarton.ifengine.game.GameMapInterface;
 import io.github.tmanbarton.ifengine.game.Player;
 import io.github.tmanbarton.ifengine.parser.CommandType;
 import io.github.tmanbarton.ifengine.parser.ContextManager;
@@ -9,6 +10,7 @@ import io.github.tmanbarton.ifengine.parser.ObjectResolver;
 import io.github.tmanbarton.ifengine.parser.ParsedCommand;
 import io.github.tmanbarton.ifengine.response.DefaultResponses;
 import io.github.tmanbarton.ifengine.response.ResponseProvider;
+import io.github.tmanbarton.ifengine.test.TestGameMap;
 import io.github.tmanbarton.ifengine.test.TestItemFactory;
 import io.github.tmanbarton.ifengine.test.TestLocationFactory;
 
@@ -34,6 +36,7 @@ class DropHandlerTest {
   private Player player;
   private Location location;
   private ResponseProvider responses;
+  private GameMapInterface gameMap;
 
   @BeforeEach
   void setUp() {
@@ -43,6 +46,7 @@ class DropHandlerTest {
     handler = new DropHandler(objectResolver, contextManager, responses);
     location = TestLocationFactory.createDefaultLocation();
     player = new Player(location);
+    gameMap = TestGameMap.createEmpty();
   }
 
   @Nested
@@ -55,7 +59,7 @@ class DropHandlerTest {
       player.addItem(key);
       final ParsedCommand command = createDropCommand("key");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getDropSuccess(), result);
       assertFalse(player.hasItem("key"));
@@ -67,7 +71,7 @@ class DropHandlerTest {
     void testHandle_dropItemNotInInventory() {
       final ParsedCommand command = createDropCommand("key");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getDropDontHave("key"), result);
     }
@@ -77,7 +81,7 @@ class DropHandlerTest {
     void testHandle_dropNoObjectNoItems() {
       final ParsedCommand command = createDropCommand();
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getDropNotCarryingAnything(), result);
     }
@@ -95,7 +99,7 @@ class DropHandlerTest {
       player.addItem(rope);
       final ParsedCommand command = createDropCommand("all");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getDropAllSuccess(), result);
       assertTrue(player.getInventory().isEmpty());
@@ -108,7 +112,7 @@ class DropHandlerTest {
     void testHandle_dropAllFromEmptyInventory() {
       final ParsedCommand command = createDropCommand("all");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getDropNotCarryingAnything(), result);
     }
@@ -120,7 +124,7 @@ class DropHandlerTest {
       player.addItem(key);
       final ParsedCommand command = createDropCommand("everything");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getDropSuccess(), result);
       assertFalse(player.hasItem("key"));
@@ -133,7 +137,7 @@ class DropHandlerTest {
       player.addItem(key);
       final ParsedCommand command = createDropCommand("all");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       // Single item returns getDropSuccess, not getDropAllSuccess
       assertEquals(responses.getDropSuccess(), result);
@@ -150,7 +154,7 @@ class DropHandlerTest {
       player.addItem(key);
       final ParsedCommand command = createDropCommand();
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getDropSuccess(), result);
       assertFalse(player.hasItem("key"));
@@ -165,7 +169,7 @@ class DropHandlerTest {
       player.addItem(rope);
       final ParsedCommand command = createDropCommand();
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getDropNeedToSpecify(), result);
       // Neither item should be dropped
@@ -188,7 +192,7 @@ class DropHandlerTest {
       bag.insertItem(key);
       final ParsedCommand command = createDropCommand("key");
 
-      handler.handle(player, command);
+      handler.handle(player, gameMap, command);
 
       assertFalse(player.isItemContained(key));
       assertFalse(bag.containsItem("key"));
@@ -207,7 +211,7 @@ class DropHandlerTest {
       player.markItemAsContained(gem, bag);
       final ParsedCommand command = createDropCommand("bag");
 
-      handler.handle(player, command);
+      handler.handle(player, gameMap, command);
 
       // Container should be at location
       assertTrue(location.getItems().contains(bag));
@@ -264,7 +268,7 @@ class DropHandlerTest {
       player.addItem(key);
       final ParsedCommand command = createDropCommand("KEY");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getDropSuccess(), result);
       assertFalse(player.hasItem("key"));
@@ -277,7 +281,7 @@ class DropHandlerTest {
       player.addItem(key);
       final ParsedCommand command = createDropCommand("KeY");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getDropSuccess(), result);
     }
@@ -293,7 +297,7 @@ class DropHandlerTest {
       player.addItem(key);
       final ParsedCommand command = createDropCommand("key");
 
-      handler.handle(player, command);
+      handler.handle(player, gameMap, command);
 
       assertFalse(player.getInventory().contains(key));
     }
@@ -305,7 +309,7 @@ class DropHandlerTest {
       player.addItem(key);
       final ParsedCommand command = createDropCommand("key");
 
-      handler.handle(player, command);
+      handler.handle(player, gameMap, command);
 
       assertTrue(location.getItems().contains(key));
     }
@@ -318,8 +322,8 @@ class DropHandlerTest {
       player.addItem(key);
       player.addItem(rope);
 
-      handler.handle(player, createDropCommand("key"));
-      handler.handle(player, createDropCommand("rope"));
+      handler.handle(player, gameMap, createDropCommand("key"));
+      handler.handle(player, gameMap, createDropCommand("rope"));
 
       assertTrue(player.getInventory().isEmpty());
       assertEquals(2, location.getItems().size());

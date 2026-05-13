@@ -575,10 +575,10 @@ public class GameMap implements GameMapInterface {
      * <p>
      * Example usage:
      * <pre>
-     * .withCommand("xyzzy", (player, cmd, ctx) -> "Nothing happens.")
+     * .withCommand("xyzzy", (player, gameMap, cmd, ctx) -> "Nothing happens.")
      *
      * // Partial override - handle special case, delegate otherwise
-     * .withCommand("eat", (player, cmd, ctx) -> {
+     * .withCommand("eat", (player, gameMap, cmd, ctx) -> {
      *     if (cmd.getFirstDirectObject().equals("magic apple")) {
      *         return "You feel a surge of power!";
      *     }
@@ -605,7 +605,7 @@ public class GameMap implements GameMapInterface {
      * <p>
      * Example usage:
      * <pre>
-     * .withCommand("search", List.of("find", "look for"), (player, cmd, ctx) -> {
+     * .withCommand("search", List.of("find", "look for"), (player, gameMap, cmd, ctx) -> {
      *     String target = cmd.getFirstDirectObject();
      *     if (target.isEmpty()) {
      *         return "Search what?";

@@ -1,5 +1,6 @@
 package io.github.tmanbarton.ifengine.command;
 
+import io.github.tmanbarton.ifengine.game.GameMapInterface;
 import io.github.tmanbarton.ifengine.game.Player;
 import io.github.tmanbarton.ifengine.parser.ParsedCommand;
 
@@ -215,7 +216,7 @@ public class CommandDispatcher {
    * @return Optional containing response if handler found and processed command, empty otherwise
    */
   @Nonnull
-  public Optional<String> handle(@Nullable final Player player, @Nullable final ParsedCommand command) {
+  public Optional<String> handle(@Nullable final Player player, @Nonnull final GameMapInterface gameMapInterface, @Nullable final ParsedCommand command) {
     if (player == null || command == null) {
       return Optional.empty();
     }
@@ -230,7 +231,7 @@ public class CommandDispatcher {
       return Optional.empty();
     }
 
-    final String result = handler.handle(player, command);
+    final String result = handler.handle(player, gameMapInterface, command);
     return Optional.ofNullable(result);
   }
 
@@ -244,8 +245,8 @@ public class CommandDispatcher {
    * @param command the parsed command to process, may be null
    * @return response string if handler found and processed command, null otherwise
    */
-  public String dispatch(@Nullable final Player player, @Nullable final ParsedCommand command) {
-    final Optional<String> result = handle(player, command);
+  public String dispatch(@Nullable final Player player, @Nonnull final GameMapInterface gameMapInterface, @Nullable final ParsedCommand command) {
+    final Optional<String> result = handle(player, gameMapInterface, command);
     return result.orElse(null);
   }
 

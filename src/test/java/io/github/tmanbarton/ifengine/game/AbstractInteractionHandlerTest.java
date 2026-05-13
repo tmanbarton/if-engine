@@ -9,6 +9,7 @@ import io.github.tmanbarton.ifengine.parser.CommandType;
 import io.github.tmanbarton.ifengine.parser.ParsedCommand;
 import io.github.tmanbarton.ifengine.response.DefaultResponses;
 import io.github.tmanbarton.ifengine.response.ResponseProvider;
+import io.github.tmanbarton.ifengine.test.TestGameMap;
 import io.github.tmanbarton.ifengine.test.TestItemFactory;
 import io.github.tmanbarton.ifengine.test.TestLocationFactory;
 
@@ -39,6 +40,7 @@ class AbstractInteractionHandlerTest {
   private ResponseProvider responses;
   private Player player;
   private Location location;
+  private GameMapInterface gameMap;
 
   @BeforeEach
   void setUp() {
@@ -47,6 +49,7 @@ class AbstractInteractionHandlerTest {
     location = TestLocationFactory.createDefaultLocation();
     player = new Player(location);
     player.setGameState(GameState.PLAYING);
+    gameMap = TestGameMap.createEmpty();
   }
 
   /**
@@ -87,7 +90,7 @@ class AbstractInteractionHandlerTest {
     void testHandle_noObjectNoClimbableScenery() {
       final ParsedCommand command = createCommandNoObject("climb");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getClimbNotPresent(), result);
     }
@@ -101,7 +104,7 @@ class AbstractInteractionHandlerTest {
       location.addSceneryObject(tree);
       final ParsedCommand command = createCommandNoObject("climb");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals("You climb the tree successfully.", result);
     }
@@ -120,7 +123,7 @@ class AbstractInteractionHandlerTest {
       location.addSceneryObject(ladder);
       final ParsedCommand command = createCommandNoObject("climb");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       // First scenery object added is used
       assertEquals("You climb the tree.", result);
@@ -135,7 +138,7 @@ class AbstractInteractionHandlerTest {
       location.addSceneryObject(window);
       final ParsedCommand command = createCommandNoObject("climb");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getClimbNotPresent(), result);
     }
@@ -151,7 +154,7 @@ class AbstractInteractionHandlerTest {
       player.addItem(key);
       final ParsedCommand command = createCommand("climb", "key");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getCantClimb(), result);
     }
@@ -163,7 +166,7 @@ class AbstractInteractionHandlerTest {
       location.addItem(rope);
       final ParsedCommand command = createCommand("climb", "rope");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getCantClimb(), result);
     }
@@ -178,7 +181,7 @@ class AbstractInteractionHandlerTest {
       location.addItem(locationRope);
       final ParsedCommand command = createCommand("climb", "rope");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       // Should still return "can't climb" because it's a real item
       assertEquals(responses.getCantClimb(), result);
@@ -197,7 +200,7 @@ class AbstractInteractionHandlerTest {
       location.addSceneryObject(tree);
       final ParsedCommand command = createCommand("climb", "tree");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals("You climb the tall oak tree.", result);
     }
@@ -212,7 +215,7 @@ class AbstractInteractionHandlerTest {
       location.addSceneryObject(tree);
       final ParsedCommand command = createCommand("climb", "oak");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals("You climb the oak tree.", result);
     }
@@ -232,7 +235,7 @@ class AbstractInteractionHandlerTest {
       location.addSceneryObject(tree);
       final ParsedCommand command = createCommand("climb", "window");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       // Window doesn't support climb, but there ARE climbable objects at location
       assertEquals(responses.getCantClimb(), result);
@@ -247,7 +250,7 @@ class AbstractInteractionHandlerTest {
       location.addSceneryObject(tree);
       final ParsedCommand command = createCommand("climb", "TREE");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals("You climb the tree.", result);
     }
@@ -261,7 +264,7 @@ class AbstractInteractionHandlerTest {
     void testHandle_objectNotFound() {
       final ParsedCommand command = createCommand("climb", "unicorn");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getClimbNotPresent(), result);
     }
@@ -272,7 +275,7 @@ class AbstractInteractionHandlerTest {
       // Even if there's a tree at another location, it's not present here
       final ParsedCommand command = createCommand("climb", "tree");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getClimbNotPresent(), result);
     }
@@ -293,7 +296,7 @@ class AbstractInteractionHandlerTest {
       location.addSceneryObject(ropeScenery);
       final ParsedCommand command = createCommand("climb", "rope");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       // Real item found first, so "can't climb" response
       assertEquals(responses.getCantClimb(), result);

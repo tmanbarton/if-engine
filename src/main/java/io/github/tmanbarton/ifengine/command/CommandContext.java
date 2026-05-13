@@ -78,7 +78,7 @@ public interface CommandContext {
    * <p>
    * Example usage in a custom command handler:
    * <pre>
-   * .withCommand("lean", (player, cmd, ctx) -> {
+   * .withCommand("lean", (player, gameMap, cmd, ctx) -> {
    *     return ctx.putItemInContainer("ladder", "wall", "on");
    * })
    * </pre>

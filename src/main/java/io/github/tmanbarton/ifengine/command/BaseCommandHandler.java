@@ -1,5 +1,6 @@
 package io.github.tmanbarton.ifengine.command;
 
+import io.github.tmanbarton.ifengine.game.GameMapInterface;
 import io.github.tmanbarton.ifengine.game.Player;
 import io.github.tmanbarton.ifengine.parser.ParsedCommand;
 
@@ -122,11 +123,12 @@ public interface BaseCommandHandler {
    * </ul>
    *
    * @param player the player executing the command, never null
+   * @param gameMapInterface the game map for accessing game state, never null
    * @param command the parsed command to process, never null
    * @return String containing response message
    */
   @Nonnull
-  String handle(@Nonnull Player player, @Nonnull ParsedCommand command);
+  String handle(@Nonnull Player player, @Nonnull final GameMapInterface gameMapInterface, @Nonnull ParsedCommand command);
 
   /**
    * Determines whether this handler can process the given verb.

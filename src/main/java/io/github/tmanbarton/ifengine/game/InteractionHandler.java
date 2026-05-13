@@ -12,6 +12,6 @@ import io.github.tmanbarton.ifengine.command.BaseCommandHandler;
 public interface InteractionHandler extends BaseCommandHandler {
   // All methods inherited from BaseCommandHandler:
   // - getSupportedVerbs()
-  // - handle(Player, ParsedCommand)
+  // - handle(Player, GameMapInterface, ParsedCommand)
   // - canHandle(String) - default implementation
 }

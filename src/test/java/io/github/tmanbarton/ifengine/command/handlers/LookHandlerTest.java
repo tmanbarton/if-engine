@@ -4,6 +4,7 @@ import io.github.tmanbarton.ifengine.InteractionType;
 import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.Location;
 import io.github.tmanbarton.ifengine.SceneryObject;
+import io.github.tmanbarton.ifengine.game.GameMapInterface;
 import io.github.tmanbarton.ifengine.game.Player;
 import io.github.tmanbarton.ifengine.game.SceneryInteractionHandler;
 import io.github.tmanbarton.ifengine.parser.CommandType;
@@ -12,6 +13,7 @@ import io.github.tmanbarton.ifengine.parser.ObjectResolver;
 import io.github.tmanbarton.ifengine.parser.ParsedCommand;
 import io.github.tmanbarton.ifengine.response.DefaultResponses;
 import io.github.tmanbarton.ifengine.response.ResponseProvider;
+import io.github.tmanbarton.ifengine.test.TestGameMap;
 import io.github.tmanbarton.ifengine.test.TestItemFactory;
 import io.github.tmanbarton.ifengine.test.TestLocationFactory;
 
@@ -37,6 +39,7 @@ class LookHandlerTest {
   private Player player;
   private Location location;
   private ResponseProvider responses;
+  private GameMapInterface gameMap;
 
   @BeforeEach
   void setUp() {
@@ -47,6 +50,7 @@ class LookHandlerTest {
     handler = new LookHandler(objectResolver, sceneryHandler, contextManager, responses);
     location = TestLocationFactory.createDefaultLocation();
     player = new Player(location);
+    gameMap = TestGameMap.createEmpty();
   }
 
   @Nested
@@ -57,7 +61,7 @@ class LookHandlerTest {
     void testHandle_lookShowsLocationDescription() {
       final ParsedCommand command = createLookCommand();
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertTrue(result.contains(location.getLongDescription()));
     }
@@ -67,7 +71,7 @@ class LookHandlerTest {
     void testHandle_lookAroundShowsLocationDescription() {
       final ParsedCommand command = createLookAroundCommand();
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertTrue(result.contains(location.getLongDescription()));
     }
@@ -79,7 +83,7 @@ class LookHandlerTest {
       location.addItem(key);
       final ParsedCommand command = createLookCommand();
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertTrue(result.contains(key.getLocationDescription()));
     }
@@ -95,7 +99,7 @@ class LookHandlerTest {
       player.addItem(key);
       final ParsedCommand command = createLookAtCommand("key");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(key.getDetailedDescription(), result);
     }
@@ -107,7 +111,7 @@ class LookHandlerTest {
       location.addItem(key);
       final ParsedCommand command = createLookAtCommand("key");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(key.getDetailedDescription(), result);
     }
@@ -117,7 +121,7 @@ class LookHandlerTest {
     void testHandle_lookAtItemNotPresent() {
       final ParsedCommand command = createLookAtCommand("nonexistent");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getLookAtObjectNotPresent("nonexistent"), result);
     }
@@ -138,7 +142,7 @@ class LookHandlerTest {
       location.addItem(locationKey);
       final ParsedCommand command = createLookAtCommand("key");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(inventoryKey.getDetailedDescription(), result);
     }
@@ -156,7 +160,7 @@ class LookHandlerTest {
       location.addSceneryObject(tree);
       final ParsedCommand command = createLookAtCommand("tree");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals("A tall oak tree with spreading branches.", result);
     }
@@ -170,7 +174,7 @@ class LookHandlerTest {
       location.addSceneryObject(tree);
       final ParsedCommand command = createLookAtCommand("tree");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getLookAtObjectNotPresent("tree"), result);
     }
@@ -238,7 +242,7 @@ class LookHandlerTest {
       player.addItem(key);
       final ParsedCommand command = createLookAtCommand("KEY");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(key.getDetailedDescription(), result);
     }
@@ -250,7 +254,7 @@ class LookHandlerTest {
       location.addItem(key);
       final ParsedCommand command = createLookAtCommand("KeY");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(key.getDetailedDescription(), result);
     }

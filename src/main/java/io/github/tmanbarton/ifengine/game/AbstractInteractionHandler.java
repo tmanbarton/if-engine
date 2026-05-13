@@ -22,7 +22,7 @@ public abstract class AbstractInteractionHandler implements InteractionHandler {
 
   @Override
   @Nonnull
-  public String handle(@Nonnull final Player player, @Nonnull final ParsedCommand command) {
+  public String handle(@Nonnull final Player player, @Nonnull final GameMapInterface gameMapInterface, @Nonnull final ParsedCommand command) {
     // Step 1: Handle object inference when no object is specified
     if (command.getDirectObjects().isEmpty()) {
       // User typed verb without object (e.g., "climb") - try to infer from available scenery

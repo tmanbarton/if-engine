@@ -1,8 +1,10 @@
 package io.github.tmanbarton.ifengine.command;
 
+import io.github.tmanbarton.ifengine.game.GameMapInterface;
 import io.github.tmanbarton.ifengine.game.Player;
 import io.github.tmanbarton.ifengine.parser.CommandType;
 import io.github.tmanbarton.ifengine.parser.ParsedCommand;
+import io.github.tmanbarton.ifengine.test.TestGameMap;
 import io.github.tmanbarton.ifengine.test.TestLocationFactory;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -28,11 +30,13 @@ class CommandDispatcherTest {
 
   private CommandDispatcher dispatcher;
   private Player player;
+  private GameMapInterface gameMap;
 
   @BeforeEach
   void setUp() {
     dispatcher = new CommandDispatcher();
     player = new Player(TestLocationFactory.createDefaultLocation());
+    gameMap = TestGameMap.createEmpty();
   }
 
   private ParsedCommand createCommand(final String verb) {
@@ -74,7 +78,7 @@ class CommandDispatcherTest {
     }
 
     @Override
-    public String handle(final Player player, final ParsedCommand command) {
+    public String handle(final Player player, final GameMapInterface gameMapInterface, final ParsedCommand command) {
       return response;
     }
   }
@@ -119,8 +123,8 @@ class CommandDispatcherTest {
       dispatcher.registerHandler(takeHandler);
       dispatcher.registerHandler(lookHandler);
 
-      final Optional<String> takeResult = dispatcher.handle(player, createCommand("take", "key"));
-      final Optional<String> lookResult = dispatcher.handle(player, createCommand("look"));
+      final Optional<String> takeResult = dispatcher.handle(player, gameMap, createCommand("take", "key"));
+      final Optional<String> lookResult = dispatcher.handle(player, gameMap, createCommand("look"));
 
       assertTrue(takeResult.isPresent());
       assertEquals("taken", takeResult.get());
@@ -131,7 +135,7 @@ class CommandDispatcherTest {
     @Test
     @DisplayName("Test handle - returns empty for unregistered verb")
     void testHandle_emptyForUnregisteredVerb() {
-      final Optional<String> result = dispatcher.handle(player, createCommand("unknown"));
+      final Optional<String> result = dispatcher.handle(player, gameMap, createCommand("unknown"));
 
       assertFalse(result.isPresent());
     }

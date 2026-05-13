@@ -70,7 +70,7 @@ class UnlockHandlerTest {
       player.addItem(key);
       final ParsedCommand command = createUnlockCommand("door");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(TestOpenableLocation.DEFAULT_UNLOCK_MESSAGE, result);
       assertTrue(openableLocation.isUnlocked());
@@ -83,7 +83,7 @@ class UnlockHandlerTest {
       player.addItem(key);
       final ParsedCommand command = createUnlockCommand("vault");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(TestOpenableLocation.DEFAULT_UNLOCK_MESSAGE, result);
       assertTrue(openableLocation.isUnlocked());
@@ -98,7 +98,7 @@ class UnlockHandlerTest {
     void testHandle_unlockWithoutKey() {
       final ParsedCommand command = createUnlockCommand("door");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(TestOpenableLocation.DEFAULT_UNLOCK_NO_KEY_MESSAGE, result);
       assertFalse(openableLocation.isUnlocked());
@@ -116,7 +116,7 @@ class UnlockHandlerTest {
       openableLocation.setUnlocked(true);
       final ParsedCommand command = createUnlockCommand("door");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(TestOpenableLocation.DEFAULT_ALREADY_UNLOCKED_MESSAGE, result);
     }
@@ -132,7 +132,7 @@ class UnlockHandlerTest {
       final Player regularPlayer = new Player(regularLocation);
       final ParsedCommand command = createUnlockCommand("door");
 
-      final String result = handler.handle(regularPlayer, command);
+      final String result = handler.handle(regularPlayer, gameMap, command);
 
       assertEquals(responses.getUnlockNotPresent("door"), result,
           "unlock command at location with no door should return not-present response");
@@ -145,7 +145,7 @@ class UnlockHandlerTest {
       final Player regularPlayer = new Player(regularLocation);
       final ParsedCommand command = createUnlockCommand();
 
-      final String result = handler.handle(regularPlayer, command);
+      final String result = handler.handle(regularPlayer, gameMap, command);
 
       assertEquals(responses.getUnlockNothingToUnlock(), result);
     }
@@ -159,7 +159,7 @@ class UnlockHandlerTest {
       final ParsedCommand command = createUnlockCommand("unicorn");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then - should say "not present", not "can't unlock"
       assertEquals(responses.getUnlockNotPresent("unicorn"), result,
@@ -177,7 +177,7 @@ class UnlockHandlerTest {
       final ParsedCommand command = createUnlockCommand("key");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then - key exists but isn't unlockable
       assertEquals(responses.getUnlockCantUnlock("key"), result,
@@ -220,7 +220,7 @@ class UnlockHandlerTest {
       player.addItem(key);
       final ParsedCommand command = createUnlockCommand("DOOR");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(TestOpenableLocation.DEFAULT_UNLOCK_MESSAGE, result);
     }
@@ -232,7 +232,7 @@ class UnlockHandlerTest {
       player.addItem(key);
       final ParsedCommand command = createUnlockCommand("DoOr");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(TestOpenableLocation.DEFAULT_UNLOCK_MESSAGE, result);
     }
@@ -258,7 +258,7 @@ class UnlockHandlerTest {
       final ParsedCommand command = createUnlockCommand("chest");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then
       assertEquals(TestOpenableItem.DEFAULT_UNLOCK_MESSAGE, result);
@@ -279,7 +279,7 @@ class UnlockHandlerTest {
       final ParsedCommand command = createUnlockCommand("chest");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then
       assertEquals(TestOpenableItem.DEFAULT_UNLOCK_NO_KEY_MESSAGE, result);
@@ -303,7 +303,7 @@ class UnlockHandlerTest {
       final ParsedCommand command = createUnlockCommand("door");
 
       // When - "unlock door" should find chest first (inventory priority)
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       // Then - chest unlocks, not the door
       assertEquals(TestOpenableItem.DEFAULT_UNLOCK_MESSAGE, result);
@@ -330,7 +330,7 @@ class UnlockHandlerTest {
       final ParsedCommand command = createUnlockCommandWithCode("lockbox", "1, 2, 3, 4");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then - code should be extracted and passed to tryUnlock
       assertEquals(TestOpenableItem.DEFAULT_UNLOCK_MESSAGE, result);
@@ -352,7 +352,7 @@ class UnlockHandlerTest {
       final ParsedCommand command = createUnlockCommandWithCode("cryptex", "secret", "phrase");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then - multi-word answer should be joined with spaces
       assertEquals(TestOpenableItem.DEFAULT_UNLOCK_MESSAGE, result);
@@ -374,7 +374,7 @@ class UnlockHandlerTest {
       final ParsedCommand command = createUnlockCommand("lockbox");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then - no code extracted, tryUnlock receives null → prompt message
       assertEquals(TestOpenableItem.DEFAULT_PROMPT_MESSAGE, result);
@@ -396,7 +396,7 @@ class UnlockHandlerTest {
       final ParsedCommand command = createUnlockCommandWithCode("lockbox", "9, 9, 9, 9");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then - wrong code returns failure message
       assertEquals(TestOpenableItem.DEFAULT_WRONG_CODE_MESSAGE, result);
@@ -411,7 +411,7 @@ class UnlockHandlerTest {
       final ParsedCommand command = createUnlockCommand("lockbox 1234");
 
       // When
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       // Then - no object named "lockbox 1234" exists, returns not-present
       assertEquals(responses.getUnlockNotPresent("lockbox 1234"), result,
@@ -437,7 +437,7 @@ class UnlockHandlerTest {
       final ParsedCommand command = createUnlockCommandWithCodeOnly("1234");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then - implied object resolved AND code passed to tryUnlock
       assertEquals(TestOpenableItem.DEFAULT_UNLOCK_MESSAGE, result);
@@ -459,7 +459,7 @@ class UnlockHandlerTest {
       final ParsedCommand command = createUnlockCommandWithCodeOnly("9999");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then - implied object resolved, wrong code returns failure message
       assertEquals(TestOpenableItem.DEFAULT_WRONG_CODE_MESSAGE, result);
@@ -486,7 +486,7 @@ class UnlockHandlerTest {
       final ParsedCommand command = createUnlockCommand("lockbox");
 
       // When - unlock without providing code
-      handler.handle(testPlayer, command);
+      handler.handle(testPlayer, gameMap, command);
 
       // Then - state should change to WAITING_FOR_UNLOCK_CODE
       assertEquals(GameState.WAITING_FOR_UNLOCK_CODE, testPlayer.getGameState());
@@ -508,7 +508,7 @@ class UnlockHandlerTest {
       final ParsedCommand command = createUnlockCommand("lockbox");
 
       // When - unlock without providing code
-      handler.handle(testPlayer, command);
+      handler.handle(testPlayer, gameMap, command);
 
       // Then - pending openable should be set
       assertEquals(lockbox, testPlayer.getPendingOpenable());
@@ -530,7 +530,7 @@ class UnlockHandlerTest {
       final ParsedCommand command = createUnlockCommandWithCode("lockbox", "1234");
 
       // When - unlock with correct code
-      handler.handle(testPlayer, command);
+      handler.handle(testPlayer, gameMap, command);
 
       // Then - state should remain PLAYING, no pending openable
       assertEquals(GameState.PLAYING, testPlayer.getGameState());
@@ -553,7 +553,7 @@ class UnlockHandlerTest {
       final ParsedCommand command = createUnlockCommandWithCode("lockbox", "9999");
 
       // When - unlock with wrong code
-      handler.handle(testPlayer, command);
+      handler.handle(testPlayer, gameMap, command);
 
       // Then - state should remain PLAYING, no pending openable
       assertEquals(GameState.PLAYING, testPlayer.getGameState());
@@ -577,7 +577,7 @@ class UnlockHandlerTest {
       final ParsedCommand command = createUnlockCommand("lockbox");
 
       // When - try to unlock already unlocked item
-      handler.handle(testPlayer, command);
+      handler.handle(testPlayer, gameMap, command);
 
       // Then - state should remain PLAYING, no pending openable
       assertEquals(GameState.PLAYING, testPlayer.getGameState());
@@ -605,7 +605,7 @@ class UnlockHandlerTest {
       final ParsedCommand command = createUnlockCommand("chest");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then
       assertEquals(TestOpenableItem.DEFAULT_UNLOCK_MESSAGE, result);
@@ -626,7 +626,7 @@ class UnlockHandlerTest {
       final ParsedCommand command = createUnlockCommand("chest");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then
       assertEquals(TestOpenableItem.DEFAULT_UNLOCK_NO_KEY_MESSAGE, result);
@@ -650,7 +650,7 @@ class UnlockHandlerTest {
       final ParsedCommand command = createUnlockCommand("door");
 
       // When
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       // Then - chest unlocks, not the location door
       assertEquals(TestOpenableItem.DEFAULT_UNLOCK_MESSAGE, result);
@@ -679,7 +679,7 @@ class UnlockHandlerTest {
       final ParsedCommand command = createUnlockCommand("safe");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then
       assertEquals(TestOpenableSceneryObject.DEFAULT_UNLOCK_MESSAGE, result);
@@ -709,7 +709,7 @@ class UnlockHandlerTest {
       final ParsedCommand command = createUnlockCommand("chest");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then - item unlocks, not scenery
       assertEquals(TestOpenableItem.DEFAULT_UNLOCK_MESSAGE, result);
@@ -732,7 +732,7 @@ class UnlockHandlerTest {
       final ParsedCommand command = createUnlockCommand("door");
 
       // When
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       // Then - scenery unlocks, not the location
       assertEquals(TestOpenableSceneryObject.DEFAULT_UNLOCK_MESSAGE, result);
@@ -763,7 +763,7 @@ class UnlockHandlerTest {
       final ParsedCommand command = createUnlockCommand("box");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then
       assertEquals(responses.getUnlockNeedToSpecify("box"), result);
@@ -790,7 +790,7 @@ class UnlockHandlerTest {
       final ParsedCommand command = createUnlockCommand("chest");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then
       assertEquals(responses.getUnlockNeedToSpecify("chest"), result);
@@ -817,7 +817,7 @@ class UnlockHandlerTest {
       final ParsedCommand command = createUnlockCommand("safe");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then
       assertEquals(responses.getUnlockNeedToSpecify("safe"), result);

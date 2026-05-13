@@ -4,12 +4,14 @@ import io.github.tmanbarton.ifengine.InteractionType;
 import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.Location;
 import io.github.tmanbarton.ifengine.SceneryObject;
+import io.github.tmanbarton.ifengine.game.GameMapInterface;
 import io.github.tmanbarton.ifengine.game.Player;
 import io.github.tmanbarton.ifengine.parser.CommandType;
 import io.github.tmanbarton.ifengine.parser.ObjectResolver;
 import io.github.tmanbarton.ifengine.parser.ParsedCommand;
 import io.github.tmanbarton.ifengine.response.DefaultResponses;
 import io.github.tmanbarton.ifengine.response.ResponseProvider;
+import io.github.tmanbarton.ifengine.test.TestGameMap;
 import io.github.tmanbarton.ifengine.test.TestItemFactory;
 import io.github.tmanbarton.ifengine.test.TestLocationFactory;
 
@@ -35,6 +37,7 @@ class PutHandlerTest {
   private Player player;
   private Location location;
   private ResponseProvider responses;
+  private GameMapInterface gameMap;
 
   @BeforeEach
   void setUp() {
@@ -43,6 +46,7 @@ class PutHandlerTest {
     handler = new PutHandler(objectResolver, responses);
     location = TestLocationFactory.createDefaultLocation();
     player = new Player(location);
+    gameMap = TestGameMap.createEmpty();
   }
 
   @Nested
@@ -60,7 +64,7 @@ class PutHandlerTest {
 
       final ParsedCommand command = createPutCommand("coin", "in", "bag");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getPutSuccess("coin", "in", "bag"), result);
     }
@@ -76,7 +80,7 @@ class PutHandlerTest {
 
       final ParsedCommand command = createPutCommand("coin", "on", "table");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getPutSuccess("coin", "on", "table"), result);
     }
@@ -89,7 +93,7 @@ class PutHandlerTest {
 
       final ParsedCommand command = createPutCommand("coin", "in", "bag");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getPutItemNotPresent("coin"), result);
     }
@@ -99,7 +103,7 @@ class PutHandlerTest {
     void testHandle_putNoObjectSpecified() {
       final ParsedCommand command = createPutCommand(null, "in", "box");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getPutWhat(), result);
     }
@@ -112,7 +116,7 @@ class PutHandlerTest {
 
       final ParsedCommand command = createPutCommandNoContainer("coin");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getPutWhere("coin"), result);
     }
@@ -133,7 +137,7 @@ class PutHandlerTest {
 
       final ParsedCommand command = createPutCommand("coin", "in", "bag");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getPutSuccess("coin", "in", "bag"), result);
     }
@@ -149,7 +153,7 @@ class PutHandlerTest {
 
       final ParsedCommand command = createPutCommand("coin", "on", "table");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getPutSuccess("coin", "on", "table"), result);
     }
@@ -164,7 +168,7 @@ class PutHandlerTest {
 
       final ParsedCommand command = createPutCommand("coin", "at", "bag");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getPutUnsupportedPreposition("at"), result);
     }
@@ -177,7 +181,7 @@ class PutHandlerTest {
 
       final ParsedCommand command = createPutCommandNoPreposition("coin", "bag");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getPutMissingPreposition("coin"), result);
     }
@@ -193,7 +197,7 @@ class PutHandlerTest {
 
       final ParsedCommand command = createPutCommand("coin", "in", "table");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getPutInvalidPreposition("table", "on"), result);
     }
@@ -209,7 +213,7 @@ class PutHandlerTest {
 
       final ParsedCommand command = createPutCommand("coin", "on", "bag");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getPutInvalidPreposition("bag", "in"), result);
     }
@@ -226,7 +230,7 @@ class PutHandlerTest {
 
       final ParsedCommand command = createPutCommand("coin", "in", "box");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getPutContainerNotFound("box"), result);
     }
@@ -245,7 +249,7 @@ class PutHandlerTest {
 
       final ParsedCommand command = createPutCommand("coin", "in", "tree");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getPutNotAContainer("tree"), result);
     }
@@ -261,7 +265,7 @@ class PutHandlerTest {
 
       final ParsedCommand command = createPutCommand("gem", "in", "bag");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getPutItemNotAccepted("bag", "gem"), result);
     }
@@ -278,7 +282,7 @@ class PutHandlerTest {
 
       final ParsedCommand command = createPutCommand("bag", "in", "bag");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getPutCircularContainment(), result);
     }
@@ -298,7 +302,7 @@ class PutHandlerTest {
 
       final ParsedCommand command = createPutCommand("small-bag", "in", "large-box");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getPutSuccess("small-bag", "in", "large-box"), result);
       // Verify container state
@@ -322,11 +326,11 @@ class PutHandlerTest {
 
       // Put coin in small-bag first
       final ParsedCommand putCoinInBag = createPutCommand("coin", "in", "small-bag");
-      handler.handle(player, putCoinInBag);
+      handler.handle(player, gameMap, putCoinInBag);
 
       // Now put small-bag (with coin inside) into large-box
       final ParsedCommand putBagInBox = createPutCommand("small-bag", "in", "large-box");
-      final String result = handler.handle(player, putBagInBox);
+      final String result = handler.handle(player, gameMap, putBagInBox);
 
       assertEquals(responses.getPutSuccess("small-bag", "in", "large-box"), result);
       // Verify nested containment
@@ -349,7 +353,7 @@ class PutHandlerTest {
 
       final ParsedCommand command = createPutCommand("coin", "in", "bag");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getPutSuccess("coin", "in", "bag"), result);
       // Item should still be in inventory (contained in bag which is in inventory)
@@ -369,7 +373,7 @@ class PutHandlerTest {
 
       final ParsedCommand command = createPutCommand("coin", "in", "bag");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getPutSuccess("coin", "in", "bag"), result);
       // Item should be moved from location to inventory
@@ -391,7 +395,7 @@ class PutHandlerTest {
 
       // First put coin in bag1
       final ParsedCommand putInBag1 = createPutCommand("coin", "in", "bag");
-      handler.handle(player, putInBag1);
+      handler.handle(player, gameMap, putInBag1);
 
       // Verify coin is in bag1
       assertTrue(player.isItemContained(coin));
@@ -399,7 +403,7 @@ class PutHandlerTest {
 
       // Now move coin from bag1 to sack
       final ParsedCommand putInBag2 = createPutCommand("coin", "in", "sack");
-      final String result = handler.handle(player, putInBag2);
+      final String result = handler.handle(player, gameMap, putInBag2);
 
       assertEquals(responses.getPutSuccess("coin", "in", "sack"), result);
       // Coin should now be in sack, not bag
@@ -420,7 +424,7 @@ class PutHandlerTest {
 
       final ParsedCommand command = createPutCommand("coin", "in", "bag");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(responses.getPutSuccess("coin", "in", "bag"), result);
       // Both items should be at location
@@ -485,7 +489,7 @@ class PutHandlerTest {
 
       final ParsedCommand command = createPutCommand("coin", "on", "table");
 
-      handler.handle(player, command);
+      handler.handle(player, gameMap, command);
 
       // Item should be removed from player inventory
       assertFalse(player.getInventory().contains(coin));
@@ -503,7 +507,7 @@ class PutHandlerTest {
 
       final ParsedCommand command = createPutCommand("coin", "on", "table");
 
-      handler.handle(player, command);
+      handler.handle(player, gameMap, command);
 
       // Item should still be at location
       assertTrue(location.getItems().contains(coin));

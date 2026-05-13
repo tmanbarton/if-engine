@@ -69,7 +69,7 @@ class OpenHandlerTest {
       openableLocation.setUnlocked(true);
       final ParsedCommand command = createOpenCommand("door");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(TestOpenableLocation.DEFAULT_OPEN_MESSAGE, result);
       assertTrue(openableLocation.isOpen());
@@ -81,7 +81,7 @@ class OpenHandlerTest {
       openableLocation.setUnlocked(true);
       final ParsedCommand command = createOpenCommand("vault");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(TestOpenableLocation.DEFAULT_OPEN_MESSAGE, result);
       assertTrue(openableLocation.isOpen());
@@ -98,7 +98,7 @@ class OpenHandlerTest {
       player.addItem(key);
       final ParsedCommand command = createOpenCommand("door");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(TestOpenableLocation.DEFAULT_UNLOCK_AND_OPEN_MESSAGE, result);
       assertTrue(openableLocation.isUnlocked());
@@ -117,7 +117,7 @@ class OpenHandlerTest {
       assertFalse(player.hasItem("key"));
       final ParsedCommand command = createOpenCommand("door");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(TestOpenableLocation.DEFAULT_OPEN_LOCKED_NO_KEY_MESSAGE, result);
       assertFalse(openableLocation.isUnlocked());
@@ -130,7 +130,7 @@ class OpenHandlerTest {
       // Vault is locked and player has no key
       final ParsedCommand command = createOpenCommand("vault");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(TestOpenableLocation.DEFAULT_OPEN_LOCKED_NO_KEY_MESSAGE, result);
     }
@@ -146,7 +146,7 @@ class OpenHandlerTest {
       openableLocation.setOpen(true);
       final ParsedCommand command = createOpenCommand("door");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(TestOpenableLocation.DEFAULT_ALREADY_OPEN_MESSAGE, result);
     }
@@ -162,7 +162,7 @@ class OpenHandlerTest {
       final Player regularPlayer = new Player(regularLocation);
       final ParsedCommand command = createOpenCommand("door");
 
-      final String result = handler.handle(regularPlayer, command);
+      final String result = handler.handle(regularPlayer, gameMap, command);
 
       assertEquals(responses.getOpenNotPresent("door"), result,
           "open command at location with no door should return not-present response");
@@ -175,7 +175,7 @@ class OpenHandlerTest {
       final Player regularPlayer = new Player(regularLocation);
       final ParsedCommand command = createOpenCommand();
 
-      final String result = handler.handle(regularPlayer, command);
+      final String result = handler.handle(regularPlayer, gameMap, command);
 
       assertEquals(responses.getOpenNothingToOpen(), result);
     }
@@ -189,7 +189,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommand("unicorn");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then - should say "not present", not "can't open"
       assertEquals(responses.getOpenNotPresent("unicorn"), result,
@@ -207,7 +207,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommand("key");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then - key exists but isn't openable
       assertEquals(responses.getOpenCantOpen("key"), result,
@@ -249,7 +249,7 @@ class OpenHandlerTest {
       openableLocation.setUnlocked(true);
       final ParsedCommand command = createOpenCommand("DOOR");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(TestOpenableLocation.DEFAULT_OPEN_MESSAGE, result);
     }
@@ -260,7 +260,7 @@ class OpenHandlerTest {
       openableLocation.setUnlocked(true);
       final ParsedCommand command = createOpenCommand("DoOr");
 
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       assertEquals(TestOpenableLocation.DEFAULT_OPEN_MESSAGE, result);
     }
@@ -278,7 +278,7 @@ class OpenHandlerTest {
       assertFalse(openableLocation.isOpen());
       final ParsedCommand command = createOpenCommand("door");
 
-      handler.handle(player, command);
+      handler.handle(player, gameMap, command);
 
       assertTrue(openableLocation.isUnlocked());
       assertTrue(openableLocation.isOpen());
@@ -291,7 +291,7 @@ class OpenHandlerTest {
       assertFalse(openableLocation.isOpen());
       final ParsedCommand command = createOpenCommand("door");
 
-      handler.handle(player, command);
+      handler.handle(player, gameMap, command);
 
       assertTrue(openableLocation.isUnlocked());
       assertTrue(openableLocation.isOpen());
@@ -315,7 +315,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommand("chest");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then
       assertEquals(TestOpenableItem.DEFAULT_OPEN_MESSAGE, result);
@@ -339,7 +339,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommand("chest");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then
       assertTrue(chest.isUnlocked());
@@ -360,7 +360,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommand("chest");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then
       assertEquals(TestOpenableItem.DEFAULT_OPEN_LOCKED_MESSAGE, result);
@@ -380,7 +380,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommand("door");
 
       // When - "open door" should find chest first (inventory priority)
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       // Then - chest opens, not the door
       assertEquals(TestOpenableItem.DEFAULT_OPEN_MESSAGE, result);
@@ -407,7 +407,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommandWithCode("lockbox", "1, 2, 3, 4");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then - code should be extracted and passed to tryOpen
       assertEquals(TestOpenableItem.DEFAULT_UNLOCK_MESSAGE + " " + TestOpenableItem.DEFAULT_OPEN_MESSAGE, result);
@@ -430,7 +430,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommandWithCode("cryptex", "secret", "phrase");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then - multi-word answer should be joined with spaces
       assertEquals(TestOpenableItem.DEFAULT_UNLOCK_MESSAGE + " " + TestOpenableItem.DEFAULT_OPEN_MESSAGE, result);
@@ -453,7 +453,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommand("lockbox");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then - no code extracted, tryOpen receives null → prompt message
       assertEquals(TestOpenableItem.DEFAULT_PROMPT_MESSAGE, result);
@@ -475,7 +475,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommandWithCode("lockbox", "9, 9, 9, 9");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then - wrong code returns failure message
       assertEquals(TestOpenableItem.DEFAULT_WRONG_CODE_MESSAGE, result);
@@ -489,7 +489,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommand("lockbox 1234");
 
       // When
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       // Then - no object named "lockbox 1234" exists, returns not-present
       assertEquals(responses.getOpenNotPresent("lockbox 1234"), result,
@@ -515,7 +515,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommandWithCodeOnly("1234");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then - implied object resolved AND code passed to tryOpen
       assertEquals(TestOpenableItem.DEFAULT_UNLOCK_MESSAGE + " " + TestOpenableItem.DEFAULT_OPEN_MESSAGE, result);
@@ -538,7 +538,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommandWithCodeOnly("9999");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then - implied object resolved, wrong code returns failure message
       assertEquals(TestOpenableItem.DEFAULT_WRONG_CODE_MESSAGE, result);
@@ -565,7 +565,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommand("lockbox");
 
       // When - open without providing code
-      handler.handle(testPlayer, command);
+      handler.handle(testPlayer, gameMap, command);
 
       // Then - state should change to WAITING_FOR_OPEN_CODE
       assertEquals(GameState.WAITING_FOR_OPEN_CODE, testPlayer.getGameState());
@@ -587,7 +587,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommand("lockbox");
 
       // When - open without providing code
-      handler.handle(testPlayer, command);
+      handler.handle(testPlayer, gameMap, command);
 
       // Then - pending openable should be set
       assertEquals(lockbox, testPlayer.getPendingOpenable());
@@ -609,7 +609,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommandWithCode("lockbox", "1234");
 
       // When - open with correct code
-      handler.handle(testPlayer, command);
+      handler.handle(testPlayer, gameMap, command);
 
       // Then - state should remain PLAYING, no pending openable
       assertEquals(GameState.PLAYING, testPlayer.getGameState());
@@ -632,7 +632,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommandWithCode("lockbox", "9999");
 
       // When - open with wrong code
-      handler.handle(testPlayer, command);
+      handler.handle(testPlayer, gameMap, command);
 
       // Then - state should remain PLAYING, no pending openable
       assertEquals(GameState.PLAYING, testPlayer.getGameState());
@@ -657,7 +657,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommand("lockbox");
 
       // When - try to open already open item
-      handler.handle(testPlayer, command);
+      handler.handle(testPlayer, gameMap, command);
 
       // Then - state should remain PLAYING, no pending openable
       assertEquals(GameState.PLAYING, testPlayer.getGameState());
@@ -682,7 +682,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommand("chest");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then
       assertEquals(TestOpenableItem.DEFAULT_OPEN_MESSAGE, result);
@@ -703,7 +703,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommand("chest");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then
       assertEquals(TestOpenableItem.DEFAULT_OPEN_LOCKED_MESSAGE, result);
@@ -723,7 +723,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommand("door");
 
       // When
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       // Then - chest opens, not the location door
       assertEquals(TestOpenableItem.DEFAULT_OPEN_MESSAGE, result);
@@ -749,7 +749,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommand("cabinet");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then
       assertEquals(TestOpenableSceneryObject.DEFAULT_OPEN_MESSAGE, result);
@@ -775,7 +775,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommand("chest");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then - item opens, not scenery
       assertEquals(TestOpenableItem.DEFAULT_OPEN_MESSAGE, result);
@@ -796,7 +796,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommand("door");
 
       // When
-      final String result = handler.handle(player, command);
+      final String result = handler.handle(player, gameMap, command);
 
       // Then - scenery opens, not the location
       assertEquals(TestOpenableSceneryObject.DEFAULT_OPEN_MESSAGE, result);
@@ -827,7 +827,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommand("box");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then
       assertEquals(responses.getOpenNeedToSpecify("box"), result);
@@ -854,7 +854,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommand("chest");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then
       assertEquals(responses.getOpenNeedToSpecify("chest"), result);
@@ -881,7 +881,7 @@ class OpenHandlerTest {
       final ParsedCommand command = createOpenCommand("safe");
 
       // When
-      final String result = handler.handle(testPlayer, command);
+      final String result = handler.handle(testPlayer, gameMap, command);
 
       // Then
       assertEquals(responses.getOpenNeedToSpecify("safe"), result);

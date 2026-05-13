@@ -1,5 +1,6 @@
 package io.github.tmanbarton.ifengine.command;
 
+import io.github.tmanbarton.ifengine.game.GameMapInterface;
 import io.github.tmanbarton.ifengine.game.Player;
 import io.github.tmanbarton.ifengine.parser.ParsedCommand;
 
@@ -63,12 +64,12 @@ public final class CustomCommandAdapter implements BaseCommandHandler {
 
   @Override
   @Nullable
-  public String handle(@Nonnull final Player player, @Nonnull final ParsedCommand command) {
+  public String handle(@Nonnull final Player player, @Nonnull final GameMapInterface gameMapInterface, @Nonnull final ParsedCommand command) {
     final CommandContext context = contextFactory.apply(player);
-    final String result = handler.handle(player, command, context);
+    final String result = handler.handle(player, gameMapInterface, command, context);
 
     if (result == null && fallbackHandler != null) {
-      return fallbackHandler.handle(player, command);
+      return fallbackHandler.handle(player, gameMapInterface, command);
     }
     return result;
   }

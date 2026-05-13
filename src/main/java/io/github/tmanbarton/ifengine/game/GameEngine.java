@@ -350,7 +350,7 @@ public class GameEngine {
     }
 
     // Try command dispatcher first (for refactored commands)
-    final java.util.Optional<String> dispatcherResult = commandDispatcher.handle(player, command);
+    final java.util.Optional<String> dispatcherResult = commandDispatcher.handle(player, gameMap, command);
     if (dispatcherResult.isPresent()) {
       return dispatcherResult.get();
     }

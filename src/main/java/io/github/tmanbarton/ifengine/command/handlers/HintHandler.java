@@ -63,7 +63,7 @@ public class HintHandler implements BaseCommandHandler {
 
   @Override
   @Nonnull
-  public String handle(@Nonnull final Player player, @Nonnull final ParsedCommand command) {
+  public String handle(@Nonnull final Player player, @Nonnull final GameMapInterface gameMapInterface, @Nonnull final ParsedCommand command) {
     if (config == null || gameMap == null) {
       return HintConfiguration.DEFAULT_HINT;
     }

@@ -56,7 +56,7 @@ class HintHandlerTest {
       final var handler = new HintHandler(null, gameMap);
 
       // When
-      final String result = handler.handle(player, createHintCommand());
+      final String result = handler.handle(player, gameMap, createHintCommand());
 
       // Then
       assertEquals(HintConfiguration.DEFAULT_HINT, result);
@@ -91,15 +91,15 @@ class HintHandlerTest {
       // Given - player starts in phase-one (no key)
 
       // When/Then - first hint is level 1
-      final String hint1 = handler.handle(player, createHintCommand());
+      final String hint1 = handler.handle(player, gameMap, createHintCommand());
       assertEquals("Phase one hint 1", hint1);
 
       // When/Then - second hint is level 2
-      final String hint2 = handler.handle(player, createHintCommand());
+      final String hint2 = handler.handle(player, gameMap, createHintCommand());
       assertEquals("Phase one hint 2", hint2);
 
       // When/Then - third hint is level 3
-      final String hint3 = handler.handle(player, createHintCommand());
+      final String hint3 = handler.handle(player, gameMap, createHintCommand());
       assertEquals("Phase one hint 3", hint3);
     }
 
@@ -107,12 +107,12 @@ class HintHandlerTest {
     @DisplayName("fourth request stays at level 3")
     void testHint_fourthRequest_staysAtLevel3() {
       // Given - request 3 hints to get to level 3
-      handler.handle(player, createHintCommand());
-      handler.handle(player, createHintCommand());
-      handler.handle(player, createHintCommand());
+      handler.handle(player, gameMap, createHintCommand());
+      handler.handle(player, gameMap, createHintCommand());
+      handler.handle(player, gameMap, createHintCommand());
 
       // When - request a fourth hint
-      final String hint4 = handler.handle(player, createHintCommand());
+      final String hint4 = handler.handle(player, gameMap, createHintCommand());
 
       // Then - still returns level 3
       assertEquals("Phase one hint 3", hint4);
@@ -122,12 +122,12 @@ class HintHandlerTest {
     @DisplayName("phase change resets to level 1")
     void testHint_phaseChange_resetsToLevel1() {
       // Given - get to level 2 in phase-one
-      handler.handle(player, createHintCommand());
-      handler.handle(player, createHintCommand());
+      handler.handle(player, gameMap, createHintCommand());
+      handler.handle(player, gameMap, createHintCommand());
 
       // When - change to phase-two by giving player the key
       player.addItem(new Item("key", "a key", "A key.", "A key."));
-      final String hint = handler.handle(player, createHintCommand());
+      final String hint = handler.handle(player, gameMap, createHintCommand());
 
       // Then - returns level 1 of phase-two
       assertEquals("Phase two hint 1", hint);
