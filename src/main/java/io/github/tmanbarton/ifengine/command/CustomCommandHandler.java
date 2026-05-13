@@ -1,5 +1,7 @@
 package io.github.tmanbarton.ifengine.command;
 
+import io.github.tmanbarton.ifengine.game.GameMap;
+import io.github.tmanbarton.ifengine.game.GameMapInterface;
 import io.github.tmanbarton.ifengine.game.Player;
 import io.github.tmanbarton.ifengine.parser.ParsedCommand;
 
@@ -45,6 +47,6 @@ public interface CustomCommandHandler {
    *         built-in handler for this verb
    */
   @Nullable
-  String handle(@Nonnull Player player, @Nonnull ParsedCommand command,
+  String handle(@Nonnull Player player, @Nonnull GameMapInterface gamMap, @Nonnull ParsedCommand command,
                 @Nonnull CommandContext context);
 }

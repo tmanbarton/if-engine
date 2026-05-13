@@ -128,7 +128,7 @@ public final class GameExample {
             }))
 
         // Custom command: "listen" - hear ambient sounds based on location
-        .withCommand("listen", List.of("hear"), (player, cmd, ctx) -> {
+        .withCommand("listen", List.of("hear"), (player, gameMapInterface, cmd, ctx) -> {
           final String locationName = ctx.getCurrentLocation().getName();
           return switch (locationName) {
             case "cottage" -> "You hear the creak of old floorboards settling and "
@@ -143,7 +143,7 @@ public final class GameExample {
 
         // Custom command: "knock on <object>" - demonstrates ParsedCommand usage
         // Supports: "knock on chest", "knock chest", "knock on door", "rap on chest"
-        .withCommand("knock", List.of("rap", "tap"), (player, cmd, ctx) -> {
+        .withCommand("knock", List.of("rap", "tap"), (player, gameMapInterface, cmd, ctx) -> {
           // Get the target - could be direct object or indirect object after "on"
           String target = cmd.getFirstDirectObject();
           if (target.isEmpty()) {
@@ -184,7 +184,7 @@ public final class GameExample {
 
         // Custom command using scenery custom interactions
         // Works with SceneryObject.withCustomInteraction("smell", response)
-        .withCommand("smell", List.of("sniff"), (player, cmd, ctx) -> {
+        .withCommand("smell", List.of("sniff"), (player, gameMapInterface, cmd, ctx) -> {
           final String target = cmd.getFirstDirectObject();
           if (target.isEmpty()) {
             return "Smell what?";
@@ -196,7 +196,7 @@ public final class GameExample {
 
         // Custom "put" command demonstrating putItemInContainer with conditional logic.
         // Handles a special case (lantern in stump), otherwise falls through to default.
-        .withCommand("put", (player, cmd, ctx) -> {
+        .withCommand("put", (player, gameMapInterface, cmd, ctx) -> {
           final String item = cmd.getFirstDirectObject();
           final String container = cmd.getFirstIndirectObject();
 

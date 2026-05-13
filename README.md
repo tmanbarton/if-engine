@@ -316,7 +316,7 @@ Register custom commands via `GameMap.Builder.withCommand()`:
 GameMap map = new GameMap.Builder()
         .addLocation(new Location("street", "You're on an unnamed street in an unnamed town.", "You're on the street."))
         .setStartingLocation("street")
-        .withCommand("xyzzy", (player, cmd, ctx) -> "Nothing happens.")
+        .withCommand("xyzzy", (player, gameMapInterface, cmd, ctx) -> "Nothing happens.")
         .withCommane("beg", (player, cmd, ctx) -> "You get on your knees with cupped hands extended and give your best puppy eyes. " +
                 "No one's around for you to look at with those pitiful puppy eyes or put anything in your grubby hands, so you dust yourself off and stand back up.")
         .build();
@@ -325,7 +325,7 @@ GameMap map = new GameMap.Builder()
 ### Custom command with aliases
 
 ```java
-.withCommand("search", List.of("find", "look for"), (player, cmd, ctx) -> {
+.withCommand("search", List.of("find", "look for"), (player, gameMapInterface, cmd, ctx) -> {
     String target = cmd.getFirstDirectObject();
     if (target.isEmpty()) {
         return "Search what?";
@@ -339,7 +339,7 @@ GameMap map = new GameMap.Builder()
 The `ctx` parameter provides access to game utilities:
 
 ```java
-.withCommand("locate", (player, cmd, ctx) -> {
+.withCommand("locate", (player, gameMapInterface, cmd, ctx) -> {
     String target = cmd.getFirstDirectObject();
 
     // Resolve items from inventory or location
@@ -377,13 +377,13 @@ SceneryObject wall = SceneryObject.builder("wall")
     .build();
 
 // Create custom commands that behave like "put ladder on wall"
-.withCommand("lean", (player, cmd, ctx) -> {
+.withCommand("lean", (player, gameMapInterface, cmd, ctx) -> {
     String item = cmd.getFirstDirectObject();
     String target = cmd.getFirstIndirectObject();
     return ctx.putItemInContainer(item, target, "on");
 })
 
-.withCommand("climb", (player, cmd, ctx) -> {
+.withCommand("climb", (player, gameMapInterface, cmd, ctx) -> {
     // "climb ladder" could put the ladder on a wall
     String item = cmd.getFirstDirectObject();
     return ctx.putItemInContainer(item, "wall", "on");
@@ -401,7 +401,7 @@ The `putItemInContainer` method handles all aspects of container insertion:
 **Checking container state** - Use `isItemInContainer` to check if an item is in a container:
 
 ```java
-.withCommand("climb", (player, cmd, ctx) -> {
+.withCommand("climb", (player, gameMapInterface, cmd, ctx) -> {
     // Check if ladder is already on the wall
     if (ctx.isItemInContainer("ladder", "wall")) {
         return "You climb the ladder and peek over the wall.";
@@ -421,7 +421,7 @@ Both item names and container names support aliases.
  Return `null` from your handler to delegate to the built-in command. This allows you to handle specific cases while using default behavior for everything else:
 
 ```java
-.withCommand("eat", (player, cmd, ctx) -> {
+.withCommand("eat", (player, gameMapInterface, cmd, ctx) -> {
     // Handle special case
     if (cmd.getFirstDirectObject().equals("magic apple")) {
         return "You feel a surge of power!";
@@ -436,7 +436,7 @@ Both item names and container names support aliases.
 To completely replace a built-in command (never delegate), simply always return a non-null response:
 
 ```java
-.withCommand("look", (player, cmd, ctx) -> "You see nothing special.")
+.withCommand("look", (player, gameMapInterface, cmd, ctx) -> "You see nothing special.")
 ```
 
 ## Customizing Response Text
@@ -501,7 +501,7 @@ location.addSceneryObject(flower);
 Then register a custom command to use it:
 
 ```java
-.withCommand("smell", (player, cmd, ctx) -> {
+.withCommand("smell", (player, gameMapInterface, cmd, ctx) -> {
     final String target = cmd.getFirstDirectObject();
     return ctx.getCurrentLocation().findSceneryObject(target)
         .flatMap(s -> s.getCustomResponse("smell"))
@@ -638,7 +638,7 @@ The third argument is the **revealed location description** — shown in the loc
 Call `revealHiddenItemByName()` on the location to make the item visible. A typical trigger is examining scenery — for example, overriding `look` to handle "look under table":
 
 ```java
-.withCommand("look", (player, cmd, ctx) -> {
+.withCommand("look", (player, gameMapInterface, cmd, ctx) -> {
     final String preposition = cmd.getPreposition();
     final String target = cmd.getFirstIndirectObject();
     final Location currentLocation = ctx.getCurrentLocation();
@@ -999,7 +999,7 @@ Methods
   - Example usage in a custom command handler:
 
 ```java
-.withCommand("lean", (player, cmd, ctx) -> {
+.withCommand("lean", (player, gameMapInterface, cmd, ctx) -> {
     return ctx.putItemInContainer("ladder", "wall", "on");
 })
 ```
