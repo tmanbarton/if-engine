@@ -36,6 +36,7 @@ public final class TestGameMapBuilder {
   private final Set<String> itemNames;
   private final List<ConnectionSpec> connections;
   private final List<SceneryContainerSpec> sceneryContainers;
+  private final List<SceneryObject> sceneryObjects;
   private final List<HiddenItemSpec> hiddenItems;
   private final String startingLocationName;
 
@@ -43,12 +44,14 @@ public final class TestGameMapBuilder {
                              @Nonnull final Set<String> itemNames,
                              @Nonnull final List<ConnectionSpec> connections,
                              @Nonnull final List<SceneryContainerSpec> sceneryContainers,
+                             @Nonnull final List<SceneryObject> sceneryObjects,
                              @Nonnull final List<HiddenItemSpec> hiddenItems,
                              @Nonnull final String startingLocationName) {
     this.locationNames = Set.copyOf(locationNames);
     this.itemNames = Set.copyOf(itemNames);
     this.connections = List.copyOf(connections);
     this.sceneryContainers = List.copyOf(sceneryContainers);
+    this.sceneryObjects = List.copyOf(sceneryObjects);
     this.hiddenItems = List.copyOf(hiddenItems);
     this.startingLocationName = startingLocationName;
   }
@@ -63,6 +66,7 @@ public final class TestGameMapBuilder {
     return new TestGameMapBuilder(
         Set.of(DEFAULT_STARTING_LOCATION),
         Set.of(),
+        List.of(),
         List.of(),
         List.of(),
         List.of(),
@@ -81,6 +85,7 @@ public final class TestGameMapBuilder {
     return new TestGameMapBuilder(
         Set.of(locationName),
         Set.of(),
+        List.of(),
         List.of(),
         List.of(),
         List.of(),
@@ -103,6 +108,7 @@ public final class TestGameMapBuilder {
         List.of(new ConnectionSpec("location1", Direction.NORTH, "location2")),
         List.of(),
         List.of(),
+        List.of(),
         "location1"
     );
   }
@@ -121,6 +127,7 @@ public final class TestGameMapBuilder {
         List.of(new ConnectionSpec("location1", Direction.NORTH, "location2")),
         List.of(),
         List.of(),
+        List.of(),
         "location1"
     );
   }
@@ -135,7 +142,7 @@ public final class TestGameMapBuilder {
   public TestGameMapBuilder withLocations(@Nonnull final String... names) {
     final Set<String> newLocations = new HashSet<>(this.locationNames);
     newLocations.addAll(Set.of(names));
-    return new TestGameMapBuilder(newLocations, itemNames, connections, sceneryContainers, hiddenItems, startingLocationName);
+    return new TestGameMapBuilder(newLocations, itemNames, connections, sceneryContainers, sceneryObjects, hiddenItems, startingLocationName);
   }
 
   /**
@@ -161,7 +168,7 @@ public final class TestGameMapBuilder {
   public TestGameMapBuilder withItems(@Nonnull final String... names) {
     final Set<String> newItems = new HashSet<>(this.itemNames);
     newItems.addAll(Set.of(names));
-    return new TestGameMapBuilder(locationNames, newItems, connections, sceneryContainers, hiddenItems, startingLocationName);
+    return new TestGameMapBuilder(locationNames, newItems, connections, sceneryContainers, sceneryObjects, hiddenItems, startingLocationName);
   }
 
   /**
@@ -190,7 +197,7 @@ public final class TestGameMapBuilder {
                                            @Nonnull final String toLocation) {
     final List<ConnectionSpec> newConnections = new ArrayList<>(this.connections);
     newConnections.add(new ConnectionSpec(fromLocation, direction, toLocation));
-    return new TestGameMapBuilder(locationNames, itemNames, newConnections, sceneryContainers, hiddenItems, startingLocationName);
+    return new TestGameMapBuilder(locationNames, itemNames, newConnections, sceneryContainers, sceneryObjects, hiddenItems, startingLocationName);
   }
 
   /**
@@ -205,7 +212,20 @@ public final class TestGameMapBuilder {
                                                  @Nonnull final String... allowedItemNames) {
     final List<SceneryContainerSpec> newContainers = new ArrayList<>(this.sceneryContainers);
     newContainers.add(new SceneryContainerSpec(containerName, Set.of(allowedItemNames)));
-    return new TestGameMapBuilder(locationNames, itemNames, connections, newContainers, hiddenItems, startingLocationName);
+    return new TestGameMapBuilder(locationNames, itemNames, connections, newContainers, sceneryObjects, hiddenItems, startingLocationName);
+  }
+
+  /**
+   * Adds a scenery object to the starting location.
+   *
+   * @param sceneryObject the scenery object to add
+   * @return a new builder with the scenery object
+   */
+  @Nonnull
+  public TestGameMapBuilder withScenery(@Nonnull final SceneryObject sceneryObject) {
+    final List<SceneryObject> newSceneryObjects = new ArrayList<>(this.sceneryObjects);
+    newSceneryObjects.add(sceneryObject);
+    return new TestGameMapBuilder(locationNames, itemNames, connections, sceneryContainers, newSceneryObjects, hiddenItems, startingLocationName);
   }
 
   /**
@@ -221,7 +241,7 @@ public final class TestGameMapBuilder {
                                            @Nonnull final String revealedLocationDescription) {
     final List<HiddenItemSpec> newHiddenItems = new ArrayList<>(this.hiddenItems);
     newHiddenItems.add(new HiddenItemSpec(itemName, revealedLocationDescription));
-    return new TestGameMapBuilder(locationNames, itemNames, connections, sceneryContainers, newHiddenItems, startingLocationName);
+    return new TestGameMapBuilder(locationNames, itemNames, connections, sceneryContainers, sceneryObjects, newHiddenItems, startingLocationName);
   }
 
   /**
@@ -232,7 +252,7 @@ public final class TestGameMapBuilder {
    */
   @Nonnull
   public TestGameMapBuilder withStartingLocation(@Nonnull final String locationName) {
-    return new TestGameMapBuilder(locationNames, itemNames, connections, sceneryContainers, hiddenItems, locationName);
+    return new TestGameMapBuilder(locationNames, itemNames, connections, sceneryContainers, sceneryObjects, hiddenItems, locationName);
   }
 
   /**
@@ -281,6 +301,13 @@ public final class TestGameMapBuilder {
           .asContainer()
           .withAllowedItems(spec.allowedItems.toArray(new String[0]))
           .build();
+      if (startLocation != null) {
+        startLocation.addSceneryObject(sceneryObject);
+      }
+    }
+
+    // Add scenery objects to starting location
+    for (final SceneryObject sceneryObject : sceneryObjects) {
       if (startLocation != null) {
         startLocation.addSceneryObject(sceneryObject);
       }

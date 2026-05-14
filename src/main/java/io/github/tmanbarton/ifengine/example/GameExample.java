@@ -5,7 +5,6 @@ import io.github.tmanbarton.ifengine.InteractionType;
 import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.ItemContainer;
 import io.github.tmanbarton.ifengine.Location;
-import io.github.tmanbarton.ifengine.OpenableSceneryObject;
 import io.github.tmanbarton.ifengine.SceneryObject;
 import io.github.tmanbarton.ifengine.game.GameEngine;
 import io.github.tmanbarton.ifengine.game.GameMap;
@@ -40,13 +39,36 @@ public final class GameExample {
   public static GameMap createMap() {
     return new GameMap.Builder()
         // Add locations
-        .addLocation(createCottage())
+        .addLocation(new Location(
+            "cottage",
+            "You are inside a small, cozy cottage. Sunlight streams through a dusty window. "
+                + "A wooden door leads north to the outside.",
+            "Inside the cottage."))
         .addLocation(new Location(
             "forest",
             "You stand on a narrow forest path. Ancient trees tower above you. "
                 + "The path continues east. The cottage lies to the south.",
             "On the forest path."))
-        .addLocation(createClearing())
+        .addLocation(new Location(
+            "clearing",
+            "You emerge into a sun-dappled clearing. Wildflowers dot the grass. "
+                + "A weathered stone bench sits beneath an old oak. The forest path leads west.",
+            "In a sunny clearing."))
+
+        // Add scenery to locations
+        .addSceneryToLocation(new CottageWindow(), "cottage")
+        .addSceneryToLocation(SceneryObject.builder("wildflowers")
+            .withAliases("flowers", "flower")
+            .withInteraction(InteractionType.LOOK, "A colorful mix of daisies, buttercups, and violets.")
+            .withCustomInteraction("smell", "The sweet fragrance of wildflowers fills your nose.")
+            .build(), "clearing")
+        .addSceneryToLocation(SceneryObject.builder("stump")
+            .withAliases("tree stump", "hollow stump")
+            .withInteraction(InteractionType.LOOK, "A hollow tree stump with a dark cavity inside.")
+            .asContainer()
+            .withPrepositions("in", "into", "inside")
+            .withAllowedItems("key", "lantern")
+            .build(), "clearing")
 
         // Connect locations (bidirectional)
         .connectBidirectional("cottage", Direction.NORTH, "forest")
@@ -221,55 +243,6 @@ public final class GameExample {
         .build();
   }
 
-  /**
-   * Creates the cottage location with an openable window scenery object.
-   */
-  private static Location createCottage() {
-    final Location cottage = new Location(
-        "cottage",
-        "You are inside a small, cozy cottage. Sunlight streams through a dusty window. "
-            + "A wooden door leads north to the outside.",
-        "Inside the cottage.");
-
-    final OpenableSceneryObject window = new CottageWindow();
-    cottage.addSceneryObject(window);
-
-    return cottage;
-  }
-
-  /**
-   * Creates the clearing location with scenery demonstrating custom interactions
-   * and the new scenery container API.
-   */
-  private static Location createClearing() {
-    final Location clearing = new Location(
-        "clearing",
-        "You emerge into a sun-dappled clearing. Wildflowers dot the grass. "
-            + "A weathered stone bench sits beneath an old oak. The forest path leads west.",
-        "In a sunny clearing.");
-
-    // Scenery with standard interaction + custom interaction for use with custom commands
-    final SceneryObject wildflowers = SceneryObject.builder("wildflowers")
-        .withAliases("flowers", "flower")
-        .withInteraction(InteractionType.LOOK, "A colorful mix of daisies, buttercups, and violets.")
-        .withCustomInteraction("smell", "The sweet fragrance of wildflowers fills your nose.")
-        .build();
-    clearing.addSceneryObject(wildflowers);
-
-    // Scenery container using the simplified builder API
-
-    // Container example: a hollow tree stump that uses "in" preposition - "put X in stump"
-    final SceneryObject stump = SceneryObject.builder("stump")
-        .withAliases("tree stump", "hollow stump")
-        .withInteraction(InteractionType.LOOK, "A hollow tree stump with a dark cavity inside.")
-        .asContainer()
-        .withPrepositions("in", "into", "inside")  // Custom prepositions for enclosures
-        .withAllowedItems("key", "lantern")  // Items that fit in the stump
-        .build();
-    clearing.addSceneryObject(stump);
-
-    return clearing;
-  }
 
   /**
    * Example of creating and using the game engine.

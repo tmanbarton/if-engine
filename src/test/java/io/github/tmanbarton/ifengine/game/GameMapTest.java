@@ -3,6 +3,8 @@ package io.github.tmanbarton.ifengine.game;
 import io.github.tmanbarton.ifengine.Direction;
 import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.Location;
+import io.github.tmanbarton.ifengine.InteractionType;
+import io.github.tmanbarton.ifengine.SceneryObject;
 import io.github.tmanbarton.ifengine.test.TestItemFactory;
 
 import org.junit.jupiter.api.DisplayName;
@@ -272,6 +274,71 @@ class GameMapTest {
       );
 
       assertTrue(exception.getMessage().contains("cottage"));
+    }
+  }
+
+  @Nested
+  class AddSceneryToLocation {
+
+    @Test
+    @DisplayName("adds scenery object to the specified location")
+    void testAddSceneryToLocation_addsSceneryToLocation() {
+      final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
+      final SceneryObject tree = SceneryObject.builder("tree")
+          .withInteraction(InteractionType.LOOK, "A tall tree.")
+          .build();
+
+      new GameMap.Builder()
+          .addLocation(cottage)
+          .addSceneryToLocation(tree, "cottage")
+          .setStartingLocation("cottage")
+          .skipIntroQuestion()
+          .build();
+
+      assertTrue(cottage.findSceneryObject("tree").isPresent(),
+          "scenery object should be present at location after builder adds it");
+    }
+
+    @Test
+    @DisplayName("throws IllegalArgumentException when location key not found")
+    void testAddSceneryToLocation_throwsWhenLocationNotFound() {
+      final SceneryObject tree = SceneryObject.builder("tree")
+          .withInteraction(InteractionType.LOOK, "A tall tree.")
+          .build();
+      final GameMap.Builder builder = new GameMap.Builder();
+
+      final IllegalArgumentException exception = assertThrows(
+          IllegalArgumentException.class,
+          () -> builder.addSceneryToLocation(tree, "nonexistent")
+      );
+
+      assertTrue(exception.getMessage().contains("nonexistent"),
+          "exception message should mention the missing location key");
+    }
+
+    @Test
+    @DisplayName("throws NullPointerException for null scenery object")
+    void testAddSceneryToLocation_throwsForNullScenery() {
+      final Location cottage = new Location("cottage", "A cozy cottage.", "In a cottage.");
+      final GameMap.Builder builder = new GameMap.Builder()
+          .addLocation(cottage);
+
+      assertThrows(NullPointerException.class,
+          () -> builder.addSceneryToLocation(null, "cottage"),
+          "should reject null scenery object");
+    }
+
+    @Test
+    @DisplayName("throws NullPointerException for null location key")
+    void testAddSceneryToLocation_throwsForNullLocationKey() {
+      final SceneryObject tree = SceneryObject.builder("tree")
+          .withInteraction(InteractionType.LOOK, "A tall tree.")
+          .build();
+      final GameMap.Builder builder = new GameMap.Builder();
+
+      assertThrows(NullPointerException.class,
+          () -> builder.addSceneryToLocation(tree, null),
+          "should reject null location key");
     }
   }
 

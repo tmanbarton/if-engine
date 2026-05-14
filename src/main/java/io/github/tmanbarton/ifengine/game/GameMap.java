@@ -3,6 +3,7 @@ package io.github.tmanbarton.ifengine.game;
 import io.github.tmanbarton.ifengine.Direction;
 import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.Location;
+import io.github.tmanbarton.ifengine.SceneryObject;
 import io.github.tmanbarton.ifengine.command.CustomCommandHandler;
 import io.github.tmanbarton.ifengine.command.CustomCommandRegistration;
 
@@ -360,6 +361,29 @@ public class GameMap implements GameMapInterface {
       location.addHiddenItem(item, revealedLocationDescription);
       initialHiddenItemPlacements.put(item.getName(),
           new HiddenItemPlacement(locationKey, revealedLocationDescription));
+      return this;
+    }
+
+    /**
+     * Adds a scenery object to a location.
+     *
+     * @param sceneryObject the scenery object to add
+     * @param locationKey the key/name of the location to add it to
+     * @return this Builder for method chaining
+     * @throws IllegalArgumentException if the location is not found
+     * @throws NullPointerException if sceneryObject or locationKey is null
+     */
+    @Nonnull
+    public Builder addSceneryToLocation(@Nonnull final SceneryObject sceneryObject,
+                                         @Nonnull final String locationKey) {
+      Objects.requireNonNull(sceneryObject, "sceneryObject cannot be null");
+      Objects.requireNonNull(locationKey, "locationKey cannot be null");
+      final Location location = locations.get(locationKey);
+      if (location == null) {
+        throw new IllegalArgumentException(
+            "Location not found: " + locationKey + ". Add the location before adding scenery to it.");
+      }
+      location.addSceneryObject(sceneryObject);
       return this;
     }
 

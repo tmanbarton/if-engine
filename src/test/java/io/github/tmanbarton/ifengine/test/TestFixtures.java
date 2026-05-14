@@ -5,7 +5,6 @@ import io.github.tmanbarton.ifengine.InteractionType;
 import io.github.tmanbarton.ifengine.Item;
 import io.github.tmanbarton.ifengine.ItemContainer;
 import io.github.tmanbarton.ifengine.Location;
-import io.github.tmanbarton.ifengine.OpenableSceneryObject;
 import io.github.tmanbarton.ifengine.SceneryObject;
 import io.github.tmanbarton.ifengine.game.GameState;
 
@@ -110,22 +109,18 @@ public final class TestFixtures {
    */
   @Nonnull
   public static TestGameEngine sceneryInteractionScenario() {
-    final TestGameMap map = TestGameMapBuilder.singleLocation().build();
-    final Location location = map.getStartingLocation();
-
-    // Add scenery objects with various interactions
-    location.addSceneryObject(SceneryObject.builder("tree")
-        .withInteraction(InteractionType.CLIMB, "You climb the tree and see far into the distance.")
-        .build());
-
-    location.addSceneryObject(SceneryObject.builder("window")
-        .withInteraction(InteractionType.PUNCH, "You punch the window but it doesn't break.")
-        .withInteraction(InteractionType.KICK, "You kick the window but it holds firm.")
-        .build());
-
-    location.addSceneryObject(SceneryObject.builder("rope")
-        .withInteraction(InteractionType.CLIMB, "You climb the rope to reach the rafters.")
-        .build());
+    final TestGameMap map = TestGameMapBuilder.singleLocation()
+        .withScenery(SceneryObject.builder("tree")
+            .withInteraction(InteractionType.CLIMB, "You climb the tree and see far into the distance.")
+            .build())
+        .withScenery(SceneryObject.builder("window")
+            .withInteraction(InteractionType.PUNCH, "You punch the window but it doesn't break.")
+            .withInteraction(InteractionType.KICK, "You kick the window but it holds firm.")
+            .build())
+        .withScenery(SceneryObject.builder("rope")
+            .withInteraction(InteractionType.CLIMB, "You climb the rope to reach the rafters.")
+            .build())
+        .build();
 
     return TestGameEngineBuilder.withCustomMap(map)
         .withInitialPlayerState(GameState.PLAYING)
@@ -140,12 +135,11 @@ public final class TestFixtures {
    */
   @Nonnull
   public static TestGameEngine singleSceneryInteractionScenario() {
-    final TestGameMap map = TestGameMapBuilder.singleLocation().build();
-    final Location location = map.getStartingLocation();
-
-    location.addSceneryObject(SceneryObject.builder("tree")
-        .withInteraction(InteractionType.CLIMB, "You climb the tree successfully.")
-        .build());
+    final TestGameMap map = TestGameMapBuilder.singleLocation()
+        .withScenery(SceneryObject.builder("tree")
+            .withInteraction(InteractionType.CLIMB, "You climb the tree successfully.")
+            .build())
+        .build();
 
     return TestGameEngineBuilder.withCustomMap(map)
         .withInitialPlayerState(GameState.PLAYING)
@@ -164,18 +158,16 @@ public final class TestFixtures {
   public static TestGameEngine mixedInteractionScenario() {
     final TestGameMap map = TestGameMapBuilder.singleLocation()
         .withItems("key", "rope")
+        .withScenery(SceneryObject.builder("tree")
+            .withInteraction(InteractionType.CLIMB, "You climb the tree.")
+            .build())
+        .withScenery(SceneryObject.builder("window")
+            .withInteraction(InteractionType.LOOK, "A dusty window.")
+            .build())
+        .withScenery(SceneryObject.builder("table")
+            .withInteraction(InteractionType.LOOK, "A wooden table.")
+            .build())
         .build();
-    final Location location = map.getStartingLocation();
-
-    location.addSceneryObject(SceneryObject.builder("tree")
-        .withInteraction(InteractionType.CLIMB, "You climb the tree.")
-        .build());
-
-    location.addSceneryObject(SceneryObject.builder("window")
-        .build());
-
-    location.addSceneryObject(SceneryObject.builder("table")
-        .build());
 
     return TestGameEngineBuilder.withCustomMap(map)
         .withInitialPlayerState(GameState.PLAYING)
@@ -272,15 +264,8 @@ public final class TestFixtures {
   public static TestGameEngine sceneryContainerScenario() {
     final TestGameMap map = TestGameMapBuilder.singleLocation()
         .withItems("test-coin", "test-widget", "test-token")
+        .withSceneryContainer("box", "test-coin", "test-widget", "test-token")
         .build();
-    final Location location = map.getStartingLocation();
-
-    // Add scenery container
-    final SceneryObject box = SceneryObject.builder("box")
-        .asContainer()
-        .withAllowedItems("test-coin", "test-widget", "test-token")
-        .build();
-    location.addSceneryObject(box);
 
     return TestGameEngineBuilder.withCustomMap(map)
         .withInitialPlayerState(GameState.PLAYING)
@@ -325,12 +310,10 @@ public final class TestFixtures {
   public static TestGameEngine hiddenItemScenario() {
     final TestGameMap map = TestGameMapBuilder.singleLocation()
         .withHiddenItem("key", "There's a key under the table.")
+        .withScenery(SceneryObject.builder("table")
+            .withInteraction(InteractionType.LOOK, "A sturdy wooden table.")
+            .build())
         .build();
-    final Location location = map.getStartingLocation();
-
-    location.addSceneryObject(SceneryObject.builder("table")
-        .withInteraction(InteractionType.LOOK, "A sturdy wooden table.")
-        .build());
 
     return TestGameEngineBuilder.withCustomMap(map)
         .withInitialPlayerState(GameState.PLAYING)
@@ -431,8 +414,8 @@ public final class TestFixtures {
 
     final TestGameMap map = TestGameMapBuilder.singleLocation()
         .withItem("safe-key")
+        .withScenery(safe)
         .build();
-    map.getStartingLocation().addSceneryObject(safe);
 
     return TestGameEngineBuilder.withCustomMap(map)
         .withInitialPlayerState(GameState.PLAYING)
@@ -455,8 +438,9 @@ public final class TestFixtures {
         .withRequiresUnlocking(false)
         .build();
 
-    final TestGameMap map = TestGameMapBuilder.singleLocation().build();
-    map.getStartingLocation().addSceneryObject(cabinet);
+    final TestGameMap map = TestGameMapBuilder.singleLocation()
+        .withScenery(cabinet)
+        .build();
 
     return TestGameEngineBuilder.withCustomMap(map)
         .withInitialPlayerState(GameState.PLAYING)

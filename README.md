@@ -89,6 +89,7 @@ GameMap map = new GameMap.Builder()
         .addLocation(location)       // Add a location
         .placeItem(item, "room")     // Add and place item in location
         .placeHiddenItem(item, "room", "revealed desc")  // Hidden until revealed
+        .addSceneryToLocation(scenery, "room")  // Add scenery to location
         .connect("a", Direction.DOWN, "b")  // One-way connection
         .connectBidirectional("a", Direction.NORTH, "b")  // Bidirectional connection
         .setStartingLocation("room") // Required: where players start
@@ -481,6 +482,13 @@ SceneryObject painting = SceneryObject.builder("painting")
     .withInteraction(InteractionType.TAKE, "It's firmly attached to the wall.")
     .build();
 
+// Add via builder (preferred)
+new GameMap.Builder()
+    .addLocation(location)
+    .addSceneryToLocation(painting, "room")
+    // ...
+
+// Or add directly to a Location (still available for internal use)
 location.addSceneryObject(painting);
 ```
 
@@ -495,7 +503,8 @@ SceneryObject flower = SceneryObject.builder("flower")
     .withCustomInteraction("smell", "It smells lovely!")
     .build();
 
-location.addSceneryObject(flower);
+// Add via builder
+builder.addSceneryToLocation(flower, "garden");
 ```
 
 Then register a custom command to use it:
@@ -520,7 +529,7 @@ SceneryObject table = SceneryObject.builder("table")
     .asContainer()  // Marks as container - items can be placed here
     .build();
 
-location.addSceneryObject(table);  // Automatically registers as container
+builder.addSceneryToLocation(table, "room");  // Automatically registers as container
 ```
 
 **Custom prepositions** - For enclosures like drawers, boxes, or hollow spaces:
@@ -767,10 +776,10 @@ public class WallSafe extends OpenableSceneryObject {
 }
 ```
 
-Add it to a location like any scenery object:
+Add it to a location via the builder:
 
 ```java
-location.addSceneryObject(new WallSafe());
+builder.addSceneryToLocation(new WallSafe(), "vault-room");
 ```
 
 The player can then `unlock safe` and `open safe`. If `requiresUnlocking` is `false` (e.g., a cabinet with no lock), the object starts unlocked and the player can `open` it directly.
@@ -854,6 +863,34 @@ public static void main(String[] args) {
 ```
 
 ## API Reference
+
+### GameMap.Builder
+Builder for constructing `GameMap` instances with method chaining. All location/item/scenery methods require that the referenced location has already been added via `addLocation()`.
+
+`import io.github.tmanbarton.ifengine.game.GameMap;`
+
+#### World building
+- #### `Builder addLocation(Location location)`: Adds a location to the game map. The location's name is used as its key.
+- #### `Builder placeItem(Item item, String locationKey)`: Adds an item and places it in a location. Throws `IllegalArgumentException` if the location is not found.
+- #### `Builder placeHiddenItem(Item item, String locationKey, String revealedLocationDescription)`: Adds a hidden item to a location. Hidden items are invisible until revealed via `CommandContext.revealHiddenItem()`. After reveal, the item uses the provided description until the player takes it.
+- #### `Builder addSceneryToLocation(SceneryObject sceneryObject, String locationKey)`: Adds a scenery object to a location. If the scenery object is configured as a container (via `asContainer()`), a `SceneryContainer` is automatically created. Throws `IllegalArgumentException` if the location is not found.
+- #### `Builder connect(String fromLocationKey, Direction direction, String toLocationKey)`: Creates a one-way connection between two locations. Throws `IllegalArgumentException` if either location is not found.
+- #### `Builder connectBidirectional(String fromLocationKey, Direction direction, String toLocationKey)`: Creates a bidirectional connection. For example, connecting "cottage" NORTH to "forest" also creates "forest" SOUTH to "cottage".
+- #### `Builder setStartingLocation(String locationKey)`: Sets where new players start. Required before `build()`.
+
+#### Intro configuration
+- #### `Builder skipIntroQuestion()`: Skips the intro question and starts directly in PLAYING state.
+- #### `Builder withIntroResponses(String yesResponse, String noResponse)`: Sets custom yes/no responses for the intro question. Both answers transition to PLAYING state.
+- #### `Builder withIntroHandler(IntroHandler handler)`: Sets a fully custom intro handler for complete control over intro response handling.
+- #### `Builder withGameIntro(String introMessage)`: Sets a story intro message shown before the first location description. Optional.
+
+#### Commands and hints
+- #### `Builder withCommand(String verb, CustomCommandHandler handler)`: Registers a custom command with no aliases. Return `null` from the handler to delegate to the built-in handler.
+- #### `Builder withCommand(String verb, List<String> aliases, CustomCommandHandler handler)`: Registers a custom command with aliases.
+- #### `Builder withHints(Consumer<HintConfigurationBuilder> configurer)`: Configures the progressive hint system.
+
+#### Build
+- #### `GameMap build()`: Validates configuration and returns a new `GameMap`. Throws `IllegalStateException` if no locations added, starting location not set, or intro behavior not configured.
 
 ### Player
 Represents the player in the game.
