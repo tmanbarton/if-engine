@@ -1181,6 +1181,20 @@ Interface for game maps that provide locations and items for the game world. Pas
 - #### `Location getStartingLocation()`: Gets the starting location for new players.
 - #### `void resetMap()`: Resets the game map to its initial state. Restores item locations, clears visited flags, and restores any other initial state.
 
+### UnlockResult
+`import io.github.tmanbarton.ifengine.UnlockResult`
+
+Record representing the result of an unlock attempt. Returned by `Openable.tryUnlock()`.
+- `boolean success()`: Whether the unlock was successful.
+- `String message()`: The message to display to the player.
+
+### OpenResult
+`import io.github.tmanbarton.ifengine.OpenResult`
+
+Record representing the result of an open attempt. Returned by `Openable.tryOpen()`.
+- `boolean success()`: Whether the open was successful.
+- `String message()`: The message to display to the player.
+
 ### ContainerType
 Enum representing the type of container and its behavior.
 
